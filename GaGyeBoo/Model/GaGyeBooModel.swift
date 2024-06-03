@@ -82,13 +82,12 @@ struct MockStruct {
             
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy"
-            if month != nil {
-                let monthStr = String(month!).count == 1 ? "0\(month!)" : "\(month!)"
-                if day == nil {
-                    formatter.dateFormat = "yyyy-MM"
-                    searchDateStr = "\(year)-\(monthStr)"
-                } else {
-                    let dayStr = String(day!).count == 1 ? "0\(day!)" : "\(day!)"
+            if let month = month {
+                let monthStr = String(month).count == 1 ? "0\(month)" : "\(month)"
+                formatter.dateFormat = "yyyy-MM"
+                searchDateStr = "\(year)-\(monthStr)"
+                if let day = day {
+                    let dayStr = String(day).count == 1 ? "0\(day)" : "\(day)"
                     formatter.dateFormat = "yyyy-MM-dd"
                     searchDateStr = "\(year)-\(monthStr)-\(dayStr)"
                 }
