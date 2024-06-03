@@ -14,6 +14,7 @@
 		CD0E38B42C0D99BF00F9BF92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD0E38B32C0D99BF00F9BF92 /* Assets.xcassets */; };
 		CD0E38B72C0D99BF00F9BF92 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = CD0E38B62C0D99BF00F9BF92 /* Base */; };
 		CD0E38C22C0D9C4300F9BF92 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CD0E38C12C0D9C4300F9BF92 /* .gitignore */; };
+		CD0E38C42C0D9DB300F9BF92 /* TempModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38C32C0D9DB300F9BF92 /* TempModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		CD0E38B62C0D99BF00F9BF92 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CD0E38B82C0D99BF00F9BF92 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD0E38C12C0D9C4300F9BF92 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		CD0E38C32C0D9DB300F9BF92 /* TempModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 		CD0E38BE2C0D99DA00F9BF92 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CD0E38C32C0D9DB300F9BF92 /* TempModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -166,6 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0E38AC2C0D99BE00F9BF92 /* ViewController.swift in Sources */,
+				CD0E38C42C0D9DB300F9BF92 /* TempModel.swift in Sources */,
 				CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */,
 				CD0E38B22C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld in Sources */,
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
