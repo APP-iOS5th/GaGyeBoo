@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F8143A02C0F4D0F00741BBA /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 7F81439F2C0F4D0F00741BBA /* DGCharts */; };
+		7F8143A22C0F4D0F00741BBA /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8143A12C0F4D0F00741BBA /* DGChartsDynamic */; };
 		CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */; };
 		CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */; };
 		CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */; };
@@ -49,6 +51,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F8143A22C0F4D0F00741BBA /* DGChartsDynamic in Frameworks */,
+				7F8143A02C0F4D0F00741BBA /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,6 +146,10 @@
 			dependencies = (
 			);
 			name = GaGyeBoo;
+			packageProductDependencies = (
+				7F81439F2C0F4D0F00741BBA /* DGCharts */,
+				7F8143A12C0F4D0F00741BBA /* DGChartsDynamic */,
+			);
 			productName = GaGyeBoo;
 			productReference = CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */;
 			productType = "com.apple.product-type.application";
@@ -170,6 +178,9 @@
 				Base,
 			);
 			mainGroup = CD0E389B2C0D99BE00F9BF92;
+			packageReferences = (
+				7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			productRefGroup = CD0E38A52C0D99BE00F9BF92 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -421,6 +432,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChartsOrg/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7F81439F2C0F4D0F00741BBA /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+		7F8143A12C0F4D0F00741BBA /* DGChartsDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGChartsDynamic;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		CD0E38B02C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld */ = {
