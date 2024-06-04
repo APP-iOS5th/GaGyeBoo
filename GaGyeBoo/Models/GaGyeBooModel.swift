@@ -10,7 +10,7 @@ import Foundation
 struct GaGyeBooModel {
     let id = UUID()
     let date: Date
-    let saveType: String
+    let saveType: Categories
     let category: String
     let spendType: String?
     let amount: Double
@@ -43,10 +43,10 @@ struct MockStruct {
         let currentYear = Calendar.current.component(.year, from: Date())
         
         for month in 1...12 {
-            for _ in 1...20 {
+            for _ in 1...30 {
                 let saveType: Categories = Categories.allCases.randomElement()!
                 let category: String = saveType.getCategories().randomElement()!
-                let randomAmount = Double.random(in: 1000...100000)
+                let randomAmount = floor(Double.random(in: 1000...100000))
                 var randomDay = Int.random(in: 1...28)
                 if [1, 3, 5, 8, 10, 12].contains(month) {
                     randomDay = Int.random(in: 1...31)
@@ -62,7 +62,7 @@ struct MockStruct {
                 
                 let expense = GaGyeBooModel(
                     date: date,
-                    saveType: saveType.rawValue,
+                    saveType: saveType,
                     category: category,
                     spendType: saveType == .expense ? ["현금", "카드"].randomElement()! : nil,
                     amount: randomAmount
@@ -95,6 +95,6 @@ struct MockStruct {
             let targetDateStr: String = formatter.string(from: modelDate)
             
             return targetDateStr == searchDateStr
-        }
+        }.sorted{ $0.date < $1.date }
     }
 }
