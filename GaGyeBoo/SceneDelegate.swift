@@ -19,10 +19,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: windowScene)
         
-        let navigation = UINavigationController(rootViewController: MainViewController())
-        self.window?.rootViewController = navigation
+        self.window?.rootViewController = createTabBar()
         self.window?.makeKeyAndVisible()
         
+    }
+    
+    func createTabBar() -> UITabBarController {
+        let homeView = MainViewController()
+        homeView.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "calendar"), selectedImage: nil)
+        let homeNavigation = UINavigationController(rootViewController: homeView)
+        
+        let statsView = StatisticsViewController()
+        statsView.tabBarItem = UITabBarItem(title: "통계", image: UIImage(systemName: "list.bullet.clipboard"), selectedImage: nil)
+        let statsNavigation = UINavigationController(rootViewController: statsView)
+        
+        let settingView = SettingViewController()
+        settingView.tabBarItem = UITabBarItem(title: "정보", image: UIImage(systemName: "gearshape"), selectedImage: nil)
+        let settingNavigation = UINavigationController(rootViewController: settingView)
+        
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [homeNavigation, statsNavigation, settingNavigation]
+        
+        return tabBarController
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
