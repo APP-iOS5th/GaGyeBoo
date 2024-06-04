@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  GaGyeBoo
-//
-//  Created by MadCow on 2024/6/3.
-//
-
 import UIKit
 
 class MainViewController: UIViewController {
@@ -18,11 +11,11 @@ class MainViewController: UIViewController {
     }()
     
     let calendarView: UICalendarView = {
-        var view = UICalendarView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.wantsDateDecorations = true
+        var calendar = UICalendarView()
+        calendar.translatesAutoresizingMaskIntoConstraints = false
+        calendar.wantsDateDecorations = true
         
-        return view
+        return calendar
     }()
     
     private let mockData = MockStruct()
@@ -87,6 +80,7 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
             return nil
         }
         
+        // MARK: - 월을 변경하면 UIStackView의 위치가 깨지는 현상 있음
         if models.count > 0 {
             return .customView {
                 let vStack = UIStackView()
