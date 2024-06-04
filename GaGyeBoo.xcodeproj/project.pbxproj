@@ -15,6 +15,13 @@
 		CD0E38B72C0D99BF00F9BF92 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = CD0E38B62C0D99BF00F9BF92 /* Base */; };
 		CD0E38C22C0D9C4300F9BF92 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CD0E38C12C0D9C4300F9BF92 /* .gitignore */; };
 		CD0E38C42C0D9DB300F9BF92 /* GaGyeBooModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38C32C0D9DB300F9BF92 /* GaGyeBooModel.swift */; };
+		CD25740F2C0ECC3900BC4844 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD25740E2C0ECC3900BC4844 /* AddViewController.swift */; };
+		CD2574112C0ECC4000BC4844 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574102C0ECC4000BC4844 /* SettingViewController.swift */; };
+		CD2574132C0ECC6300BC4844 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574122C0ECC6300BC4844 /* StatisticsViewController.swift */; };
+		CD2574162C0ECEB000BC4844 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574152C0ECEB000BC4844 /* MainView.swift */; };
+		CD2574182C0ECEB500BC4844 /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574172C0ECEB500BC4844 /* AddView.swift */; };
+		CD25741A2C0ECEBA00BC4844 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574192C0ECEBA00BC4844 /* SettingView.swift */; };
+		CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +35,13 @@
 		CD0E38B82C0D99BF00F9BF92 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD0E38C12C0D9C4300F9BF92 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		CD0E38C32C0D9DB300F9BF92 /* GaGyeBooModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaGyeBooModel.swift; sourceTree = "<group>"; };
+		CD25740E2C0ECC3900BC4844 /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
+		CD2574102C0ECC4000BC4844 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		CD2574122C0ECC6300BC4844 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		CD2574152C0ECEB000BC4844 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		CD2574172C0ECEB500BC4844 /* AddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
+		CD2574192C0ECEBA00BC4844 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,9 +75,10 @@
 		CD0E38A62C0D99BE00F9BF92 /* GaGyeBoo */ = {
 			isa = PBXGroup;
 			children = (
-				CD0E38C02C0D9A3900F9BF92 /* Data */,
-				CD0E38BE2C0D99DA00F9BF92 /* Model */,
-				CD0E38BF2C0D99DF00F9BF92 /* ViewController */,
+				CD0E38C02C0D9A3900F9BF92 /* Datas */,
+				CD0E38BE2C0D99DA00F9BF92 /* Models */,
+				CD2574142C0ECEA300BC4844 /* Views */,
+				CD0E38BF2C0D99DF00F9BF92 /* Controllers */,
 				CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */,
 				CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */,
 				CD0E38B32C0D99BF00F9BF92 /* Assets.xcassets */,
@@ -73,28 +88,42 @@
 			path = GaGyeBoo;
 			sourceTree = "<group>";
 		};
-		CD0E38BE2C0D99DA00F9BF92 /* Model */ = {
+		CD0E38BE2C0D99DA00F9BF92 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				CD0E38C32C0D9DB300F9BF92 /* GaGyeBooModel.swift */,
 			);
-			path = Model;
+			path = Models;
 			sourceTree = "<group>";
 		};
-		CD0E38BF2C0D99DF00F9BF92 /* ViewController */ = {
+		CD0E38BF2C0D99DF00F9BF92 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */,
+				CD25740E2C0ECC3900BC4844 /* AddViewController.swift */,
+				CD2574122C0ECC6300BC4844 /* StatisticsViewController.swift */,
+				CD2574102C0ECC4000BC4844 /* SettingViewController.swift */,
 			);
-			path = ViewController;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
-		CD0E38C02C0D9A3900F9BF92 /* Data */ = {
+		CD0E38C02C0D9A3900F9BF92 /* Datas */ = {
 			isa = PBXGroup;
 			children = (
 				CD0E38B02C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld */,
 			);
-			path = Data;
+			path = Datas;
+			sourceTree = "<group>";
+		};
+		CD2574142C0ECEA300BC4844 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CD2574152C0ECEB000BC4844 /* MainView.swift */,
+				CD2574172C0ECEB500BC4844 /* AddView.swift */,
+				CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */,
+				CD2574192C0ECEBA00BC4844 /* SettingView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,10 +198,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */,
+				CD2574162C0ECEB000BC4844 /* MainView.swift in Sources */,
+				CD2574182C0ECEB500BC4844 /* AddView.swift in Sources */,
 				CD0E38C42C0D9DB300F9BF92 /* GaGyeBooModel.swift in Sources */,
+				CD2574132C0ECC6300BC4844 /* StatisticsViewController.swift in Sources */,
+				CD25740F2C0ECC3900BC4844 /* AddViewController.swift in Sources */,
 				CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */,
 				CD0E38B22C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld in Sources */,
+				CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */,
+				CD2574112C0ECC4000BC4844 /* SettingViewController.swift in Sources */,
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
+				CD25741A2C0ECEBA00BC4844 /* SettingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
