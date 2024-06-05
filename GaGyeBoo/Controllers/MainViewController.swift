@@ -1,9 +1,13 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    private let picker: UISegmentedControl = {
+    private lazy var picker: UISegmentedControl = {
         let pk = UISegmentedControl(items: ["일간", "월간"])
         pk.translatesAutoresizingMaskIntoConstraints = false
+        // TODO: picker의 값이 변경되면 그 값에 맞게 보여지는 화면 다르게 하기
+        pk.addAction(UIAction { [weak self] _ in
+            print(pk.selectedSegmentIndex)
+        }, for: .valueChanged)
         pk.selectedSegmentIndex = 0
         
         return pk
@@ -116,18 +120,16 @@ class MainViewController: UIViewController {
     }
     
     func setSpendList(year: Int, month: Int, day: Int) {
-        // TODO: 일별 수입/지출 내역 리스트 표시
         let spendList = mockData.getSampleDataBy(year: year, month: month, day: day)
         prevBottomAnchorForScrollView = secondContentView.topAnchor
         
         for (idx, spend) in spendList.enumerated() {
-            
             let category = spend.category
             let date = spend.date
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             let dateText = dateFormatter.string(from: date)
-            //let spendType = spend.spendType
+            let spendType = spend.spendType
             let amount = spend.amount
             let saveType = spend.saveType
             
@@ -168,6 +170,22 @@ class MainViewController: UIViewController {
             ])
             
             [categoryLabel, dateLabel, amountLabel, seperator].forEach{ tempSpendView.append($0) }
+            
+            if let spendType = spendType {
+                let spendTypeLabel = UILabel()
+                spendTypeLabel.translatesAutoresizingMaskIntoConstraints = false
+                spendTypeLabel.text = spendType
+                spendTypeLabel.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+                spendTypeLabel.textColor = .lightGray
+                
+                tempSpendView.append(spendTypeLabel)
+                secondContentView.addSubview(spendTypeLabel)
+                
+                NSLayoutConstraint.activate([
+                    spendTypeLabel.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 10),
+                    spendTypeLabel.trailingAnchor.constraint(equalTo: amountLabel.trailingAnchor)
+                ])
+            }
             
             prevBottomAnchorForScrollView = seperator.bottomAnchor
             if idx == spendList.count - 1 {
@@ -239,20 +257,8 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
             self.setSpendList(year: year, month: month, day: day)
         }
     }
-}
-
-extension MainViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 30
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MainTableViewCell", for: indexPath) as? MainTableViewCell else {
-            return UITableViewCell()
-        }
-        
-        return cell
-    }
+    // TODO: UICalendarView에서 연/월이 변경되면 그 날에 맞는 데이터 불러와서 캘린더 새로고침
 }
 
 class HorizontalSeparator: UIView {
