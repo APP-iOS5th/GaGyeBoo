@@ -5,7 +5,13 @@ import DGCharts
 class StatisticsView: UIView {
     
     var segmentedControl: UISegmentedControl!
-    var barChartView: BarChartView!
+    
+    lazy var barChartView: BarChartView = {
+       let barChartView = BarChartView()
+        barChartView.backgroundColor = .brown
+        barChartView.translatesAutoresizingMaskIntoConstraints = false
+        return barChartView
+    }()
     
     var monthData: [String] = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
     var incomeData: [Double] = [1000, 1200, 1300, 1100, 1050, 1150, 1250, 1230, 1280, 1150, 1200, 1250]
@@ -30,8 +36,6 @@ class StatisticsView: UIView {
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
         addSubview(segmentedControl)
         
-        barChartView = BarChartView()
-        barChartView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(barChartView)
         
         NSLayoutConstraint.activate([
