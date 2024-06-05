@@ -148,7 +148,7 @@ class MainViewController: UIViewController {
             amountLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
             amountLabel.textColor = saveType == .income ? .systemBlue : .systemRed
             
-            let seperator = HorizontalSeperator()
+            let seperator = HorizontalSeparator()
             
             [categoryLabel, dateLabel, amountLabel, seperator].forEach{ secondContentView.addSubview($0) }
             
@@ -255,7 +255,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-class HorizontalSeperator: UIView {
+class HorizontalSeparator: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
