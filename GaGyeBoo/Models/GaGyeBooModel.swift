@@ -43,7 +43,7 @@ struct MockStruct {
         let currentYear = Calendar.current.component(.year, from: Date())
         
         for month in 1...12 {
-            for _ in 1...30 {
+            for _ in 1...100 {
                 let saveType: Categories = Categories.allCases.randomElement()!
                 let category: String = saveType.getCategories().randomElement()!
                 let randomAmount = floor(Double.random(in: 1000...100000))
