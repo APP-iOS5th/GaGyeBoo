@@ -31,6 +31,7 @@ class StatisticsView: UIView {
         
         barChartView.legend.font = .systemFont(ofSize: 15)
         
+        
         return barChartView
     }()
     
@@ -94,6 +95,8 @@ class StatisticsView: UIView {
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
         let entries = entryData(values: values)
         let dataSet = BarChartDataSet(entries: entries, label: label)
+
+        dataSet.colors = dataSet.label == "수입" ? [.blue] : [.red]
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
@@ -116,25 +119,17 @@ class StatisticsView: UIView {
         let selectedIndex = segmentedControl.selectedSegmentIndex
         var label = ""
         
-        if selectedIndex == 0 {
-            data = incomeData
-            label = "수입"
-        } else {
-            data = expenseData
-            label = "지출"
-        }
-        
-        if data.isEmpty {
-            barChartView.isHidden = true
-            noDataLabel.isHidden = false
-        } else {
-            barChartView.isHidden = false
-            noDataLabel.isHidden = true
-            
+        (data, label) = selectedIndex == 0 ? (incomeData, "수입") : (expenseData, "지출")
+        barChartView.isHidden = data.isEmpty
+        noDataLabel.isHidden = !data.isEmpty
+
+        if !data.isEmpty {
             let chartData = createBarChartData(values: data, label: label)
-            
             barChartView.data = chartData
         }
+        
     }
     
 }
+
+
