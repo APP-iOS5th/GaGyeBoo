@@ -18,9 +18,19 @@ class StatisticsView: UIView {
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: monthData)
         
         let maxLabelCount = max(incomeData.count, expenseData.count)
+        barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
+        
+        barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
+        
+        barChartView.rightAxis.enabled = false
+        barChartView.leftAxis.enabled = false
         barChartView.doubleTapToZoomEnabled = false
+        barChartView.animate(xAxisDuration: 4.0, yAxisDuration: 4.0, easingOption: .easeInOutBounce)
         barChartView.translatesAutoresizingMaskIntoConstraints = false
+        
+        barChartView.legend.font = .systemFont(ofSize: 15)
+        
         return barChartView
     }()
     
@@ -64,7 +74,7 @@ class StatisticsView: UIView {
             
             barChartView.centerXAnchor.constraint(equalTo: centerXAnchor),
             barChartView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            barChartView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8),
+            barChartView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1),
             barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.5),
             
             noDataLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -84,6 +94,8 @@ class StatisticsView: UIView {
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
         let entries = entryData(values: values)
         let dataSet = BarChartDataSet(entries: entries, label: label)
+        dataSet.valueFont = .systemFont(ofSize: 12)
+        
         let chartData = BarChartData(dataSet: dataSet)
         return chartData
     }

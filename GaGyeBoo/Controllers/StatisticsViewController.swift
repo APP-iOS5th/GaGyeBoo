@@ -9,6 +9,6 @@ class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
-        self.title = "통계"
+        self.title = "수입 및 지출 통계"
     }
 }
