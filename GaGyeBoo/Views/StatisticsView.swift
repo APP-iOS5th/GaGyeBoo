@@ -15,6 +15,11 @@ class StatisticsView: UIView {
     lazy var barChartView: BarChartView = {
         let barChartView = BarChartView()
         barChartView.backgroundColor = .systemBrown
+        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: monthData)
+        
+        let maxLabelCount = max(incomeData.count, expenseData.count)
+        barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
+        barChartView.doubleTapToZoomEnabled = false
         barChartView.translatesAutoresizingMaskIntoConstraints = false
         return barChartView
     }()
@@ -76,6 +81,24 @@ class StatisticsView: UIView {
         updateBarChartData()
     }
     
+    private func createBarChartData(values: [Double], label: String) -> BarChartData {
+        let entries = entryData(values: values)
+        let dataSet = BarChartDataSet(entries: entries, label: label)
+        let chartData = BarChartData(dataSet: dataSet)
+        return chartData
+    }
+    
+    private func entryData(values: [Double]) -> [BarChartDataEntry] {
+        var barDataEntries: [BarChartDataEntry] = []
+        
+        for i in 0..<values.count {
+            let barDataEntry = BarChartDataEntry(x: Double(i), y: values[i])
+            barDataEntries.append(barDataEntry)
+        }
+        return barDataEntries
+    }
+    
+    
     private func updateBarChartData() {
         var data: [Double] = []
         let selectedIndex = segmentedControl.selectedSegmentIndex
@@ -96,11 +119,10 @@ class StatisticsView: UIView {
             barChartView.isHidden = false
             noDataLabel.isHidden = true
             
-            let entries = monthData.enumerated().map { BarChartDataEntry(x: Double($0.offset), y: data[$0.offset]) }
-            let dataSet = BarChartDataSet(entries: entries, label: label)
-            let chartData = BarChartData(dataSet: dataSet)
+            let chartData = createBarChartData(values: data, label: label)
             
             barChartView.data = chartData
         }
     }
+    
 }
