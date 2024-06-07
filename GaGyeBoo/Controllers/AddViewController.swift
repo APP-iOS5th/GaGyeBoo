@@ -11,6 +11,7 @@ class AddViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        navigationItem.title = "지출"
+        view.backgroundColor = .white
     }
 }
