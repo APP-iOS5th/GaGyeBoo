@@ -4,10 +4,19 @@ class MainViewController: UIViewController {
     private lazy var picker: UISegmentedControl = {
         let pk = UISegmentedControl(items: ["일간", "월간"])
         pk.translatesAutoresizingMaskIntoConstraints = false
-        // TODO: picker의 값이 변경되면 그 값에 맞게 보여지는 화면 다르게 하기
+        /*
+        TODO: picker의 값이 변경되면 그 값에 맞게 보여지는 화면 다르게 하기
         pk.addAction(UIAction { [weak self] _ in
-            print(pk.selectedSegmentIndex)
+            switch pk.selectedSegmentIndex {
+            case 0:
+                self?.setDailySpendView()
+            case 1:
+                self?.setMonthlySpendView()
+            default:
+                break
+            }
         }, for: .valueChanged)
+        */
         pk.selectedSegmentIndex = 0
         
         return pk
@@ -53,14 +62,23 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setDailySpendView()
+        // setMonthlySpendView()
+    }
+    
+    func setDailySpendView() {
         view.backgroundColor = .systemBackground
-        
         setNavigationComponents()
         setSegmentPicker()
         setScrollView()
         setCalendarData()
         setCalendarView()
-        setSpendList(year: 2024, month: 6, day: 7)
+    }
+    
+    func setMonthlySpendView() {
+//        tempSpendView.forEach{ $0.removeFromSuperview() }
+//        tempSpendView.removeAll()
+//        view.backgroundColor = .yellow
     }
     
     func setNavigationComponents() {
@@ -105,7 +123,9 @@ class MainViewController: UIViewController {
     func setCalendarData() {
         let currentYear = Calendar.current.component(.year, from: Date())
         let currentMonth = Calendar.current.component(.month, from: Date())
+        let currentDay = Calendar.current.component(.day, from: Date())
         currentSpend = mockData.getSampleDataBy(year: currentYear, month: currentMonth)
+        setSpendList(year: currentYear, month: currentMonth, day: currentDay)
     }
     
     func setCalendarView() {
@@ -203,7 +223,7 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
     func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
         let models = currentSpend.filter { $0.date == dateComponents.date }
         
-        // MARK: - 월을 변경하면 UIStackView의 위치가 깨지는 현상 있음
+        // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
         if models.count > 0 {
             return .customView {
                 let vStack = UIStackView()
@@ -237,7 +257,7 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
 
                     vStack.addArrangedSubview(expenseLabel)
                 }
-
+                
                 return vStack
             }
         }
@@ -253,12 +273,16 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
             let year = dateComponent.year,
             let month = dateComponent.month,
             let day = dateComponent.day {
-            
             self.setSpendList(year: year, month: month, day: day)
         }
     }
     
-    // TODO: UICalendarView에서 연/월이 변경되면 그 날에 맞는 데이터 불러와서 캘린더 새로고침
+    func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
+        if let newYear = calendarView.visibleDateComponents.year, let newMonth = calendarView.visibleDateComponents.month {
+            currentSpend = mockData.getSampleDataBy(year: newYear, month: newMonth)
+            calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
+        }
+    }
 }
 
 class HorizontalSeparator: UIView {
