@@ -2,7 +2,7 @@ import UIKit
 import Charts
 import DGCharts
 
-class StatisticsView: UIView {
+class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["수입", "지출"])
@@ -10,21 +10,6 @@ class StatisticsView: UIView {
         control.selectedSegmentIndex = 0
         control.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
         return control
-    }()
-    
-    lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.showsVerticalScrollIndicator = true
-        return scrollView
-    }()
-    
-    lazy var stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 10
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
     }()
     
     lazy var barChartView: BarChartView = {
@@ -38,12 +23,10 @@ class StatisticsView: UIView {
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
         
         barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
-        
         barChartView.xAxis.drawGridLinesEnabled = false
         barChartView.rightAxis.enabled = false
         barChartView.leftAxis.enabled = false
         barChartView.doubleTapToZoomEnabled = false
-        barChartView.animate(xAxisDuration: 4.0, yAxisDuration: 4.0, easingOption: .easeInOutBounce)
         barChartView.legend.font = .systemFont(ofSize: 15)
         
         return barChartView
@@ -58,13 +41,13 @@ class StatisticsView: UIView {
         return label
     }()
     
-    lazy var usageListView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.spacing = 10
-        stackView.alignment = .center
-        return stackView
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        return tableView
     }()
     
     var monthData: [String] = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
@@ -81,16 +64,12 @@ class StatisticsView: UIView {
         setupView()
     }
     
-    /// Mark: View
-    
     private func setupView() {
         backgroundColor = .white
         addSubview(segmentedControl)
-        addSubview(scrollView)
-        scrollView.addSubview(stackView)
-        stackView.addSubview(usageListView)
-        stackView.addSubview(barChartView)
-        stackView.addSubview(noDataLabel)
+        addSubview(barChartView)
+        addSubview(noDataLabel)
+        addSubview(tableView)
         
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -98,41 +77,26 @@ class StatisticsView: UIView {
             segmentedControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             segmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            scrollView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            barChartView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 20),
+            barChartView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            barChartView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.4),
             
-            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            noDataLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            noDataLabel.centerYAnchor.constraint(equalTo: barChartView.centerYAnchor),
             
-            barChartView.topAnchor.constraint(equalTo: stackView.topAnchor),
-            barChartView.centerXAnchor.constraint(equalTo: stackView.centerXAnchor),
-            barChartView.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -10),
-            barChartView.heightAnchor.constraint(equalTo: stackView.heightAnchor, multiplier: 0.5),
-            
-            noDataLabel.centerXAnchor.constraint(equalTo: stackView.centerXAnchor),
-            noDataLabel.centerYAnchor.constraint(equalTo: stackView.centerYAnchor),
-            
-            usageListView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
-            usageListView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
-            usageListView.topAnchor.constraint(equalTo: barChartView.bottomAnchor, constant: 20),
-            usageListView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: -10)
+            tableView.topAnchor.constraint(equalTo: barChartView.bottomAnchor, constant: 20),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
         
         updateBarChartData()
-        
-        
     }
-    
-    
-    /// Mark: Method
     
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         updateBarChartData()
+        tableView.reloadData()
     }
     
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
@@ -143,6 +107,8 @@ class StatisticsView: UIView {
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
+        chartData.barWidth = 0.3
+        
         return chartData
     }
     
@@ -153,9 +119,9 @@ class StatisticsView: UIView {
             let barDataEntry = BarChartDataEntry(x: Double(i), y: values[i])
             barDataEntries.append(barDataEntry)
         }
+        
         return barDataEntries
     }
-    
     
     private func updateBarChartData() {
         var data: [Double] = []
@@ -169,49 +135,24 @@ class StatisticsView: UIView {
         if !data.isEmpty {
             let chartData = createBarChartData(values: data, label: label)
             barChartView.data = chartData
-            updateUsageList(data: data, label: label)
-        }
-        
-    }
-    
-    private func updateUsageList(data: [Double], label: String) {
-        usageListView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        for (index, value) in data.enumerated() {
-            let containerView = UIView()
-            containerView.translatesAutoresizingMaskIntoConstraints = false
-            
-            let stackView = UIStackView()
-            stackView.axis = .horizontal
-            stackView.spacing = 10
-            stackView.translatesAutoresizingMaskIntoConstraints = false
-            
-            let monthLabel = UILabel()
-            monthLabel.text = monthData[index]
-            monthLabel.font = .systemFont(ofSize: 15)
-            monthLabel.translatesAutoresizingMaskIntoConstraints = false
-            
-            let valueLabel = UILabel()
-            valueLabel.text = "총\(label): \(Int(value))원"
-            valueLabel.font = .systemFont(ofSize: 15)
-            valueLabel.translatesAutoresizingMaskIntoConstraints = false
-            
-            stackView.addArrangedSubview(monthLabel)
-            stackView.addArrangedSubview(valueLabel)
-            
-            containerView.addSubview(stackView)
-            
-            NSLayoutConstraint.activate([
-                stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                stackView.topAnchor.constraint(equalTo: containerView.topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            ])
-            
-            usageListView.addArrangedSubview(containerView)
+            barChartView.animate(xAxisDuration: 0.5, yAxisDuration: 0.5, easingOption: .easeInOutBounce)
         }
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return segmentedControl.selectedSegmentIndex == 0 ? incomeData.count : expenseData.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let data = segmentedControl.selectedSegmentIndex == 0 ? incomeData : expenseData
+        let label = segmentedControl.selectedSegmentIndex == 0 ? "수입" : "지출"
+        cell.textLabel?.text = "\(monthData[indexPath.row]) 총 \(label): \(Int(data[indexPath.row]))원"
+        return cell
+    }
 }
 
 
+class CustomBarChartRenderer: BarChartRenderer {
+    internal let angleRadians = CGFloat(50.0)
+}
