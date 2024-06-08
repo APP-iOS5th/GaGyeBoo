@@ -14,6 +14,13 @@ struct GaGyeBooModel {
     let category: String
     let spendType: String?
     let amount: Double
+    var dateStr: String {
+        get {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            return formatter.string(from: self.date)
+        }
+    }
 }
 
 // let descriptions = ["점심식사", "저녁식사", "지하철", "버스", "옷", "전자제품", "영화", "커피", "술", "기타"]

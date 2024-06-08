@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 class MainViewController: UIViewController {
     private lazy var picker: UISegmentedControl = {
@@ -54,20 +55,26 @@ class MainViewController: UIViewController {
         return calendar
     }()
     
+    private let dataManager = SpendDataManager()
     private let mockData = MockStruct()
     private var currentSpend: [GaGyeBooModel] = []
     private var tempSpendView: [UIView] = []
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
+    private var cancellable: Cancellable?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // dataManager.saveSpend(newSpend: GaGyeBooModel(date: Date(), saveType: .income, category: "그냥", spendType: nil, amount: 100000))
+        dataManager.getAllSpends()
         setDailySpendView()
         // setMonthlySpendView()
     }
     
     func setDailySpendView() {
         view.backgroundColor = .systemBackground
+        
+        setSubscriber()
         setNavigationComponents()
         setSegmentPicker()
         setScrollView()
@@ -79,6 +86,14 @@ class MainViewController: UIViewController {
 //        tempSpendView.forEach{ $0.removeFromSuperview() }
 //        tempSpendView.removeAll()
 //        view.backgroundColor = .yellow
+    }
+    
+    func setSubscriber() {
+        cancellable?.cancel()
+        cancellable = dataManager.$allSpends.sink { [weak self] spend in
+            guard let self = self else { return }
+            self.currentSpend = spend
+        }
     }
     
     func setNavigationComponents() {
@@ -124,7 +139,6 @@ class MainViewController: UIViewController {
         let currentYear = Calendar.current.component(.year, from: Date())
         let currentMonth = Calendar.current.component(.month, from: Date())
         let currentDay = Calendar.current.component(.day, from: Date())
-        currentSpend = mockData.getSampleDataBy(year: currentYear, month: currentMonth)
         setSpendList(year: currentYear, month: currentMonth, day: currentDay)
     }
     
@@ -140,10 +154,9 @@ class MainViewController: UIViewController {
     }
     
     func setSpendList(year: Int, month: Int, day: Int) {
-        let spendList = mockData.getSampleDataBy(year: year, month: month, day: day)
         prevBottomAnchorForScrollView = secondContentView.topAnchor
         
-        for (idx, spend) in spendList.enumerated() {
+        for (idx, spend) in currentSpend.enumerated() {
             let category = spend.category
             let date = spend.date
             let dateFormatter = DateFormatter()
@@ -208,7 +221,7 @@ class MainViewController: UIViewController {
             }
             
             prevBottomAnchorForScrollView = seperator.bottomAnchor
-            if idx == spendList.count - 1 {
+            if idx == currentSpend.count - 1 {
                 seperator.bottomAnchor.constraint(equalTo: secondContentView.bottomAnchor, constant: -10).isActive = true
             }
         }
@@ -221,44 +234,45 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
     func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-        let models = currentSpend.filter { $0.date == dateComponents.date }
-        
-        // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
-        if models.count > 0 {
-            return .customView {
-                let vStack = UIStackView()
-                vStack.translatesAutoresizingMaskIntoConstraints = false
-                vStack.axis = .vertical
-                vStack.alignment = .center
-
-                var income: Double = 0
-                var expense: Double = 0
-                models.forEach { model in
-                    switch model.saveType {
-                    case .income:
-                        income += model.amount
-                    case .expense:
-                        expense += model.amount
+        if let year = dateComponents.year, let month = dateComponents.month, let day = dateComponents.day {
+            let models = currentSpend.filter { $0.dateStr == "\(year)-\(String(month).count == 1 ? "0\(month)" : "\(month)")-\(String(day).count == 1 ? "0\(day)" : "\(day)")" }
+            // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
+            if models.count > 0 {
+                return .customView {
+                    let vStack = UIStackView()
+                    vStack.translatesAutoresizingMaskIntoConstraints = false
+                    vStack.axis = .vertical
+                    vStack.alignment = .center
+                    
+                    var income: Double = 0
+                    var expense: Double = 0
+                    models.forEach { model in
+                        switch model.saveType {
+                        case .income:
+                            income += model.amount
+                        case .expense:
+                            expense += model.amount
+                        }
                     }
+                    if income > 0 {
+                        let incomeLabel = UILabel()
+                        incomeLabel.font = UIFont.systemFont(ofSize: 9)
+                        incomeLabel.textColor = .systemBlue
+                        incomeLabel.text = "+\(Int(income))"
+                        
+                        vStack.addArrangedSubview(incomeLabel)
+                    }
+                    if expense > 0 {
+                        let expenseLabel = UILabel()
+                        expenseLabel.font = UIFont.systemFont(ofSize: 9)
+                        expenseLabel.textColor = .systemRed
+                        expenseLabel.text = "-\(Int(expense))"
+                        
+                        vStack.addArrangedSubview(expenseLabel)
+                    }
+                    
+                    return vStack
                 }
-                if income > 0 {
-                    let incomeLabel = UILabel()
-                    incomeLabel.font = UIFont.systemFont(ofSize: 9)
-                    incomeLabel.textColor = .systemBlue
-                    incomeLabel.text = "+\(Int(income))"
-
-                    vStack.addArrangedSubview(incomeLabel)
-                }
-                if expense > 0 {
-                    let expenseLabel = UILabel()
-                    expenseLabel.font = UIFont.systemFont(ofSize: 9)
-                    expenseLabel.textColor = .systemRed
-                    expenseLabel.text = "-\(Int(expense))"
-
-                    vStack.addArrangedSubview(expenseLabel)
-                }
-                
-                return vStack
             }
         }
         return nil
@@ -269,17 +283,20 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
         tempSpendView.forEach{ $0.removeFromSuperview() }
         tempSpendView.removeAll()
         
+        
         if let dateComponent = dateComponents,
             let year = dateComponent.year,
             let month = dateComponent.month,
             let day = dateComponent.day {
+            
+            dataManager.getRecordsBy(year: year, month: month, day: day)
             self.setSpendList(year: year, month: month, day: day)
         }
     }
     
     func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
         if let newYear = calendarView.visibleDateComponents.year, let newMonth = calendarView.visibleDateComponents.month {
-            currentSpend = mockData.getSampleDataBy(year: newYear, month: newMonth)
+            dataManager.getRecordsBy(year: newYear, month: newMonth)
             calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
         }
     }
