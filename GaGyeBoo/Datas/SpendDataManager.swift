@@ -6,6 +6,7 @@ class SpendDataManager {
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private let fetchRequest: NSFetchRequest<GaGyeBoo> = GaGyeBoo.fetchRequest()
     @Published var allSpends: [GaGyeBooModel] = []
+    @Published var spendsForDetailList: [GaGyeBooModel] = []
     var cancellable: Cancellable?
     
     func saveSpend(newSpend: GaGyeBooModel) {
@@ -70,7 +71,7 @@ class SpendDataManager {
                 endComponents.day = day + 1
             }
         }
-        
+        print(startComponents, endComponents)
         if let startDate = calendar.date(from: startComponents), let endDate = calendar.date(from: endComponents) {
             let predicate = NSPredicate(format: "date >= %@ AND date <= %@", startDate as NSDate, endDate as NSDate)
             fetchRequest.predicate = predicate
@@ -88,9 +89,10 @@ class SpendDataManager {
                             spendList.append(GaGyeBooModel(date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
                         }
                     }
-                    allSpends = spendList
+                    print(spendList.count)
+                    spendsForDetailList = spendList
                 } else {
-                    allSpends = []
+                    spendsForDetailList = []
                 }
             } catch {
                 print("error in find Data >> \(error.localizedDescription)")
