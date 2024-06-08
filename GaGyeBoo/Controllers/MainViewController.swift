@@ -58,6 +58,7 @@ class MainViewController: UIViewController {
     private let dataManager = SpendDataManager()
     private let mockData = MockStruct()
     private var currentSpend: [GaGyeBooModel] = []
+    private var spendList: [GaGyeBooModel] = []
     private var tempSpendView: [UIView] = []
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
     private var cancellable: Cancellable?
@@ -65,7 +66,6 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // dataManager.saveSpend(newSpend: GaGyeBooModel(date: Date(), saveType: .income, category: "그냥", spendType: nil, amount: 100000))
         dataManager.getAllSpends()
         setDailySpendView()
         // setMonthlySpendView()
@@ -93,6 +93,11 @@ class MainViewController: UIViewController {
         cancellable = dataManager.$allSpends.sink { [weak self] spend in
             guard let self = self else { return }
             self.currentSpend = spend
+        }
+        
+        cancellable?.cancel()
+        cancellable = dataManager.$spendsForDetailList.sink { [weak self] spend in
+            self?.spendList = spend
         }
     }
     
@@ -139,7 +144,8 @@ class MainViewController: UIViewController {
         let currentYear = Calendar.current.component(.year, from: Date())
         let currentMonth = Calendar.current.component(.month, from: Date())
         let currentDay = Calendar.current.component(.day, from: Date())
-        setSpendList(year: currentYear, month: currentMonth, day: currentDay)
+        dataManager.getRecordsBy(year: currentYear, month: currentMonth, day: currentDay)
+        setSpendList()
     }
     
     func setCalendarView() {
@@ -153,10 +159,10 @@ class MainViewController: UIViewController {
         ])
     }
     
-    func setSpendList(year: Int, month: Int, day: Int) {
+    func setSpendList() {
         prevBottomAnchorForScrollView = secondContentView.topAnchor
         
-        for (idx, spend) in currentSpend.enumerated() {
+        for (idx, spend) in spendList.enumerated() {
             let category = spend.category
             let date = spend.date
             let dateFormatter = DateFormatter()
@@ -221,7 +227,7 @@ class MainViewController: UIViewController {
             }
             
             prevBottomAnchorForScrollView = seperator.bottomAnchor
-            if idx == currentSpend.count - 1 {
+            if idx == spendList.count - 1 {
                 seperator.bottomAnchor.constraint(equalTo: secondContentView.bottomAnchor, constant: -10).isActive = true
             }
         }
@@ -290,7 +296,7 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
             let day = dateComponent.day {
             
             dataManager.getRecordsBy(year: year, month: month, day: day)
-            self.setSpendList(year: year, month: month, day: day)
+            self.setSpendList()
         }
     }
     
