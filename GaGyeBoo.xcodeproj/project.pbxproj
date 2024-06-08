@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7F8143A02C0F4D0F00741BBA /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 7F81439F2C0F4D0F00741BBA /* DGCharts */; };
 		7F8143A22C0F4D0F00741BBA /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8143A12C0F4D0F00741BBA /* DGChartsDynamic */; };
+		7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */; };
 		CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */; };
 		CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */; };
 		CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTableCell.swift; sourceTree = "<group>"; };
 		CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaGyeBoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				CD2574152C0ECEB000BC4844 /* MainView.swift */,
 				CD2574172C0ECEB500BC4844 /* AddView.swift */,
 				CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */,
+				7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */,
 				CD2574192C0ECEBA00BC4844 /* SettingView.swift */,
 			);
 			path = Views;
@@ -219,6 +222,7 @@
 				CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */,
 				CD2574112C0ECC4000BC4844 /* SettingViewController.swift in Sources */,
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
+				7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */,
 				CD25741A2C0ECEBA00BC4844 /* SettingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

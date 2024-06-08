@@ -46,7 +46,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(StatisticsTableCell.self, forCellReuseIdentifier: StatisticsTableCell.identifier)
         return tableView
     }()
     
@@ -107,7 +107,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
-        chartData.barWidth = 0.3
+        chartData.barWidth = 0.4
         
         return chartData
     }
@@ -135,7 +135,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         if !data.isEmpty {
             let chartData = createBarChartData(values: data, label: label)
             barChartView.data = chartData
-            barChartView.animate(xAxisDuration: 0.5, yAxisDuration: 0.5, easingOption: .easeInOutBounce)
+            barChartView.animate(xAxisDuration: 3, yAxisDuration: 3, easingOption: .easeInOutBounce)
         }
     }
     
@@ -144,10 +144,16 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "StatisticsTableCell", for: indexPath) as? StatisticsTableCell else {
+            fatalError("The TableView could not customCell")
+        }
         let data = segmentedControl.selectedSegmentIndex == 0 ? incomeData : expenseData
         let label = segmentedControl.selectedSegmentIndex == 0 ? "수입" : "지출"
-        cell.textLabel?.text = "\(monthData[indexPath.row]) 총 \(label): \(Int(data[indexPath.row]))원"
+        let month = monthData[indexPath.row]
+        let amount = "\(Int(data[indexPath.row]))원"
+        
+        cell.configure(with: month, amount: amount, isIncome: segmentedControl.selectedSegmentIndex == 0)
+        
         return cell
     }
 }
