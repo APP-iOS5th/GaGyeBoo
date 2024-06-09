@@ -22,6 +22,7 @@ class AddViewController: UIViewController {
         let type = UISegmentedControl(items: ["수입", "지출"])
         type.translatesAutoresizingMaskIntoConstraints = false
         type.selectedSegmentIndex = 1
+        
         type.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
         return type
     }()
