@@ -2,10 +2,8 @@ import UIKit
 import DGCharts
 
 class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
-    
-    private let dataManager = DataManager()
-    private let spendDataManager = SpendDataManager()
-    private var monthlySummaries: [MonthlySummary] = []
+    private var monthlySummaries: [MonthlyStatistics] = []
+    private var filteredSummaries: [MonthlyStatistics] = []
     
     lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["수입", "지출"])
@@ -17,14 +15,14 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     lazy var barChartView: BarChartView = {
         let barChartView = BarChartView()
+        let months = StatisticsDataManager.shared.fetchMonthlyStatistics().map { $0.month.components(separatedBy: "-").last ?? "" }
+        let maxLabelCount = months.count
+        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.translatesAutoresizingMaskIntoConstraints = false
         barChartView.backgroundColor = .systemGray6
-        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: monthData)
         
-        let maxLabelCount = max(incomeData.count, expenseData.count)
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
-        
         
         barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
         barChartView.xAxis.drawGridLinesEnabled = false
@@ -54,9 +52,6 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         return tableView
     }()
     
-    var monthData: [String] = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-    var incomeData: [Double] = [1000, 1200, 1300, 1100, 1050, 1150, 1250, 1230, 1280, 1150, 1200, 1250]
-    var expenseData: [Double] = [800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350]
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,8 +66,8 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     private func loadData() {
-        spendDataManager.loadSpends()
-        updateMonthlySummaries()
+        monthlySummaries = StatisticsDataManager.shared.fetchMonthlyStatistics() // 필요한 모든 월별 통계 데이터 로드
+        filteredSummaries = monthlySummaries// 필터된 데이터 업데이트
         updateBarChartData()
         tableView.reloadData()
     }
@@ -109,33 +104,17 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        updateMonthlySummaries() // 선택에 따라 필터된 데이터 업데이트
         updateBarChartData()
         tableView.reloadData()
     }
     
     private func updateMonthlySummaries() {
-        var summaries: [String: MonthlySummary] = [:]
-        
-        for spend in spendDataManager.allSpends {
-            let month = DateFormatter.localizedString(from: spend.date, dateStyle: .short, timeStyle: .none)
-            
-            if summaries[month] == nil {
-                summaries[month] = MonthlySummary(month: month, totalIncome: 0, totalExpense: 0)
-            }
-            
-            if spend.saveType == .income {
-                summaries[month]?.totalIncome += spend.amount
-            } else {
-                summaries[month]?.totalExpense += spend.amount
-            }
-        }
-        
-        monthlySummaries = Array(summaries.values).sorted { $0.month < $1.month }
+        monthlySummaries = StatisticsDataManager.shared.fetchMonthlyStatistics()
     }
     
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
         let entries = entryData(values: values)
-        
         let dataSet = BarChartDataSet(entries: entries, label: label)
         
         dataSet.colors = dataSet.label == "수입" ? [.blue] : [.red]
@@ -162,39 +141,60 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         var label = ""
         
         if selectedIndex == 0 {
-            data = monthlySummaries.map { $0.totalIncome }
+            data = filteredSummaries.map { $0.totalIncome }
             label = "수입"
         } else {
-            data = monthlySummaries.map { $0.totalExpense }
+            data = filteredSummaries.map { $0.totalExpense }
             label = "지출"
         }
+        
         barChartView.isHidden = data.isEmpty
         noDataLabel.isHidden = !data.isEmpty
         
         if !data.isEmpty {
-            let chartData = createBarChartData(values: data, label: label)
-            barChartView.data = chartData
-            barChartView.animate(xAxisDuration: 3, yAxisDuration: 3, easingOption: .easeInOutBounce)
+                let entries = entryData(values: data)
+                let dataSet = BarChartDataSet(entries: entries.filter { $0.y != 0 }, label: label)
+                dataSet.colors = dataSet.label == "수입" ? [.blue] : [.red]
+                dataSet.valueFont = .systemFont(ofSize: 12)
+                
+                let chartData = BarChartData(dataSet: dataSet)
+                chartData.barWidth = 0.4
+                barChartView.data = chartData
+                barChartView.animate(xAxisDuration: 4, yAxisDuration: 4, easingOption: .easeInOutBounce)
+            } else {
+                barChartView.data = nil
+            }
         }
-    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return monthlySummaries.count
+        return filteredSummaries.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "StatisticsTableCell", for: indexPath) as? StatisticsTableCell else {
             fatalError("The TableView could not customCell")
         }
-        let summary = monthlySummaries[indexPath.row]
-        let month = summary.month
-        let incomeAmount = "\(Int(summary.totalIncome))원"
-        let expenseAmount = "\(Int(summary.totalExpense))원"
         
-        cell.configure(with: month, incomeAmount: incomeAmount, expenseAmount: expenseAmount)
+        // indexPath.row가 필터된 배열의 인덱스 범위를 벗어나는지 확인
+        guard indexPath.row < filteredSummaries.count else {
+            fatalError("Index out of range")
+        }
+        
+        let summary = filteredSummaries[indexPath.row]
+        let month = summary.month.components(separatedBy: "-").last ?? ""
+        let selectedIndex = segmentedControl.selectedSegmentIndex
+        
+        if selectedIndex == 0 {
+            let incomeAmount = "\(Int(summary.totalIncome))원"
+            cell.configure(with: month, incomeAmount: incomeAmount, expenseAmount: nil)
+        } else {
+            let expenseAmount = "\(Int(summary.totalExpense))원"
+            cell.configure(with: month, incomeAmount: nil, expenseAmount: expenseAmount)
+        }
         
         return cell
     }
 }
+
 
 

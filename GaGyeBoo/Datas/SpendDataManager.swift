@@ -18,27 +18,10 @@ class SpendDataManager {
             spend.setValue(newSpend.spendType, forKey: "spendType")
             spend.setValue(newSpend.amount, forKey: "amount")
         }
-        
         do {
             try context.save()
         } catch let error {
             print("Could not save. \(error.localizedDescription)")
-        }
-    }
-    func loadSpends() {
-        do {
-            let fetchedSpends = try context.fetch(fetchRequest)
-            allSpends = fetchedSpends.map { spend in
-                let date = spend.value(forKey: "date") as? Date ?? Date()
-                let saveTypeRawValue = spend.value(forKey: "saveType") as? String ?? ""
-                let saveType = Categories(rawValue: saveTypeRawValue) ?? .income
-                let category = spend.value(forKey: "category") as? String ?? ""
-                let spendType = spend.value(forKey: "spendType") as? String ?? ""
-                let amount = spend.value(forKey: "amount") as? Double ?? 0.0
-                return GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
-            }
-        } catch let error {
-            print("Could not fetch. \(error.localizedDescription)")
         }
     }
     
@@ -140,3 +123,101 @@ extension String {
     }
 }
 */
+
+
+class StatisticsDataManager {
+    static let shared = StatisticsDataManager()
+    
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "GaGyeBoo")
+        container.loadPersistentStores { (_, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        }
+        return container
+    }()
+    
+    lazy var context: NSManagedObjectContext = {
+        return self.persistentContainer.viewContext
+    }()
+    
+    lazy var entity: NSEntityDescription? = {
+        return NSEntityDescription.entity(forEntityName: "StatisticsData", in: self.context)
+    }()
+    
+    private init() {
+        _ = fetchMonthlyStatistics()
+        addMockupDataIfNeeded()
+    }
+    
+    // Initial Data
+    func loadInitialDataIfNeeded() {
+        let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
+        let count = (try? context.count(for: fetchRequest)) ?? 0
+        _ = Calendar.current.component(.month, from: Date())
+        if count == 0 {
+            
+        }
+    }
+    
+    // Fetch Month Data
+    func fetchMonthlyStatistics() -> [MonthlyStatistics] {
+        let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "month", ascending: true)]
+        
+        do {
+            let statisticsData = try context.fetch(fetchRequest)
+            let recentData = statisticsData.suffix(6)
+            return recentData.map { MonthlyStatistics(month: $0.month ?? "", totalIncome: $0.totalIncome, totalExpense: $0.totalExpense) }
+        } catch {
+            print("Failed to fetch statistics data: \(error)")
+            return []
+        }
+    }
+    
+    // Create New Month Data
+    func createMonthlyStatistics(month: String, totalIncome: Double, totalExpense: Double) {
+        guard let entity = entity else {
+            print("데이터가 없습니다.")
+            return
+        }
+        
+        let monthlyStatistics = NSManagedObject(entity: entity, insertInto: context)
+        monthlyStatistics.setValue(month, forKey: "month")
+        monthlyStatistics.setValue(totalIncome, forKey: "totalIncome")
+        monthlyStatistics.setValue(totalExpense, forKey: "totalExpense")
+        
+        saveContext()
+    }
+    
+    // Save Data
+    func saveContext() {
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            }
+        }
+    }
+    
+    func addMockupDataIfNeeded() {
+        let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
+        let count = (try? context.count(for: fetchRequest)) ?? 0
+        guard count == 0 else {
+            return
+        }
+        
+        // Mock Data
+        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
+        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
+        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
+        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
+        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
+        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
+        saveContext()
+    }
+}
+

@@ -55,7 +55,7 @@ class StatisticsTableCell: UITableViewCell {
         ])
     }
     
-    func configure(with month: String, incomeAmount: String, expenseAmount: String) {
+    func configure(with month: String, incomeAmount: String?, expenseAmount: String?) {
         monthLabel.text = month
         incomeAmountLabel.text = incomeAmount
         expenseAmountLabel.text = expenseAmount
