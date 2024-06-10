@@ -4,7 +4,8 @@ import Combine
 
 class SpendDataManager {
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    private let fetchRequest: NSFetchRequest<GaGyeBoo> = GaGyeBoo.fetchRequest()
+    private let gaGyeBooFetchRequest: NSFetchRequest<GaGyeBoo> = GaGyeBoo.fetchRequest()
+    private let monthlySpendFetchRequest: NSFetchRequest<MonthlyRecord> = MonthlyRecord.fetchRequest()
     @Published var allSpends: [GaGyeBooModel] = []
     @Published var spendsForDetailList: [GaGyeBooModel] = []
     var cancellable: Cancellable?
@@ -22,14 +23,61 @@ class SpendDataManager {
         do {
             try context.save()
         } catch let error {
-            print("Could not save. \(error.localizedDescription)")
+            print("error in SpendDataManager saveSpend() >> \(error.localizedDescription)")
         }
+    }
+    
+    func saveMonthlyRecord(newSpend: GaGyeBooModel) {
+        if newSpend.saveType == .expense {
+            let newSpendDate = newSpend.dateStr.components(separatedBy: "-")
+            let searchDateStr = "\(newSpendDate[0])-\(newSpendDate[1])"
+            monthlySpendFetchRequest.predicate = NSPredicate(format: "date CONTAINS %@", searchDateStr)
+            
+            do {
+                let spends = try context.fetch(monthlySpendFetchRequest)
+//                var totalSpend: Double = newSpend.saveType == .income ? newSpend.amount : -newSpend.amount
+                var totalSpend: Double = newSpend.amount
+                if let updateEntity = spends.first {
+                    for spend in spends {
+                        totalSpend += spend.value(forKey: "totalSpend") as! Double
+                    }
+                    updateEntity.setValue(totalSpend, forKey: "totalSpend")
+                } else {
+                    if let entity = NSEntityDescription.entity(forEntityName: "MonthlyRecord", in: context) {
+                        let spend = NSManagedObject(entity: entity, insertInto: context)
+                        spend.setValue(newSpend.amount, forKey: "totalSpend")
+                        spend.setValue(searchDateStr, forKey: "date")
+                    }
+                }
+                
+                try context.save()
+            } catch {
+                print("error in SpendDataManager saveMonthlyRecord() >> \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func getPrevSpend(year: Int, month: Int) -> Double? {
+        let searchDate = "\(year)-\(String(month).count == 1 ? "0\(month)" : "\(month)")"
+        monthlySpendFetchRequest.predicate = NSPredicate(format: "date CONTAINS %@", searchDate)
+        
+        var totalSpend: Double?
+        do {
+            let monthlyRecord = try context.fetch(monthlySpendFetchRequest)
+            if let record = monthlyRecord.first {
+                totalSpend = record.totalSpend
+            }
+        } catch {
+            print("error in SpendDataManager getPrevSpend() >> \(error.localizedDescription)")
+        }
+        
+        return totalSpend
     }
     
     func getAllSpends() {
         var spendRecords: [GaGyeBooModel] = []
         do {
-            let allSpends = try context.fetch(fetchRequest)
+            let allSpends = try context.fetch(gaGyeBooFetchRequest)
             if allSpends.count > 0 {
                 for spend in allSpends {
                     let date = spend.value(forKey: "date") as! Date
@@ -43,7 +91,7 @@ class SpendDataManager {
                 }
             }
         } catch let error {
-            print("Load Records Error >> \(error.localizedDescription)")
+            print("error in SpendDataManager getAllSpends() >> \(error.localizedDescription)")
         }
         allSpends = spendRecords
     }
@@ -76,9 +124,9 @@ class SpendDataManager {
         
         if let startDate = calendar.date(from: startComponents), let endDate = calendar.date(from: endComponents) {
             let predicate = NSPredicate(format: "date >= %@ AND date < %@", startDate as NSDate, endDate as NSDate)
-            fetchRequest.predicate = predicate
+            gaGyeBooFetchRequest.predicate = predicate
             do {
-                let spends = try context.fetch(fetchRequest)
+                let spends = try context.fetch(gaGyeBooFetchRequest)
                 if spends.count > 0 {
                     var spendList: [GaGyeBooModel] = []
                     for spend in spends {
@@ -96,7 +144,7 @@ class SpendDataManager {
                     spendsForDetailList = []
                 }
             } catch {
-                print("error in find Data >> \(error.localizedDescription)")
+                print("error in SpendDataManager getRecordsBy() >> \(error.localizedDescription)")
             }
         }
     }

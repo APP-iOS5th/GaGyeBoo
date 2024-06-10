@@ -57,6 +57,9 @@ class MainViewController: UIViewController {
     
     private let dataManager = SpendDataManager()
     private let mockData = MockStruct()
+    private let currentYear = Calendar.current.component(.year, from: Date())
+    private let currentMonth = Calendar.current.component(.month, from: Date())
+    private let currentDay = Calendar.current.component(.day, from: Date())
     private var currentSpend: [GaGyeBooModel] = []
     private var spendList: [GaGyeBooModel] = []
     private var tempSpendView: [UIView] = []
@@ -65,7 +68,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+//        mockData.getSampleDataBy(year: 2024).forEach{ dataManager.saveSpend(newSpend: $0) }
         dataManager.getAllSpends()
         setDailySpendView()
         // setMonthlySpendView()
@@ -91,8 +94,7 @@ class MainViewController: UIViewController {
     func setSubscriber() {
         cancellable?.cancel()
         cancellable = dataManager.$allSpends.sink { [weak self] spend in
-            guard let self = self else { return }
-            self.currentSpend = spend
+            self?.currentSpend = spend
         }
         
         cancellable?.cancel()
@@ -141,9 +143,6 @@ class MainViewController: UIViewController {
     }
     
     func setCalendarData() {
-        let currentYear = Calendar.current.component(.year, from: Date())
-        let currentMonth = Calendar.current.component(.month, from: Date())
-        let currentDay = Calendar.current.component(.day, from: Date())
         dataManager.getRecordsBy(year: currentYear, month: currentMonth, day: currentDay)
         setSpendList()
     }
@@ -205,7 +204,7 @@ class MainViewController: UIViewController {
                 
                 seperator.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 10),
                 seperator.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
-                seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: 10),
+                seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
             ])
             
             [categoryLabel, dateLabel, amountLabel, seperator].forEach{ tempSpendView.append($0) }
@@ -289,7 +288,6 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
         tempSpendView.forEach{ $0.removeFromSuperview() }
         tempSpendView.removeAll()
         
-        
         if let dateComponent = dateComponents,
             let year = dateComponent.year,
             let month = dateComponent.month,
@@ -302,7 +300,6 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
     
     func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
         if let newYear = calendarView.visibleDateComponents.year, let newMonth = calendarView.visibleDateComponents.month {
-            dataManager.getRecordsBy(year: newYear, month: newMonth)
             calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
         }
     }
