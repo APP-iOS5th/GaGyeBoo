@@ -55,11 +55,13 @@ class SpendDataManager {
         startComponents.year = year
         startComponents.month = 1
         startComponents.day = 1
+        startComponents.hour = 0
 
         var endComponents = DateComponents()
         endComponents.year = year + 1
         endComponents.month = 1
         endComponents.day = 1
+        endComponents.hour = 24
         
         if let month = month {
             startComponents.month = month
@@ -68,12 +70,12 @@ class SpendDataManager {
                 startComponents.day = day
                 endComponents.month = month
                 endComponents.year = year
-                endComponents.day = day + 1
+                endComponents.day = day
             }
         }
-        print(startComponents, endComponents)
+        
         if let startDate = calendar.date(from: startComponents), let endDate = calendar.date(from: endComponents) {
-            let predicate = NSPredicate(format: "date >= %@ AND date <= %@", startDate as NSDate, endDate as NSDate)
+            let predicate = NSPredicate(format: "date >= %@ AND date < %@", startDate as NSDate, endDate as NSDate)
             fetchRequest.predicate = predicate
             do {
                 let spends = try context.fetch(fetchRequest)
@@ -89,7 +91,6 @@ class SpendDataManager {
                             spendList.append(GaGyeBooModel(date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
                         }
                     }
-                    print(spendList.count)
                     spendsForDetailList = spendList
                 } else {
                     spendsForDetailList = []
