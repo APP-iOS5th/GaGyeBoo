@@ -25,6 +25,22 @@ class SpendDataManager {
             print("Could not save. \(error.localizedDescription)")
         }
     }
+    func loadSpends() {
+        do {
+            let fetchedSpends = try context.fetch(fetchRequest)
+            allSpends = fetchedSpends.map { spend in
+                let date = spend.value(forKey: "date") as? Date ?? Date()
+                let saveTypeRawValue = spend.value(forKey: "saveType") as? String ?? ""
+                let saveType = Categories(rawValue: saveTypeRawValue) ?? .income
+                let category = spend.value(forKey: "category") as? String ?? ""
+                let spendType = spend.value(forKey: "spendType") as? String ?? ""
+                let amount = spend.value(forKey: "amount") as? Double ?? 0.0
+                return GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
+            }
+        } catch let error {
+            print("Could not fetch. \(error.localizedDescription)")
+        }
+    }
     
     func getAllSpends() {
         var spendRecords: [GaGyeBooModel] = []
@@ -56,7 +72,7 @@ class SpendDataManager {
         startComponents.month = 1
         startComponents.day = 1
         startComponents.hour = 0
-
+        
         var endComponents = DateComponents()
         endComponents.year = year + 1
         endComponents.month = 1

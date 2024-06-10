@@ -106,15 +106,10 @@ struct MockStruct {
     }
 }
 
-enum StatisticsType {
-    case income
-    case expense
-}
-
 struct Statistics {
     let date: Date
     let amount: Double
-    let type: StatisticsType
+    let type: Categories
     let category: String
 }
 
@@ -124,19 +119,21 @@ struct MonthlySummary {
     var totalExpense: Double
 }
 
-
 class DataManager {
     private var statistics: [Statistics] = []
     
-    func addExampleData() {
-        let calendar = Calendar.current
-        let components = DateComponents(year: 2024, month: 1, day: 1)
-        let date = calendar.date(from: components)!
+    init() {
+        generateStatistics()
+    }
+    
+    private func generateStatistics() {
+        let mockStruct = MockStruct()
+        let mockData = mockStruct.getSampleDataBy(year: 2024) 
         
-        statistics = [
-            Statistics(date: date, amount: 10000, type: .income, category: "월급"),
-            Statistics(date: date, amount: 5000, type: .expense, category: "식비")
-        ]
+        statistics = mockData.map { model in
+            let type: Categories = model.saveType == .income ? .income : .expense
+            return Statistics(date: model.date, amount: model.amount, type: type, category: model.category)
+        }
     }
     
     func getMonthlySummaries() -> [MonthlySummary] {

@@ -3,6 +3,10 @@ import DGCharts
 
 class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
+    private let dataManager = DataManager()
+    private let spendDataManager = SpendDataManager()
+    private var monthlySummaries: [MonthlySummary] = []
+    
     lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["수입", "지출"])
         control.translatesAutoresizingMaskIntoConstraints = false
@@ -57,12 +61,22 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        loadData()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+        loadData()
     }
+    
+    private func loadData() {
+        spendDataManager.loadSpends()
+        updateMonthlySummaries()
+        updateBarChartData()
+        tableView.reloadData()
+    }
+    
     
     private func setupView() {
         backgroundColor = .white
@@ -99,6 +113,26 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.reloadData()
     }
     
+    private func updateMonthlySummaries() {
+        var summaries: [String: MonthlySummary] = [:]
+        
+        for spend in spendDataManager.allSpends {
+            let month = DateFormatter.localizedString(from: spend.date, dateStyle: .short, timeStyle: .none)
+            
+            if summaries[month] == nil {
+                summaries[month] = MonthlySummary(month: month, totalIncome: 0, totalExpense: 0)
+            }
+            
+            if spend.saveType == .income {
+                summaries[month]?.totalIncome += spend.amount
+            } else {
+                summaries[month]?.totalExpense += spend.amount
+            }
+        }
+        
+        monthlySummaries = Array(summaries.values).sorted { $0.month < $1.month }
+    }
+    
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
         let entries = entryData(values: values)
         
@@ -127,7 +161,13 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let selectedIndex = segmentedControl.selectedSegmentIndex
         var label = ""
         
-        (data, label) = selectedIndex == 0 ? (incomeData, "수입") : (expenseData, "지출")
+        if selectedIndex == 0 {
+            data = monthlySummaries.map { $0.totalIncome }
+            label = "수입"
+        } else {
+            data = monthlySummaries.map { $0.totalExpense }
+            label = "지출"
+        }
         barChartView.isHidden = data.isEmpty
         noDataLabel.isHidden = !data.isEmpty
         
@@ -139,19 +179,19 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return segmentedControl.selectedSegmentIndex == 0 ? incomeData.count : expenseData.count
+        return monthlySummaries.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "StatisticsTableCell", for: indexPath) as? StatisticsTableCell else {
             fatalError("The TableView could not customCell")
         }
-        let data = segmentedControl.selectedSegmentIndex == 0 ? incomeData : expenseData
-        _ = segmentedControl.selectedSegmentIndex == 0 ? "수입" : "지출"
-        let month = monthData[indexPath.row]
-        let amount = "\(Int(data[indexPath.row]))원"
+        let summary = monthlySummaries[indexPath.row]
+        let month = summary.month
+        let incomeAmount = "\(Int(summary.totalIncome))원"
+        let expenseAmount = "\(Int(summary.totalExpense))원"
         
-        cell.configure(with: month, amount: amount, isIncome: segmentedControl.selectedSegmentIndex == 0)
+        cell.configure(with: month, incomeAmount: incomeAmount, expenseAmount: expenseAmount)
         
         return cell
     }

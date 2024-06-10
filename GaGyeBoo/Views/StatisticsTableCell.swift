@@ -12,15 +12,24 @@ class StatisticsTableCell: UITableViewCell {
         return label
     }()
     
-    private let amountLabel: UILabel = {
+    private let incomeAmountLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.textColor = .black
         return label
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier reuseIndentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIndentifier)
+    private let expenseAmountLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.textColor = .black
+        return label
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
     }
     
@@ -31,21 +40,25 @@ class StatisticsTableCell: UITableViewCell {
     private func setupViews() {
         
         contentView.addSubview(monthLabel)
-        contentView.addSubview(amountLabel)
+        contentView.addSubview(incomeAmountLabel)
+        contentView.addSubview(expenseAmountLabel)
         
         NSLayoutConstraint.activate([
-            monthLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            monthLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             monthLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            amountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            incomeAmountLabel.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -8),
+            incomeAmountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            expenseAmountLabel.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 8),
+            expenseAmountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
     
-    func configure(with month: String, amount: String, isIncome: Bool) {
+    func configure(with month: String, incomeAmount: String, expenseAmount: String) {
         monthLabel.text = month
-        amountLabel.text = amount
-        amountLabel.textColor = isIncome ? .systemBlue : .systemRed
+        incomeAmountLabel.text = incomeAmount
+        expenseAmountLabel.text = expenseAmount
     }
     
 }
