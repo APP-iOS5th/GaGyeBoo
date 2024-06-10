@@ -98,3 +98,56 @@ struct MockStruct {
         }
     }
 }
+
+enum StatisticsType {
+    case income
+    case expense
+}
+
+struct Statistics {
+    let date: Date
+    let amount: Double
+    let type: StatisticsType
+    let category: String
+}
+
+struct MonthlySummary {
+    let month: String
+    var totalIncome: Double
+    var totalExpense: Double
+}
+
+
+class DataManager {
+    private var statistics: [Statistics] = []
+    
+    func addExampleData() {
+        let calendar = Calendar.current
+        let components = DateComponents(year: 2024, month: 1, day: 1)
+        let date = calendar.date(from: components)!
+        
+        statistics = [
+            Statistics(date: date, amount: 10000, type: .income, category: "월급"),
+            Statistics(date: date, amount: 5000, type: .expense, category: "식비")
+        ]
+    }
+    
+    func getMonthlySummaries() -> [MonthlySummary] {
+        var summaries: [String: MonthlySummary] = [:]
+        
+        for statistic in statistics {
+            let month = DateFormatter.localizedString(from: statistic.date, dateStyle: .short, timeStyle: .none)
+            
+            if summaries[month] == nil {
+                summaries[month] = MonthlySummary(month: month, totalIncome: 0, totalExpense: 0)
+            }
+            if statistic.type == .income {
+                summaries[month]?.totalIncome += statistic.amount
+            } else {
+                summaries[month]?.totalExpense += statistic.amount
+            }
+        }
+        
+        return Array(summaries.values).sorted { $0.month < $1.month }
+    }
+}

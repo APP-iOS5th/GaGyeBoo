@@ -1,5 +1,4 @@
 import UIKit
-import Charts
 import DGCharts
 
 class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
@@ -21,6 +20,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let maxLabelCount = max(incomeData.count, expenseData.count)
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
+        
         
         barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
         barChartView.xAxis.drawGridLinesEnabled = false
@@ -101,6 +101,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
         let entries = entryData(values: values)
+        
         let dataSet = BarChartDataSet(entries: entries, label: label)
         
         dataSet.colors = dataSet.label == "수입" ? [.blue] : [.red]
@@ -108,13 +109,11 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         
         let chartData = BarChartData(dataSet: dataSet)
         chartData.barWidth = 0.4
-        
         return chartData
     }
     
     private func entryData(values: [Double]) -> [BarChartDataEntry] {
         var barDataEntries: [BarChartDataEntry] = []
-        
         for i in 0..<values.count {
             let barDataEntry = BarChartDataEntry(x: Double(i), y: values[i])
             barDataEntries.append(barDataEntry)
@@ -148,7 +147,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             fatalError("The TableView could not customCell")
         }
         let data = segmentedControl.selectedSegmentIndex == 0 ? incomeData : expenseData
-        let label = segmentedControl.selectedSegmentIndex == 0 ? "수입" : "지출"
+        _ = segmentedControl.selectedSegmentIndex == 0 ? "수입" : "지출"
         let month = monthData[indexPath.row]
         let amount = "\(Int(data[indexPath.row]))원"
         
@@ -159,6 +158,3 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
 }
 
 
-class CustomBarChartRenderer: BarChartRenderer {
-    internal let angleRadians = CGFloat(50.0)
-}
