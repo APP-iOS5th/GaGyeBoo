@@ -76,7 +76,21 @@ extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let setting = settings[indexPath.section][indexPath.row]
-        print("Selected setting: \(setting.title)")
+        
+        switch setting.title {
+        case "예산 설정":
+            let budgetSettingVC = BudgetSettingViewController()
+            navigationController?.pushViewController(budgetSettingVC, animated: true)
+//        case "고정 지출 설정":
+//            let recurringExpenseSettingVC = RecurringExpenseSettingViewController()
+//            navigationController?.pushViewController(recurringExpenseSettingVC, animated: true)
+//        case "문의하기":
+//            let inquiryVC = InquiryViewController()
+//            navigationController?.pushViewController(inquiryVC, animated: true)
+        default:
+            break
+            
+        }
     }
 }
 
