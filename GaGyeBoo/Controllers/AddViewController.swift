@@ -50,7 +50,7 @@ class AddViewController: UIViewController {
         let moneyField = UITextField()
         moneyField.placeholder = "금액을 입력하세요"
         moneyField.borderStyle = .roundedRect
-//        moneyField.addTarget(self, action: #selector(moneyChanged(moneyField:)), for: .editingChanged)
+        moneyField.addTarget(self, action: #selector(moneyTextChanged(moneyField:)), for: .editingChanged)
         
         moneyStackView.addArrangedSubview(labelComponent)
         moneyStackView.addArrangedSubview(moneyField)
@@ -121,14 +121,12 @@ class AddViewController: UIViewController {
     var saveButton: UIButton = {
        let button = UIButton()
         button.setTitle("저장", for: .normal)
-        
         var config = UIButton.Configuration.filled()
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = UIFont.systemFont(ofSize: 22, weight: .bold)
             return outgoing
         }
-        
         button.configuration = config
         return button
     }()
@@ -150,6 +148,9 @@ class AddViewController: UIViewController {
         textFieldContainer.addArrangedSubview(saveButton)
         view.addSubview(textFieldContainer)
         
+        saveButton.isEnabled = false
+        saveButton.addTarget(self, action: #selector(saveItem), for: .touchUpInside)
+        
         NSLayoutConstraint.activate([
             segmentedControl.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
             segmentedControl.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
@@ -162,10 +163,11 @@ class AddViewController: UIViewController {
             
             textFieldContainer.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
             textFieldContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-            textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 20)
+            textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5)
         ])
     }
     
+    //MARK: Methods
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -176,4 +178,28 @@ class AddViewController: UIViewController {
             break
         }
     }
+    
+    @objc func moneyTextChanged(moneyField: UITextField) {
+        updateSaveButtonState()
+    }
+    
+    @objc private func saveItem() {
+        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
+        let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+        else {
+            return
+        }
+        dismiss(animated: true)
+    }
+    
+    func updateSaveButtonState() {
+        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
+        let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+        else {
+            saveButton.isEnabled = false
+            return
+        }
+        saveButton.isEnabled = true
+    }
+    
 }
