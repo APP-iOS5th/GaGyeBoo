@@ -48,8 +48,10 @@ class AddViewController: UIViewController {
         labelComponent.text = "금액: "
         
         let moneyField = UITextField()
-        moneyField.placeholder = "금액............?"
+        moneyField.placeholder = "금액을 입력하세요"
         moneyField.borderStyle = .roundedRect
+        moneyField.translatesAutoresizingMaskIntoConstraints = false
+        moneyField.widthAnchor.constraint(equalToConstant: 310).isActive = true
         
         moneyField.addTarget(self, action: #selector(moneyTextChanged(moneyField:)), for: .editingChanged)
         
@@ -67,11 +69,13 @@ class AddViewController: UIViewController {
         categoryStackView.spacing = 8
         
         let labelComponent = UILabel()
-        labelComponent.text = "카테고리: "
+        labelComponent.text = "종류: "
         
         let iconComponent = UITextField()
         iconComponent.placeholder = "카테고리?"
         iconComponent.borderStyle = .roundedRect
+        iconComponent.translatesAutoresizingMaskIntoConstraints = false
+        iconComponent.widthAnchor.constraint(equalToConstant: 310).isActive = true
         
         categoryStackView.addArrangedSubview(labelComponent)
         categoryStackView.addArrangedSubview(iconComponent)
@@ -92,6 +96,8 @@ class AddViewController: UIViewController {
         let contents = UITextField()
         contents.placeholder = "세부 사항을 입력하세요."
         contents.borderStyle = .roundedRect
+        contents.translatesAutoresizingMaskIntoConstraints = false
+        contents.widthAnchor.constraint(equalToConstant: 310).isActive = true
         
         contentsStackView.addArrangedSubview(labelComponent)
         contentsStackView.addArrangedSubview(contents)
@@ -112,6 +118,8 @@ class AddViewController: UIViewController {
         let photo = UITextField()
         photo.placeholder = "사진 추가 하는 기능.."
         photo.borderStyle = .roundedRect
+        photo.translatesAutoresizingMaskIntoConstraints = false
+        photo.widthAnchor.constraint(equalToConstant: 310).isActive = true
         
         photoStackView.addArrangedSubview(labelComponent)
         photoStackView.addArrangedSubview(photo)
@@ -129,6 +137,7 @@ class AddViewController: UIViewController {
             return outgoing
         }
         button.configuration = config
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
