@@ -30,9 +30,9 @@ class AddViewController: UIViewController {
     let textFieldContainer: UIStackView = {
        let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.alignment = .center
+        stackView.alignment = .fill
         stackView.distribution = .fill
-        stackView.spacing = 20
+        stackView.spacing = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -42,14 +42,15 @@ class AddViewController: UIViewController {
         moneyStackView.axis = .horizontal
         moneyStackView.alignment = .fill
         moneyStackView.distribution = .fill
-        moneyStackView.spacing = 12
+        moneyStackView.spacing = 8
         
         let labelComponent = UILabel()
         labelComponent.text = "금액: "
         
         let moneyField = UITextField()
-        moneyField.placeholder = "금액을 입력하세요"
+        moneyField.placeholder = "금액............?"
         moneyField.borderStyle = .roundedRect
+        
         moneyField.addTarget(self, action: #selector(moneyTextChanged(moneyField:)), for: .editingChanged)
         
         moneyStackView.addArrangedSubview(labelComponent)
@@ -63,13 +64,13 @@ class AddViewController: UIViewController {
         categoryStackView.axis = .horizontal
         categoryStackView.alignment = .fill
         categoryStackView.distribution = .fill
-        categoryStackView.spacing = 12
+        categoryStackView.spacing = 8
         
         let labelComponent = UILabel()
         labelComponent.text = "카테고리: "
         
         let iconComponent = UITextField()
-        iconComponent.placeholder = "여기에 작은 아이콘으로 카테고리를 설정하고 싶다.."
+        iconComponent.placeholder = "카테고리?"
         iconComponent.borderStyle = .roundedRect
         
         categoryStackView.addArrangedSubview(labelComponent)
@@ -83,7 +84,7 @@ class AddViewController: UIViewController {
         contentsStackView.axis = .horizontal
         contentsStackView.alignment = .fill
         contentsStackView.distribution = .fill
-        contentsStackView.spacing = 12
+        contentsStackView.spacing = 8
         
         let labelComponent = UILabel()
         labelComponent.text = "내용: "
@@ -103,7 +104,7 @@ class AddViewController: UIViewController {
         photoStackView.axis = .horizontal
         photoStackView.alignment = .fill
         photoStackView.distribution = .fill
-        photoStackView.spacing = 12
+        photoStackView.spacing = 8
         
         let labelComponent = UILabel()
         labelComponent.text = "사진: "
