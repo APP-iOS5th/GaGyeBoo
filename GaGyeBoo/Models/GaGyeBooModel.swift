@@ -14,6 +14,13 @@ struct GaGyeBooModel {
     let category: String
     let spendType: String?
     let amount: Double
+    var dateStr: String {
+        get {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            return formatter.string(from: self.date)
+        }
+    }
 }
 
 // let descriptions = ["점심식사", "저녁식사", "지하철", "버스", "옷", "전자제품", "영화", "커피", "술", "기타"]
@@ -43,7 +50,7 @@ struct MockStruct {
         let currentYear = Calendar.current.component(.year, from: Date())
         
         for month in 1...12 {
-            for _ in 1...30 {
+            for _ in 1...20 {
                 let saveType: Categories = Categories.allCases.randomElement()!
                 let category: String = saveType.getCategories().randomElement()!
                 let randomAmount = floor(Double.random(in: 1000...100000))

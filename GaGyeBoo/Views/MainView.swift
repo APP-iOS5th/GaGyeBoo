@@ -1,12 +1,5 @@
-//
-//  MainView.swift
-//  GaGyeBoo
-//
-//  Created by MadCow on 2024/6/4.
-//
-
 import UIKit
 
-struct MainView {
+class MainView {
     
 }
