@@ -7,4 +7,9 @@
         <attribute name="saveType" optional="YES" attributeType="String"/>
         <attribute name="spendType" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="MonthlyRecord" representedClassName="MonthlyRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="mostSpendCategory" optional="YES" attributeType="String"/>
+        <attribute name="totalSpend" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
 </model>
