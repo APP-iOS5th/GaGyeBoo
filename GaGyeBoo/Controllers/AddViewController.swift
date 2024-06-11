@@ -8,9 +8,254 @@
 import UIKit
 
 class AddViewController: UIViewController {
+    
+    let datePicker: UIDatePicker = {
+        let cal = UIDatePicker()
+        cal.translatesAutoresizingMaskIntoConstraints = false
+        cal.datePickerMode = .date
+        cal.preferredDatePickerStyle = .inline
+        cal.locale = Locale(identifier: "ko_KR")
+        return cal
+    }()
+    
+    let segmentedControl: UISegmentedControl = {
+        let type = UISegmentedControl(items: ["수입", "지출"])
+        type.translatesAutoresizingMaskIntoConstraints = false
+        type.selectedSegmentIndex = 1
+        
+        type.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
+        return type
+    }()
+    
+    let textFieldContainer: UIStackView = {
+       let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.spacing = 16
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    let moneyTextField: UIStackView = {
+        let moneyStackView = UIStackView()
+        moneyStackView.axis = .horizontal
+        moneyStackView.alignment = .fill
+        moneyStackView.distribution = .fill
+        moneyStackView.spacing = 8
+        
+        let labelComponent = UILabel()
+        labelComponent.text = "금액: "
+        
+        let moneyField = UITextField()
+        moneyField.placeholder = "금액을 입력하세요"
+        moneyField.borderStyle = .roundedRect
+        moneyField.translatesAutoresizingMaskIntoConstraints = false
+        moneyField.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        
+        moneyField.addTarget(self, action: #selector(moneyTextChanged(moneyField:)), for: .editingChanged)
+        
+        moneyStackView.addArrangedSubview(labelComponent)
+        moneyStackView.addArrangedSubview(moneyField)
+        
+        return moneyStackView
+    }()
+    
+    let categoryField: UIStackView = {
+        let categoryStackView = UIStackView()
+        categoryStackView.axis = .horizontal
+        categoryStackView.alignment = .fill
+        categoryStackView.distribution = .fill
+        categoryStackView.spacing = 8
+        
+        let labelComponent = UILabel()
+        labelComponent.text = "종류: "
+        
+        let iconComponent = UITextField()
+        iconComponent.placeholder = "카테고리?"
+        iconComponent.borderStyle = .roundedRect
+        iconComponent.translatesAutoresizingMaskIntoConstraints = false
+        iconComponent.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        
+        categoryStackView.addArrangedSubview(labelComponent)
+        categoryStackView.addArrangedSubview(iconComponent)
+        
+        return categoryStackView
+    }()
+    
+    let contentsField: UIStackView = {
+        let contentsStackView = UIStackView()
+        contentsStackView.axis = .horizontal
+        contentsStackView.alignment = .fill
+        contentsStackView.distribution = .fill
+        contentsStackView.spacing = 8
+        
+        let labelComponent = UILabel()
+        labelComponent.text = "내용: "
+        
+        let contents = UITextField()
+        contents.placeholder = "세부 사항을 입력하세요."
+        contents.borderStyle = .roundedRect
+        contents.translatesAutoresizingMaskIntoConstraints = false
+        contents.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        
+        contentsStackView.addArrangedSubview(labelComponent)
+        contentsStackView.addArrangedSubview(contents)
+        
+        return contentsStackView
+    }()
+    
+    let photoField: UIStackView = {
+        let photoStackView = UIStackView()
+        photoStackView.axis = .horizontal
+        photoStackView.alignment = .fill
+        photoStackView.distribution = .fill
+        photoStackView.spacing = 8
+        
+        let labelComponent = UILabel()
+        labelComponent.text = "사진: "
+        
+        let photo = UITextField()
+        photo.placeholder = "사진 추가 하는 기능.."
+        photo.borderStyle = .roundedRect
+        photo.translatesAutoresizingMaskIntoConstraints = false
+        photo.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        
+        photoStackView.addArrangedSubview(labelComponent)
+        photoStackView.addArrangedSubview(photo)
+        
+        return photoStackView
+    }()
+    
+    private lazy var saveButton: UIButton = {
+       let button = UIButton()
+        button.setTitle("저장", for: .normal)
+        var config = UIButton.Configuration.filled()
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+            return outgoing
+        }
+        button.configuration = config
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.widthAnchor.constraint(equalToConstant: 350).isActive = true
+        
+        return button
+    }()
+    
+    lazy var keyBoardTapGesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        navigationItem.title = "지출"
+        view.backgroundColor = .white
+        
+        view.addSubview(segmentedControl)
+        view.addSubview(datePicker)
+        
+        textFieldContainer.addArrangedSubview(moneyTextField)
+        textFieldContainer.addArrangedSubview(categoryField)
+        textFieldContainer.addArrangedSubview(contentsField)
+        textFieldContainer.addArrangedSubview(photoField)
+        view.addSubview(textFieldContainer)
+        view.addSubview(saveButton)
+        
+        saveButton.isEnabled = false
+        saveButton.addTarget(self, action: #selector(saveItem), for: .touchUpInside)
+        
+        NSLayoutConstraint.activate([
+            segmentedControl.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            segmentedControl.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            segmentedControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 30),
+            
+            datePicker.leftAnchor.constraint(equalTo: segmentedControl.leftAnchor),
+            datePicker.rightAnchor.constraint(equalTo: segmentedControl.rightAnchor),
+            datePicker.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 3),
+            
+            textFieldContainer.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            textFieldContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5),
+            
+            saveButton.topAnchor.constraint(equalTo: photoField.bottomAnchor, constant: 30),
+            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+    
+    }
+    
+    //MARK: Methods
+    @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            navigationItem.title = "수입"
+        case 1:
+            navigationItem.title = "지출"
+        default:
+            break
+        }
+    }
+    
+    @objc func moneyTextChanged(moneyField: UITextField) {
+        updateSaveButtonState()
+    }
+    
+    @objc private func saveItem() {
+        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
+        let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+        else {
+            return
+        }
+        dismiss(animated: true)
+    }
+    
+    func updateSaveButtonState() {
+        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
+        let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+        else {
+            saveButton.isEnabled = false
+            return
+        }
+        saveButton.isEnabled = true
+    }
+    
+    //MARK: KeyBoardTapGesture
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        view.addGestureRecognizer(keyBoardTapGesture)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        view.removeGestureRecognizer(keyBoardTapGesture)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func tapHandler(_sender: UIView) {
+        (moneyTextField.arrangedSubviews[1] as? UITextField)?.resignFirstResponder()
+        (categoryField.arrangedSubviews[1] as? UITextField)?.resignFirstResponder()
+        (contentsField.arrangedSubviews[1] as?
+         UITextField)?.resignFirstResponder()
+    }
+    
+    @objc func keyboardWillShow(_ notification: NSNotification) {
+        print("keyboardup")
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            let keyboardHeight = keyboardSize.height
+            if view.frame.origin.y == 0 {
+                view.frame.origin.y -= keyboardHeight
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+        print("keyboard down")
+        if view.frame.origin.y != 0 {
+            view.frame.origin.y = 0
+        }
     }
 }
+
