@@ -26,7 +26,7 @@ class BudgetSettingViewController: UIViewController {
     
     private let budgetTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "예산을 입력하세요"
+        textField.placeholder = "예산을 입력하세요."
         textField.keyboardType = .numberPad
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField

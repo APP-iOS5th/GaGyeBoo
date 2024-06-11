@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */; };
-		CB25784E2C16D4F100D67DFB /* RecurringExpenseSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB25784D2C16D4F100D67DFB /* RecurringExpenseSettingViewController.swift */; };
-		CB2578502C16D4F800D67DFB /* InquiryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB25784F2C16D4F800D67DFB /* InquiryViewController.swift */; };
+		CB2578542C1780A900D67DFB /* RecurringExpenseSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */; };
+		CBDBB26A2C182D5A00F7E869 /* InquiryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */; };
 		CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */; };
 		CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */; };
 		CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */; };
@@ -29,8 +29,8 @@
 
 /* Begin PBXFileReference section */
 		CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetSettingViewController.swift; sourceTree = "<group>"; };
-		CB25784D2C16D4F100D67DFB /* RecurringExpenseSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringExpenseSettingViewController.swift; sourceTree = "<group>"; };
-		CB25784F2C16D4F800D67DFB /* InquiryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryViewController.swift; sourceTree = "<group>"; };
+		CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringExpenseSettingViewController.swift; sourceTree = "<group>"; };
+		CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryViewController.swift; sourceTree = "<group>"; };
 		CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaGyeBoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -110,8 +110,8 @@
 				CD2574122C0ECC6300BC4844 /* StatisticsViewController.swift */,
 				CD2574102C0ECC4000BC4844 /* SettingsViewController.swift */,
 				CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */,
-				CB25784D2C16D4F100D67DFB /* RecurringExpenseSettingViewController.swift */,
-				CB25784F2C16D4F800D67DFB /* InquiryViewController.swift */,
+				CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */,
+				CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -208,17 +208,17 @@
 			files = (
 				CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */,
 				CD2574162C0ECEB000BC4844 /* MainView.swift in Sources */,
-				CB25784E2C16D4F100D67DFB /* RecurringExpenseSettingViewController.swift in Sources */,
 				CD2574182C0ECEB500BC4844 /* AddView.swift in Sources */,
+				CB2578542C1780A900D67DFB /* RecurringExpenseSettingViewController.swift in Sources */,
 				CD0E38C42C0D9DB300F9BF92 /* GaGyeBooModel.swift in Sources */,
 				CD2574132C0ECC6300BC4844 /* StatisticsViewController.swift in Sources */,
+				CBDBB26A2C182D5A00F7E869 /* InquiryViewController.swift in Sources */,
 				CD25740F2C0ECC3900BC4844 /* AddViewController.swift in Sources */,
 				CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */,
 				CD0E38B22C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld in Sources */,
 				CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */,
 				CD2574112C0ECC4000BC4844 /* SettingsViewController.swift in Sources */,
 				CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */,
-				CB2578502C16D4F800D67DFB /* InquiryViewController.swift in Sources */,
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
 				CD25741A2C0ECEBA00BC4844 /* SettingsView.swift in Sources */,
 			);
