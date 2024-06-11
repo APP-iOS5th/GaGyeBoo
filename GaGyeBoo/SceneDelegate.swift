@@ -33,12 +33,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         statsView.tabBarItem = UITabBarItem(title: "통계", image: UIImage(systemName: "list.bullet.clipboard"), selectedImage: nil)
         let statsNavigation = UINavigationController(rootViewController: statsView)
         
-        let settingView = SettingViewController()
-        settingView.tabBarItem = UITabBarItem(title: "정보", image: UIImage(systemName: "gearshape"), selectedImage: nil)
-        let settingNavigation = UINavigationController(rootViewController: settingView)
+        let settingsView = SettingsViewController()
+        settingsView.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gearshape"), selectedImage: nil)
+        let settingsNavigation = UINavigationController(rootViewController: settingsView)
         
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [homeNavigation, statsNavigation, settingNavigation]
+        tabBarController.viewControllers = [homeNavigation, statsNavigation, settingsNavigation]
         
         return tabBarController
     }
