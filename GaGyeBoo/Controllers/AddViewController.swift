@@ -18,17 +18,56 @@ class AddViewController: UIViewController {
         return cal
     }()
     
-    let segmentedControl: UISegmentedControl = {
-        let type = UISegmentedControl(items: ["수입", "지출"])
-        type.translatesAutoresizingMaskIntoConstraints = false
-        type.selectedSegmentIndex = 1
+    //MARK: SegmentControll custom
+    private lazy var segmentControl: UISegmentedControl = {
+        let segment = UISegmentedControl()
         
-        type.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
-        return type
+        segment.selectedSegmentTintColor = .clear
+        
+        //배경색 제거
+        segment.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
+        //구분 라인 제거
+        segment.setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+        
+        segment.insertSegment(withTitle: "수입", at: 0, animated: true)
+        segment.insertSegment(withTitle: "지출", at: 1, animated: true)
+        
+        segment.selectedSegmentIndex = 0
+        
+        // 미선택 폰트
+        segment.setTitleTextAttributes([
+            NSAttributedString.Key.foregroundColor: UIColor.gray,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .regular)
+        ], for: .normal)
+        
+        //선택 폰트
+        segment.setTitleTextAttributes([
+            NSAttributedString.Key.foregroundColor: UIColor.systemFill,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold)
+        ], for: .selected)
+        
+        segment.addTarget(self, action: #selector(changeSegmentedControlLinePosition), for: .valueChanged)
+        
+        segment.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
+        
+        segment.translatesAutoresizingMaskIntoConstraints = false
+        return segment
+    }()
+    
+    private lazy var underLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemFill
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    // 움직일 underLineView의 leadingAnchor 따로 작성
+    private lazy var leadingDistance: NSLayoutConstraint = {
+        return underLineView.leadingAnchor.constraint(equalTo: segmentControl.leadingAnchor)
     }()
     
     let textFieldContainer: UIStackView = {
-       let stackView = UIStackView()
+        let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fill
@@ -48,7 +87,7 @@ class AddViewController: UIViewController {
         labelComponent.text = "금액: "
         
         let moneyField = UITextField()
-        moneyField.placeholder = "금액을 입력하세요"
+        moneyField.placeholder = "금액을 입력하세요."
         moneyField.borderStyle = .roundedRect
         moneyField.translatesAutoresizingMaskIntoConstraints = false
         moneyField.widthAnchor.constraint(equalToConstant: 310).isActive = true
@@ -69,16 +108,16 @@ class AddViewController: UIViewController {
         categoryStackView.spacing = 8
         
         let labelComponent = UILabel()
-        labelComponent.text = "종류: "
+        labelComponent.text = "분류: "
         
-        let iconComponent = UITextField()
-        iconComponent.placeholder = "카테고리?"
-        iconComponent.borderStyle = .roundedRect
-        iconComponent.translatesAutoresizingMaskIntoConstraints = false
-        iconComponent.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        let category = UITextField()
+        category.placeholder = "카테고리"
+        category.borderStyle = .roundedRect
+        category.translatesAutoresizingMaskIntoConstraints = false
+        category.widthAnchor.constraint(equalToConstant: 310).isActive = true
         
         categoryStackView.addArrangedSubview(labelComponent)
-        categoryStackView.addArrangedSubview(iconComponent)
+        categoryStackView.addArrangedSubview(category)
         
         return categoryStackView
     }()
@@ -128,7 +167,7 @@ class AddViewController: UIViewController {
     }()
     
     private lazy var saveButton: UIButton = {
-       let button = UIButton()
+        let button = UIButton()
         button.setTitle("저장", for: .normal)
         var config = UIButton.Configuration.filled()
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
@@ -148,10 +187,12 @@ class AddViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "지출"
+        setupInitialValues()
+        //navigationItem.title = "지출"
         view.backgroundColor = .white
         
-        view.addSubview(segmentedControl)
+        view.addSubview(segmentControl)
+        view.addSubview(underLineView)
         view.addSubview(datePicker)
         
         textFieldContainer.addArrangedSubview(moneyTextField)
@@ -165,14 +206,20 @@ class AddViewController: UIViewController {
         saveButton.addTarget(self, action: #selector(saveItem), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            segmentedControl.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-            segmentedControl.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-            segmentedControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
-            segmentedControl.heightAnchor.constraint(equalToConstant: 30),
             
-            datePicker.leftAnchor.constraint(equalTo: segmentedControl.leftAnchor),
-            datePicker.rightAnchor.constraint(equalTo: segmentedControl.rightAnchor),
-            datePicker.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 3),
+            segmentControl.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            segmentControl.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            segmentControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
+            segmentControl.heightAnchor.constraint(equalToConstant: 30),
+            
+            underLineView.bottomAnchor.constraint(equalTo: segmentControl.bottomAnchor),
+            underLineView.heightAnchor.constraint(equalToConstant: 5),
+            leadingDistance,
+            underLineView.widthAnchor.constraint(equalTo: segmentControl.widthAnchor, multiplier: 1 / CGFloat(segmentControl.numberOfSegments)),
+            
+            datePicker.leftAnchor.constraint(equalTo: segmentControl.leftAnchor),
+            datePicker.rightAnchor.constraint(equalTo: segmentControl.rightAnchor),
+            datePicker.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 3),
             
             textFieldContainer.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
             textFieldContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
@@ -181,10 +228,28 @@ class AddViewController: UIViewController {
             saveButton.topAnchor.constraint(equalTo: photoField.bottomAnchor, constant: 30),
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
-    
+        
+        
     }
     
     //MARK: Methods
+    private func setupInitialValues() {
+        segmentControl.selectedSegmentIndex = 0
+        changeSegmentedControlLinePosition()
+        
+        navigationItem.title = "수입"
+    }
+    
+    @objc private func changeSegmentedControlLinePosition() {
+        let segmentIndex = CGFloat(segmentControl.selectedSegmentIndex)
+        let segmentWidth = segmentControl.frame.width / CGFloat(segmentControl.numberOfSegments)
+        let leadingDistance = segmentWidth * segmentIndex
+        UIView.animate(withDuration: 0.2, animations: { [weak self] in
+            self?.leadingDistance.constant = leadingDistance
+            self?.view.layoutIfNeeded()
+        })
+    }
+    
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -202,7 +267,7 @@ class AddViewController: UIViewController {
     
     @objc private func saveItem() {
         guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
-        let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
         else {
             return
         }
@@ -211,7 +276,7 @@ class AddViewController: UIViewController {
     
     func updateSaveButtonState() {
         guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
-        let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
         else {
             saveButton.isEnabled = false
             return
