@@ -32,7 +32,7 @@ class AddViewController: UIViewController {
         segment.insertSegment(withTitle: "수입", at: 0, animated: true)
         segment.insertSegment(withTitle: "지출", at: 1, animated: true)
         
-        segment.selectedSegmentIndex = 1
+        segment.selectedSegmentIndex = 0
         
         // 미선택 폰트
         segment.setTitleTextAttributes([
@@ -87,7 +87,7 @@ class AddViewController: UIViewController {
         labelComponent.text = "금액: "
         
         let moneyField = UITextField()
-        moneyField.placeholder = "금액을 입력하세요"
+        moneyField.placeholder = "금액을 입력하세요."
         moneyField.borderStyle = .roundedRect
         moneyField.translatesAutoresizingMaskIntoConstraints = false
         moneyField.widthAnchor.constraint(equalToConstant: 310).isActive = true
@@ -108,16 +108,16 @@ class AddViewController: UIViewController {
         categoryStackView.spacing = 8
         
         let labelComponent = UILabel()
-        labelComponent.text = "종류: "
+        labelComponent.text = "분류: "
         
-        let iconComponent = UITextField()
-        iconComponent.placeholder = "카테고리?"
-        iconComponent.borderStyle = .roundedRect
-        iconComponent.translatesAutoresizingMaskIntoConstraints = false
-        iconComponent.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        let category = UITextField()
+        category.placeholder = "카테고리"
+        category.borderStyle = .roundedRect
+        category.translatesAutoresizingMaskIntoConstraints = false
+        category.widthAnchor.constraint(equalToConstant: 310).isActive = true
         
         categoryStackView.addArrangedSubview(labelComponent)
-        categoryStackView.addArrangedSubview(iconComponent)
+        categoryStackView.addArrangedSubview(category)
         
         return categoryStackView
     }()
@@ -187,7 +187,8 @@ class AddViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "지출"
+        setupInitialValues()
+        //navigationItem.title = "지출"
         view.backgroundColor = .white
         
         view.addSubview(segmentControl)
@@ -228,9 +229,17 @@ class AddViewController: UIViewController {
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
+        
     }
     
     //MARK: Methods
+    private func setupInitialValues() {
+        segmentControl.selectedSegmentIndex = 0
+        changeSegmentedControlLinePosition()
+        
+        navigationItem.title = "수입"
+    }
+    
     @objc private func changeSegmentedControlLinePosition() {
         let segmentIndex = CGFloat(segmentControl.selectedSegmentIndex)
         let segmentWidth = segmentControl.frame.width / CGFloat(segmentControl.numberOfSegments)
