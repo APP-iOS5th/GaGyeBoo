@@ -24,7 +24,6 @@
 		CD2574182C0ECEB500BC4844 /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574172C0ECEB500BC4844 /* AddView.swift */; };
 		CD25741A2C0ECEBA00BC4844 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574192C0ECEBA00BC4844 /* SettingsView.swift */; };
 		CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */; };
-		CD7BCB2B2C16BBF80047673F /* MonthlyRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7BCB2A2C16BBF80047673F /* MonthlyRecordModel.swift */; };
 		CD994AAC2C12E52C00681C50 /* SpendDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD994AAB2C12E52C00681C50 /* SpendDataManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +31,8 @@
 		CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetSettingViewController.swift; sourceTree = "<group>"; };
 		CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringExpenseSettingViewController.swift; sourceTree = "<group>"; };
 		CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryViewController.swift; sourceTree = "<group>"; };
+		7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTableCell.swift; sourceTree = "<group>"; };
+		7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsDataModel.swift; sourceTree = "<group>"; };
 		CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaGyeBoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -48,7 +49,6 @@
 		CD2574172C0ECEB500BC4844 /* AddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
 		CD2574192C0ECEBA00BC4844 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
-		CD7BCB2A2C16BBF80047673F /* MonthlyRecordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyRecordModel.swift; sourceTree = "<group>"; };
 		CD994AAB2C12E52C00681C50 /* SpendDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendDataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F8143B72C16C4FF00741BBA /* DGChartsDynamic in Frameworks */,
+				7F8143B52C16C4FF00741BBA /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +103,7 @@
 			children = (
 				CD0E38C32C0D9DB300F9BF92 /* GaGyeBooModel.swift */,
 				CD7BCB2A2C16BBF80047673F /* MonthlyRecordModel.swift */,
+				7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -134,6 +137,8 @@
 				CD2574172C0ECEB500BC4844 /* AddView.swift */,
 				CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */,
 				CD2574192C0ECEBA00BC4844 /* SettingsView.swift */,
+				7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */,
+>>>>>>> 4762d6b68217bc0b43b8c70fbd858cf1ef4a0a99
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -154,6 +159,10 @@
 			dependencies = (
 			);
 			name = GaGyeBoo;
+			packageProductDependencies = (
+				7F8143B42C16C4FF00741BBA /* DGCharts */,
+				7F8143B62C16C4FF00741BBA /* DGChartsDynamic */,
+			);
 			productName = GaGyeBoo;
 			productReference = CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */;
 			productType = "com.apple.product-type.application";
@@ -182,6 +191,9 @@
 				Base,
 			);
 			mainGroup = CD0E389B2C0D99BE00F9BF92;
+			packageReferences = (
+				7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			productRefGroup = CD0E38A52C0D99BE00F9BF92 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -221,10 +233,13 @@
 				CD994AAC2C12E52C00681C50 /* SpendDataManager.swift in Sources */,
 				CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */,
 				CD0E38B22C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld in Sources */,
+				7F8143BD2C16EB9800741BBA /* StatisticsDataModel.swift in Sources */,
 				CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */,
 				CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */,
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
 				CD25741A2C0ECEBA00BC4844 /* SettingsView.swift in Sources */,
+				7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */,
+>>>>>>> 4762d6b68217bc0b43b8c70fbd858cf1ef4a0a99
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +452,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChartsOrg/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7F8143B42C16C4FF00741BBA /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+		7F8143B62C16C4FF00741BBA /* DGChartsDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGChartsDynamic;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		CD0E38B02C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld */ = {
