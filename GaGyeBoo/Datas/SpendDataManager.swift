@@ -5,7 +5,7 @@ import Combine
 class SpendDataManager {
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private let gaGyeBooFetchRequest: NSFetchRequest<GaGyeBoo> = GaGyeBoo.fetchRequest()
-    private let monthlySpendFetchRequest: NSFetchRequest<MonthlyRecord> = MonthlyRecord.fetchRequest()
+    private let monthlySpendFetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
     @Published var allSpends: [GaGyeBooModel] = []
     @Published var spendsForDetailList: [GaGyeBooModel] = []
     var cancellable: Cancellable?
@@ -72,7 +72,7 @@ class SpendDataManager {
         do {
             let monthlyRecord = try context.fetch(monthlySpendFetchRequest)
             if let record = monthlyRecord.first {
-                totalSpend = record.totalSpend
+//                totalSpend = record.totalSpend
             }
         } catch {
             print("error in SpendDataManager getPrevSpend() >> \(error.localizedDescription)")
