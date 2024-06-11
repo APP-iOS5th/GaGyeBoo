@@ -83,13 +83,13 @@ class MainViewController: UIViewController {
     private var tempSpendView: [UIView] = []
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
     private var cancellable: Cancellable?
-    private lazy var prevMonthSpend: Int? = 0//dataManager.getPrevSpend(year: currentYear, month: currentMonth - 1)
-    private lazy var currentMonthSpend: Int? = 0//dataManager.getPrevSpend(year: currentYear, month: currentMonth)
+    private lazy var prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
+    private lazy var currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        mockData.getSampleDataBy(year: 2024).forEach{ dataManager.saveSpend(newSpend: $0) }
-//        dataManager.getAllSpends()
+        mockData.getSampleDataBy(year: 2024).forEach{ dataManager.saveSpend(newSpend: $0) }
+        dataManager.getAllSpends()
         setDailySpendView()
         // setMonthlySpendView()
     }
@@ -113,15 +113,15 @@ class MainViewController: UIViewController {
     }
     
     func setSubscriber() {
-//        cancellable?.cancel()
-//        cancellable = dataManager.$allSpends.sink { [weak self] spend in
-//            self?.currentSpend = spend
-//        }
-//        
-//        cancellable?.cancel()
-//        cancellable = dataManager.$spendsForDetailList.sink { [weak self] spend in
-//            self?.spendList = spend
-//        }
+        cancellable?.cancel()
+        cancellable = dataManager.$allSpends.sink { [weak self] spend in
+            self?.currentSpend = spend
+        }
+        
+        cancellable?.cancel()
+        cancellable = dataManager.$spendsForDetailList.sink { [weak self] spend in
+            self?.spendList = spend
+        }
     }
     
     func setNavigationComponents() {
@@ -239,7 +239,10 @@ class MainViewController: UIViewController {
             
             let amountLabel = UILabel()
             amountLabel.translatesAutoresizingMaskIntoConstraints = false
-            amountLabel.text = "\(saveType == .income ? "+" : "-")\(Int(amount))원"
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .decimal
+            let amountText = numberFormatter.string(from: NSNumber(value: abs(amount))) ?? ""
+            amountLabel.text = "\(saveType == .income ? "+" : "-")\(amountText)원"
             amountLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
             amountLabel.textColor = saveType == .income ? .systemBlue : .systemRed
             
@@ -290,6 +293,7 @@ class MainViewController: UIViewController {
     @objc func toAddPage() {
         // TODO: 수입/지출 내역 작성 페이지로 이동
         let addPageController = AddViewController()
+        addPageController.calendarDelegate = self
         let navigationController = UINavigationController(rootViewController: addPageController)
         present(navigationController, animated: true)
     }
@@ -321,11 +325,15 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
                         expense += model.amount
                     }
                 }
+                let numberFormatter = NumberFormatter()
+                numberFormatter.numberStyle = .decimal
+                
                 if income > 0 {
                     let incomeLabel = UILabel()
                     incomeLabel.font = UIFont.systemFont(ofSize: 9)
                     incomeLabel.textColor = .systemBlue
-                    incomeLabel.text = "+\(Int(income))"
+                    let amountText = numberFormatter.string(from: NSNumber(value: abs(Int(income)))) ?? ""
+                    incomeLabel.text = "+\(amountText)"
                     
                     vStack.addArrangedSubview(incomeLabel)
                 }
@@ -333,11 +341,11 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
                     let expenseLabel = UILabel()
                     expenseLabel.font = UIFont.systemFont(ofSize: 9)
                     expenseLabel.textColor = .systemRed
-                    expenseLabel.text = "-\(Int(expense))"
+                    let amountText = numberFormatter.string(from: NSNumber(value: abs(Int(expense)))) ?? ""
+                    expenseLabel.text = "-\(amountText)"
                     
                     vStack.addArrangedSubview(expenseLabel)
                 }
-                
                 return vStack
             }
         }
@@ -354,15 +362,15 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
             let month = dateComponent.month,
             let day = dateComponent.day {
             
-//            dataManager.getRecordsBy(year: year, month: month, day: day)
+            dataManager.getRecordsBy(year: year, month: month, day: day)
             self.setSpendList()
         }
     }
     
     func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
         if let newYear = calendarView.visibleDateComponents.year, let newMonth = calendarView.visibleDateComponents.month {
-//            currentMonthSpend = dataManager.getPrevSpend(year: newYear, month: newMonth)
-//            prevMonthSpend = dataManager.getPrevSpend(year: newYear, month: newMonth - 1)
+            currentMonthSpend = dataManager.getPrevExpense(year: newYear, month: newMonth)
+            prevMonthSpend = dataManager.getPrevExpense(year: newYear, month: newMonth - 1)
             updateSpendLabels(month: newMonth)
             
         }
