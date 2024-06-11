@@ -2,6 +2,7 @@ import UIKit
 import Combine
 
 class MainViewController: UIViewController {
+    
     private lazy var picker: UISegmentedControl = {
         let pk = UISegmentedControl(items: ["일간", "월간"])
         pk.translatesAutoresizingMaskIntoConstraints = false
@@ -21,6 +22,23 @@ class MainViewController: UIViewController {
         pk.selectedSegmentIndex = 0
         
         return pk
+    }()
+    
+    private lazy var currentMonthSpendLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        
+        return label
+    }()
+    
+    private lazy var prevMonthSpendLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+        label.textColor = .lightGray
+        
+        return label
     }()
     
     private let scrollView: UIScrollView = {
@@ -56,7 +74,7 @@ class MainViewController: UIViewController {
     }()
     
     private let dataManager = SpendDataManager()
-    private let mockData = MockStruct()
+//    private var mockData = MockStruct(generateYear: 2024)
     private let currentYear = Calendar.current.component(.year, from: Date())
     private let currentMonth = Calendar.current.component(.month, from: Date())
     private let currentDay = Calendar.current.component(.day, from: Date())
@@ -65,6 +83,8 @@ class MainViewController: UIViewController {
     private var tempSpendView: [UIView] = []
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
     private var cancellable: Cancellable?
+    private lazy var prevMonthSpend = dataManager.getPrevSpend(year: currentYear, month: currentMonth - 1)
+    private lazy var currentMonthSpend = dataManager.getPrevSpend(year: currentYear, month: currentMonth)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,6 +101,7 @@ class MainViewController: UIViewController {
         setNavigationComponents()
         setSegmentPicker()
         setScrollView()
+        setPrevLabel()
         setCalendarData()
         setCalendarView()
     }
@@ -142,6 +163,40 @@ class MainViewController: UIViewController {
         prevBottomAnchorForScrollView = secondContentView.topAnchor
     }
     
+    func setPrevLabel() {
+        contentView.addSubview(currentMonthSpendLabel)
+        contentView.addSubview(prevMonthSpendLabel)
+        
+        NSLayoutConstraint.activate([
+            currentMonthSpendLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            currentMonthSpendLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            
+            prevMonthSpendLabel.topAnchor.constraint(equalTo: currentMonthSpendLabel.bottomAnchor, constant: 5),
+            prevMonthSpendLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12)
+        ])
+        
+        updateSpendLabels(month: currentMonth)
+    }
+    
+    private func updateSpendLabels(month: Int) {
+        guard let prevMonthSpend = prevMonthSpend, let currentMonthSpend = currentMonthSpend else { return }
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        let spendLabelText = numberFormatter.string(from: NSNumber(value: abs(currentMonthSpend))) ?? ""
+        
+        currentMonthSpendLabel.text = "\(month)월 사용금액: \(spendLabelText)원"
+        let comparePrevAndCurrentMonthSpend = Int(prevMonthSpend - currentMonthSpend) / 10000
+        let spendStr: String
+        if comparePrevAndCurrentMonthSpend < 0 {
+            spendStr = "지난달보다 약 \(-comparePrevAndCurrentMonthSpend)만원 더 썼어요."
+//            prevMonthSpendLabel.textColor = .red
+        } else {
+            spendStr = "지난달보다 약 \(comparePrevAndCurrentMonthSpend)만원 덜 썼어요."
+//            prevMonthSpendLabel.textColor = .blue
+        }
+        prevMonthSpendLabel.text = spendStr
+    }
+    
     func setCalendarData() {
         dataManager.getRecordsBy(year: currentYear, month: currentMonth, day: currentDay)
         setSpendList()
@@ -151,7 +206,7 @@ class MainViewController: UIViewController {
         contentView.addSubview(calendarView)
         
         NSLayoutConstraint.activate([
-            calendarView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            calendarView.topAnchor.constraint(equalTo: prevMonthSpendLabel.bottomAnchor),
             calendarView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             calendarView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             calendarView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
@@ -239,45 +294,48 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
     func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-        if let year = dateComponents.year, let month = dateComponents.month, let day = dateComponents.day {
-            let models = currentSpend.filter { $0.dateStr == "\(year)-\(String(month).count == 1 ? "0\(month)" : "\(month)")-\(String(day).count == 1 ? "0\(day)" : "\(day)")" }
-            // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
-            if models.count > 0 {
-                return .customView {
-                    let vStack = UIStackView()
-                    vStack.translatesAutoresizingMaskIntoConstraints = false
-                    vStack.axis = .vertical
-                    vStack.alignment = .center
-                    
-                    var income: Double = 0
-                    var expense: Double = 0
-                    models.forEach { model in
-                        switch model.saveType {
-                        case .income:
-                            income += model.amount
-                        case .expense:
-                            expense += model.amount
-                        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        guard let date = Calendar.current.date(from: dateComponents) else { return nil }
+        let dateString = dateFormatter.string(from: date)
+        
+        let models = currentSpend.filter { $0.dateStr == dateString }
+        // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
+        if models.count > 0 {
+            return .customView {
+                let vStack = UIStackView()
+                vStack.translatesAutoresizingMaskIntoConstraints = false
+                vStack.axis = .vertical
+                vStack.alignment = .center
+                
+                var income: Double = 0
+                var expense: Double = 0
+                models.forEach { model in
+                    switch model.saveType {
+                    case .income:
+                        income += model.amount
+                    case .expense:
+                        expense += model.amount
                     }
-                    if income > 0 {
-                        let incomeLabel = UILabel()
-                        incomeLabel.font = UIFont.systemFont(ofSize: 9)
-                        incomeLabel.textColor = .systemBlue
-                        incomeLabel.text = "+\(Int(income))"
-                        
-                        vStack.addArrangedSubview(incomeLabel)
-                    }
-                    if expense > 0 {
-                        let expenseLabel = UILabel()
-                        expenseLabel.font = UIFont.systemFont(ofSize: 9)
-                        expenseLabel.textColor = .systemRed
-                        expenseLabel.text = "-\(Int(expense))"
-                        
-                        vStack.addArrangedSubview(expenseLabel)
-                    }
-                    
-                    return vStack
                 }
+                if income > 0 {
+                    let incomeLabel = UILabel()
+                    incomeLabel.font = UIFont.systemFont(ofSize: 9)
+                    incomeLabel.textColor = .systemBlue
+                    incomeLabel.text = "+\(Int(income))"
+                    
+                    vStack.addArrangedSubview(incomeLabel)
+                }
+                if expense > 0 {
+                    let expenseLabel = UILabel()
+                    expenseLabel.font = UIFont.systemFont(ofSize: 9)
+                    expenseLabel.textColor = .systemRed
+                    expenseLabel.text = "-\(Int(expense))"
+                    
+                    vStack.addArrangedSubview(expenseLabel)
+                }
+                
+                return vStack
             }
         }
         return nil
@@ -300,8 +358,12 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
     
     func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
         if let newYear = calendarView.visibleDateComponents.year, let newMonth = calendarView.visibleDateComponents.month {
-            calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
+            currentMonthSpend = dataManager.getPrevSpend(year: newYear, month: newMonth)
+            prevMonthSpend = dataManager.getPrevSpend(year: newYear, month: newMonth - 1)
+            updateSpendLabels(month: newMonth)
+            
         }
+        calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
     }
 }
 

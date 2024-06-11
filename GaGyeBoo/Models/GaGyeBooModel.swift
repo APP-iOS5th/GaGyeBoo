@@ -40,14 +40,15 @@ enum Categories: String, CaseIterable {
 
 struct MockStruct {
     private var generatedModel: [GaGyeBooModel] = []
+    var generateYear: Int = Calendar.current.component(.year, from: Date())
     
-    init() {
+    init(generateYear: Int) {
+        self.generateYear = generateYear
         self.generatedModel = generateSampleData()
     }
     
     private func generateSampleData() -> [GaGyeBooModel] {
         var datas: [GaGyeBooModel] = []
-        let currentYear = Calendar.current.component(.year, from: Date())
         
         for month in 1...12 {
             for _ in 1...20 {
@@ -62,7 +63,7 @@ struct MockStruct {
                 }
                 
                 var dateComponents = DateComponents()
-                dateComponents.year = currentYear
+                dateComponents.year = generateYear
                 dateComponents.month = month
                 dateComponents.day = randomDay
                 let date = Calendar.current.date(from: dateComponents)!

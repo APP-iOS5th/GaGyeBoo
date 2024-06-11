@@ -58,7 +58,14 @@ class SpendDataManager {
     }
     
     func getPrevSpend(year: Int, month: Int) -> Double? {
-        let searchDate = "\(year)-\(String(month).count == 1 ? "0\(month)" : "\(month)")"
+        var tempYear: Int = year
+        var tempMonth: Int = month
+        if tempMonth <= 0 {
+            tempYear -= 1
+            tempMonth = 12
+        }
+        
+        let searchDate = "\(tempYear)-\(String(tempMonth).count == 1 ? "0\(tempMonth)" : "\(tempMonth)")"
         monthlySpendFetchRequest.predicate = NSPredicate(format: "date CONTAINS %@", searchDate)
         
         var totalSpend: Double?
@@ -102,13 +109,11 @@ class SpendDataManager {
         var startComponents = DateComponents()
         startComponents.year = year
         startComponents.month = 1
-        startComponents.day = 1
         startComponents.hour = 0
 
         var endComponents = DateComponents()
         endComponents.year = year + 1
         endComponents.month = 1
-        endComponents.day = 1
         endComponents.hour = 24
         
         if let month = month {
