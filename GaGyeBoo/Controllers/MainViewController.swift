@@ -384,3 +384,88 @@ class HorizontalSeparator: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
+    func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
+        if let year = dateComponents.year, let month = dateComponents.month, let day = dateComponents.day {
+            let models = currentSpend.filter { $0.dateStr == "\(year)-\(String(month).count == 1 ? "0\(month)" : "\(month)")-\(String(day).count == 1 ? "0\(day)" : "\(day)")" }
+            // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
+            if models.count > 0 {
+                return .customView {
+                    let vStack = UIStackView()
+                    vStack.translatesAutoresizingMaskIntoConstraints = false
+                    vStack.axis = .vertical
+                    vStack.alignment = .center
+                    
+                    var income: Double = 0
+                    var expense: Double = 0
+                    models.forEach { model in
+                        switch model.saveType {
+                        case .income:
+                            income += model.amount
+                        case .expense:
+                            expense += model.amount
+                        }
+                    }
+                    if income > 0 {
+                        let incomeLabel = UILabel()
+                        incomeLabel.font = UIFont.systemFont(ofSize: 9)
+                        incomeLabel.textColor = .systemBlue
+                        incomeLabel.text = "+\(Int(income))"
+                        
+                        vStack.addArrangedSubview(incomeLabel)
+                    }
+                    if expense > 0 {
+                        let expenseLabel = UILabel()
+                        expenseLabel.font = UIFont.systemFont(ofSize: 9)
+                        expenseLabel.textColor = .systemRed
+                        expenseLabel.text = "-\(Int(expense))"
+                        
+                        vStack.addArrangedSubview(expenseLabel)
+                    }
+                    
+                    return vStack
+                }
+            }
+        }
+        return nil
+    }
+    
+    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+        selection.setSelected(dateComponents, animated: true)
+        tempSpendView.forEach{ $0.removeFromSuperview() }
+        tempSpendView.removeAll()
+        
+        
+        if let dateComponent = dateComponents,
+            let year = dateComponent.year,
+            let month = dateComponent.month,
+            let day = dateComponent.day {
+            
+            dataManager.getRecordsBy(year: year, month: month, day: day)
+            self.setSpendList()
+        }
+    }
+    
+    func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
+        if let newYear = calendarView.visibleDateComponents.year, let newMonth = calendarView.visibleDateComponents.month {
+            dataManager.getRecordsBy(year: newYear, month: newMonth)
+            calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
+        }
+    }
+}
+
+class HorizontalSeparator: UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        self.translatesAutoresizingMaskIntoConstraints = false
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.heightAnchor.constraint(equalToConstant: 1).isActive = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

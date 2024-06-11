@@ -177,3 +177,119 @@ extension String {
     }
 }
 */
+
+class StatisticsDataManager {
+    static let shared = StatisticsDataManager()
+    
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "GaGyeBoo")
+        container.loadPersistentStores { (_, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        }
+        return container
+    }()
+    
+    lazy var context: NSManagedObjectContext = {
+        return self.persistentContainer.viewContext
+    }()
+    
+    lazy var entity: NSEntityDescription? = {
+        return NSEntityDescription.entity(forEntityName: "StatisticsData", in: self.context)
+    }()
+    
+    private init() {
+        _ = fetchMonthlyStatistics()
+        addMockupDataIfNeeded()
+    }
+    
+    // Initial Data
+    func loadInitialDataIfNeeded() {
+        let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
+        let count = (try? context.count(for: fetchRequest)) ?? 0
+        _ = Calendar.current.component(.month, from: Date())
+        if count == 0 {
+            
+        }
+    }
+    
+    // Fetch Month Data
+    func fetchMonthlyStatistics() -> [MonthlyStatistics] {
+        let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "month", ascending: true)]
+        
+        do {
+            let statisticsData = try context.fetch(fetchRequest)
+            let months = Set(statisticsData.map { $0.month ?? "" })
+            return months.map { MonthlyStatistics(from: statisticsData, month: $0) }.sorted { $0.month < $1.month }
+        } catch {
+            print("Failed to fetch statistics data: \(error)")
+            return []
+        }
+    }
+    
+    func getRecentMonths() -> [String] {
+        let calendar = Calendar.current
+        var recentMonths = [String]()
+        var currentDate = Date()
+        
+        for _ in 0..<6 {
+            let dateComponents = calendar.dateComponents([.year, .month], from: currentDate)
+            let year = dateComponents.year!
+            let month = dateComponents.month!
+            let monthString = String(format: "%02d", month)
+            recentMonths.append("\(year)-\(monthString)")
+            
+            currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate)!
+        }
+        
+        return recentMonths.reversed()
+    }
+    
+    
+    // Create New Month Data
+    func createMonthlyStatistics(month: String, totalIncome: Double, totalExpense: Double) {
+        guard let entity = entity else {
+            print("데이터가 없습니다.")
+            return
+        }
+        
+        let monthlyStatistics = NSManagedObject(entity: entity, insertInto: context)
+        monthlyStatistics.setValue(month, forKey: "month")
+        monthlyStatistics.setValue(totalIncome, forKey: "totalIncome")
+        monthlyStatistics.setValue(totalExpense, forKey: "totalExpense")
+        
+        saveContext()
+    }
+    
+    // Save Data
+    func saveContext() {
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            }
+        }
+    }
+    
+    func addMockupDataIfNeeded() {
+        let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
+        let count = (try? context.count(for: fetchRequest)) ?? 0
+        guard count == 0 else {
+            return
+        }
+        
+        // Mock Data
+        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
+        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
+        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
+        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
+        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
+        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
+        saveContext()
+    }
+}
+
