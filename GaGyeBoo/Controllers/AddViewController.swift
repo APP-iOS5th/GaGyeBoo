@@ -143,6 +143,7 @@ class AddViewController: UIViewController {
         return button
     }()
     
+    lazy var keyBoardTapGesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -218,4 +219,43 @@ class AddViewController: UIViewController {
         saveButton.isEnabled = true
     }
     
+    //MARK: KeyBoardTapGesture
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        view.addGestureRecognizer(keyBoardTapGesture)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        view.removeGestureRecognizer(keyBoardTapGesture)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func tapHandler(_sender: UIView) {
+        (moneyTextField.arrangedSubviews[1] as? UITextField)?.resignFirstResponder()
+        (categoryField.arrangedSubviews[1] as? UITextField)?.resignFirstResponder()
+        (contentsField.arrangedSubviews[1] as?
+         UITextField)?.resignFirstResponder()
+    }
+    
+    @objc func keyboardWillShow(_ notification: NSNotification) {
+        print("keyboardup")
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            let keyboardHeight = keyboardSize.height
+            if view.frame.origin.y == 0 {
+                view.frame.origin.y -= keyboardHeight
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+        print("keyboard down")
+        if view.frame.origin.y != 0 {
+            view.frame.origin.y = 0
+        }
+    }
 }
+
