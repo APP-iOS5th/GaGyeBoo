@@ -10,6 +10,10 @@
 		CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */; };
 		CB2578542C1780A900D67DFB /* RecurringExpenseSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */; };
 		CBDBB26A2C182D5A00F7E869 /* InquiryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */; };
+		7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */; };
+		7F8143B52C16C4FF00741BBA /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8143B42C16C4FF00741BBA /* DGCharts */; };
+		7F8143B72C16C4FF00741BBA /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8143B62C16C4FF00741BBA /* DGChartsDynamic */; };
+		7F8143BD2C16EB9800741BBA /* StatisticsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */; };
 		CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */; };
 		CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */; };
 		CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */; };
@@ -102,7 +106,6 @@
 			isa = PBXGroup;
 			children = (
 				CD0E38C32C0D9DB300F9BF92 /* GaGyeBooModel.swift */,
-				CD7BCB2A2C16BBF80047673F /* MonthlyRecordModel.swift */,
 				7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */,
 			);
 			path = Models;
@@ -138,7 +141,6 @@
 				CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */,
 				CD2574192C0ECEBA00BC4844 /* SettingsView.swift */,
 				7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */,
->>>>>>> 4762d6b68217bc0b43b8c70fbd858cf1ef4a0a99
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -239,7 +241,6 @@
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
 				CD25741A2C0ECEBA00BC4844 /* SettingsView.swift in Sources */,
 				7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */,
->>>>>>> 4762d6b68217bc0b43b8c70fbd858cf1ef4a0a99
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
