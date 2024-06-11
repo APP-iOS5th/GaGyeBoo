@@ -127,7 +127,7 @@ class AddViewController: UIViewController {
         return photoStackView
     }()
     
-    var saveButton: UIButton = {
+    private lazy var saveButton: UIButton = {
        let button = UIButton()
         button.setTitle("저장", for: .normal)
         var config = UIButton.Configuration.filled()
@@ -138,6 +138,8 @@ class AddViewController: UIViewController {
         }
         button.configuration = config
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.widthAnchor.constraint(equalToConstant: 350).isActive = true
+        
         return button
     }()
     
@@ -155,8 +157,8 @@ class AddViewController: UIViewController {
         textFieldContainer.addArrangedSubview(categoryField)
         textFieldContainer.addArrangedSubview(contentsField)
         textFieldContainer.addArrangedSubview(photoField)
-        textFieldContainer.addArrangedSubview(saveButton)
         view.addSubview(textFieldContainer)
+        view.addSubview(saveButton)
         
         saveButton.isEnabled = false
         saveButton.addTarget(self, action: #selector(saveItem), for: .touchUpInside)
@@ -173,8 +175,12 @@ class AddViewController: UIViewController {
             
             textFieldContainer.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
             textFieldContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-            textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5)
+            textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5),
+            
+            saveButton.topAnchor.constraint(equalTo: photoField.bottomAnchor, constant: 30),
+            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    
     }
     
     //MARK: Methods
