@@ -88,7 +88,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        mockData.getSampleDataBy(year: 2024).forEach{ dataManager.saveSpend(newSpend: $0) }
+//        mockData.getSampleDataBy(year: 2024).forEach{ dataManager.saveSpend(newSpend: $0) }
         dataManager.getAllSpends()
         setDailySpendView()
         // setMonthlySpendView()
