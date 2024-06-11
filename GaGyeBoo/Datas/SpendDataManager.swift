@@ -168,13 +168,32 @@ class StatisticsDataManager {
         
         do {
             let statisticsData = try context.fetch(fetchRequest)
-            let recentData = statisticsData.suffix(6)
-            return recentData.map { MonthlyStatistics(month: $0.month ?? "", totalIncome: $0.totalIncome, totalExpense: $0.totalExpense) }
+            let months = Set(statisticsData.map { $0.month ?? "" })
+            return months.map { MonthlyStatistics(from: statisticsData, month: $0) }.sorted { $0.month < $1.month }
         } catch {
             print("Failed to fetch statistics data: \(error)")
             return []
         }
     }
+    
+    func getRecentMonths() -> [String] {
+        let calendar = Calendar.current
+        var recentMonths = [String]()
+        var currentDate = Date()
+        
+        for _ in 0..<6 {
+            let dateComponents = calendar.dateComponents([.year, .month], from: currentDate)
+            let year = dateComponents.year!
+            let month = dateComponents.month!
+            let monthString = String(format: "%02d", month)
+            recentMonths.append("\(year)-\(monthString)")
+            
+            currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate)!
+        }
+        
+        return recentMonths.reversed()
+    }
+    
     
     // Create New Month Data
     func createMonthlyStatistics(month: String, totalIncome: Double, totalExpense: Double) {
