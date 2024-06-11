@@ -188,7 +188,6 @@ class AddViewController: UIViewController {
         super.viewDidLoad()
         
         setupInitialValues()
-        //navigationItem.title = "지출"
         view.backgroundColor = .white
         
         view.addSubview(segmentControl)
