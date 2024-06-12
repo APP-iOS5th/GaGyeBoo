@@ -289,12 +289,12 @@ class StatisticsDataManager {
         }
         
         // Mock Data
-        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
-        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
-        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
-        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
-        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
-        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
+//        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
+//        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
+//        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
+//        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
+//        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
+//        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
         saveContext()
     }
 }

@@ -152,8 +152,8 @@
 			children = (
 				CD2574152C0ECEB000BC4844 /* MainView.swift */,
 				CD2574172C0ECEB500BC4844 /* AddView.swift */,
-				CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */,
 				CD2574192C0ECEBA00BC4844 /* SettingsView.swift */,
+				CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */,
 				7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */,
 			);
 			path = Views;
