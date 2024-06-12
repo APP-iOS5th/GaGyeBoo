@@ -97,6 +97,7 @@ class AddViewController: UIViewController {
         moneyField.borderStyle = .roundedRect
         moneyField.translatesAutoresizingMaskIntoConstraints = false
         moneyField.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        moneyField.keyboardType = .numberPad
         
         moneyField.addTarget(self, action: #selector(moneyTextChanged(moneyField:)), for: .editingChanged)
         
