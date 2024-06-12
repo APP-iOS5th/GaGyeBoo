@@ -39,10 +39,11 @@ class BudgetSettingViewController: UIViewController {
         return label
     }()
     
-    private let saveButton: UIButton = {
+    private lazy var saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("저장", for: .normal)
         button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        button.tintColor = .primary100
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()

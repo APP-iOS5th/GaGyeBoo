@@ -101,7 +101,7 @@ class SpendDataManager {
         allSpends = spendRecords
     }
     
-    func getRecordsBy(year: Int, month: Int? = nil, day: Int? = nil) {
+    func getRecordsBy(year: Int, month: Int? = nil, day: Int? = nil, target: ShowTarget) {
         let calendar = Calendar.current
         
         var startComponents = DateComponents()
@@ -142,9 +142,17 @@ class SpendDataManager {
                             spendList.append(GaGyeBooModel(date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
                         }
                     }
-                    spendsForDetailList = spendList
+                    if target == .calendar {
+                        allSpends = spendList
+                    } else {
+                        spendsForDetailList = spendList
+                    }
                 } else {
-                    spendsForDetailList = []
+                    if target == .calendar {
+                        allSpends = []
+                    } else {
+                        spendsForDetailList = []
+                    }
                 }
             } catch {
                 print("error in SpendDataManager getRecordsBy() >> \(error.localizedDescription)")
