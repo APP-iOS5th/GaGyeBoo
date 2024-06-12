@@ -20,7 +20,6 @@
 		CD0E38B72C0D99BF00F9BF92 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = CD0E38B62C0D99BF00F9BF92 /* Base */; };
 		CD0E38C22C0D9C4300F9BF92 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CD0E38C12C0D9C4300F9BF92 /* .gitignore */; };
 		CD0E38C42C0D9DB300F9BF92 /* GaGyeBooModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38C32C0D9DB300F9BF92 /* GaGyeBooModel.swift */; };
-		CD14A8AD2C195FD600D673C6 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CD14A8AC2C195FD600D673C6 /* DGCharts */; };
 		CD25740F2C0ECC3900BC4844 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD25740E2C0ECC3900BC4844 /* AddViewController.swift */; };
 		CD2574132C0ECC6300BC4844 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574122C0ECC6300BC4844 /* StatisticsViewController.swift */; };
 		CD2574162C0ECEB000BC4844 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574152C0ECEB000BC4844 /* MainView.swift */; };
@@ -28,6 +27,7 @@
 		CD25741A2C0ECEBA00BC4844 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2574192C0ECEBA00BC4844 /* SettingsView.swift */; };
 		CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD25741B2C0ECEC600BC4844 /* StatisticsView.swift */; };
 		CD994AAC2C12E52C00681C50 /* SpendDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD994AAB2C12E52C00681C50 /* SpendDataManager.swift */; };
+		F7B22A202C1987B400DEC619 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = F7B22A1F2C1987B400DEC619 /* DGCharts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -73,7 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD14A8AD2C195FD600D673C6 /* DGCharts in Frameworks */,
+				F7B22A202C1987B400DEC619 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,7 +182,7 @@
 			);
 			name = GaGyeBoo;
 			packageProductDependencies = (
-				CD14A8AC2C195FD600D673C6 /* DGCharts */,
+				F7B22A1F2C1987B400DEC619 /* DGCharts */,
 			);
 			productName = GaGyeBoo;
 			productReference = CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */;
@@ -486,7 +486,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CD14A8AC2C195FD600D673C6 /* DGCharts */ = {
+		F7B22A1F2C1987B400DEC619 /* DGCharts */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DGCharts;
 		};

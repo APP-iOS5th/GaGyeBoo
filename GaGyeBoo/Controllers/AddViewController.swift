@@ -108,29 +108,42 @@ class AddViewController: UIViewController {
         return moneyStackView
     }()
     
-    lazy var categoryField: UIStackView = {
-        let categoryStackView = UIStackView()
-        categoryStackView.axis = .horizontal
-        categoryStackView.alignment = .fill
-        categoryStackView.distribution = .fill
-        categoryStackView.spacing = 8
+    //카테고리 버튼 만들기
+    private var selectedCategory: String?
+    
+    private func createCatefgoryButtons() -> UIStackView {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 8
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         
         let labelComponent = UILabel()
         labelComponent.text = "분류: "
         
-        let category = UITextField()
-        category.placeholder = "카테고리"
-        category.borderStyle = .roundedRect
-        category.translatesAutoresizingMaskIntoConstraints = false
-        category.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        stackView.addArrangedSubview(labelComponent)
         
-        category.addTarget(self, action: #selector(categoryTextChanged(categoryField:)), for: .editingChanged)
+        let categories = ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타"]
         
-        categoryStackView.addArrangedSubview(labelComponent)
-        categoryStackView.addArrangedSubview(category)
-        
-        return categoryStackView
-    }()
+        for category in categories {
+            let button = UIButton(type: .system)
+            button.setTitle(category, for: .normal)
+            button.setTitleColor(.white, for: .normal)
+            button.backgroundColor = .systemBlue
+            button.layer.cornerRadius = 5.0
+            button.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
+            stackView.addArrangedSubview(button)
+        }
+        return stackView
+    }
+    
+    @objc private func categoryTapped(_ sender: UIButton) {
+        guard let category = sender.title(for: .normal) else { return }
+        selectedCategory = category
+        updateSaveButtonState()
+        print("선택된 카테고리: \(category)")
+    }
     
     let contentsField: UIStackView = {
         let contentsStackView = UIStackView()
@@ -211,7 +224,7 @@ class AddViewController: UIViewController {
         view.addSubview(datePicker)
         
         textFieldContainer.addArrangedSubview(moneyTextField)
-        textFieldContainer.addArrangedSubview(categoryField)
+        textFieldContainer.addArrangedSubview(createCatefgoryButtons())
         textFieldContainer.addArrangedSubview(contentsField)
         //textFieldContainer.addArrangedSubview(photoField)
         view.addSubview(textFieldContainer)
@@ -248,13 +261,12 @@ class AddViewController: UIViewController {
     }
     
     //MARK: Methods
-    
     // navigation 타이틀 초기화
     private func setupInitialValues() {
         segmentControl.selectedSegmentIndex = 0
         changeSegmentedControlLinePosition()
         
-        navigationItem.title = "수입"
+        navigationItem.title = "새로운 가계부"
     }
     
     // datePikcer
@@ -275,9 +287,9 @@ class AddViewController: UIViewController {
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            navigationItem.title = "수입"
+            let saveType: Categories = .income
         case 1:
-            navigationItem.title = "지출"
+            let saveType: Categories = .expense
         default:
             break
         }
@@ -287,13 +299,9 @@ class AddViewController: UIViewController {
         updateSaveButtonState()
     }
     
-    @objc func categoryTextChanged(categoryField: UITextField) {
-        updateSaveButtonState()
-    }
-    
     func updateSaveButtonState() {
         guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
-              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+              let category = selectedCategory, !category.isEmpty
         else {
             saveButton.isEnabled = false
             saveButton.tintColor = .bg200
@@ -306,20 +314,20 @@ class AddViewController: UIViewController {
     @objc private func saveItem() {
         guard let moneyText = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !moneyText.isEmpty,
               let amount = Double(moneyText),
-              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+              let category = selectedCategory, !category.isEmpty
         else {
             return
         }
         
         let date = datePicker.date
-        let saveType: Categories = self.segmentControl.selectedSegmentIndex == 0 ? .income : .expense
+        let saveType: Categories = segmentControl.selectedSegmentIndex == 0 ? .income : .expense
         let spendType: String? = nil
         
         let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
         spendDataManager.saveSpend(newSpend: gagyebooData)
         calendarDelegate?.reloadCalendar(newSpend: gagyebooData)
         
-        dismiss(animated: true)
+        dismiss(animated: true, completion: nil)
     }
     
     //MARK: KeyBoardTapGesture
@@ -339,13 +347,13 @@ class AddViewController: UIViewController {
     
     @objc func tapHandler(_sender: UIView) {
         (moneyTextField.arrangedSubviews[1] as? UITextField)?.resignFirstResponder()
-        (categoryField.arrangedSubviews[1] as? UITextField)?.resignFirstResponder()
         (contentsField.arrangedSubviews[1] as?
          UITextField)?.resignFirstResponder()
     }
     
     @objc func keyboardWillShow(_ notification: NSNotification) {
         print("keyboardup")
+
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             let keyboardHeight = keyboardSize.height
             if view.frame.origin.y == 0 {
@@ -360,5 +368,6 @@ class AddViewController: UIViewController {
             view.frame.origin.y = 0
         }
     }
+    
 }
 
