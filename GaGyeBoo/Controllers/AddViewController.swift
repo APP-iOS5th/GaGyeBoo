@@ -9,12 +9,17 @@ import UIKit
 
 class AddViewController: UIViewController {
     
+    let spendDataManager: SpendDataManager = SpendDataManager()
+    
     let datePicker: UIDatePicker = {
         let cal = UIDatePicker()
         cal.translatesAutoresizingMaskIntoConstraints = false
         cal.datePickerMode = .date
         cal.preferredDatePickerStyle = .inline
         cal.locale = Locale(identifier: "ko_KR")
+        
+//        cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        
         return cal
     }()
     
@@ -232,12 +237,19 @@ class AddViewController: UIViewController {
     }
     
     //MARK: Methods
+    
+    // navigation 타이틀 초기화
     private func setupInitialValues() {
         segmentControl.selectedSegmentIndex = 0
         changeSegmentedControlLinePosition()
         
         navigationItem.title = "수입"
     }
+    
+    // datePikcer
+//    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+//        let selectedDate = sender.date
+//    }
     
     @objc private func changeSegmentedControlLinePosition() {
         let segmentIndex = CGFloat(segmentControl.selectedSegmentIndex)
@@ -265,11 +277,20 @@ class AddViewController: UIViewController {
     }
     
     @objc private func saveItem() {
-        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
+        guard let moneyText = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !moneyText.isEmpty,
+              let amount = Double(moneyText),
               let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
         else {
             return
         }
+        
+        let date = datePicker.date
+        let saveType: Categories = .expense
+        let spendType: String? = nil
+        
+        let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
+        spendDataManager.saveSpend(newSpend: gagyebooData)
+        
         dismiss(animated: true)
     }
     
