@@ -155,7 +155,7 @@ class AddViewController: UIViewController {
         labelComponent.text = "사진: "
         
         let photo = UITextField()
-        photo.placeholder = "사진 추가 하는 기능.."
+        photo.placeholder = "사진 추가 하는 기능"
         photo.borderStyle = .roundedRect
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.widthAnchor.constraint(equalToConstant: 310).isActive = true
