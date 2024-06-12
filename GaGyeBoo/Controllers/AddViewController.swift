@@ -48,7 +48,7 @@ class AddViewController: UIViewController {
         
         //선택 폰트
         segment.setTitleTextAttributes([
-            NSAttributedString.Key.foregroundColor: UIColor.systemFill,
+            NSAttributedString.Key.foregroundColor: UIColor.systemGreen,
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold)
         ], for: .selected)
         
@@ -62,7 +62,7 @@ class AddViewController: UIViewController {
     
     private lazy var underLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemFill
+        view.backgroundColor = .systemGreen
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
