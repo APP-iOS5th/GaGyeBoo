@@ -9,12 +9,18 @@ import UIKit
 
 class AddViewController: UIViewController {
     
+    let spendDataManager: SpendDataManager = SpendDataManager()
+    
     let datePicker: UIDatePicker = {
         let cal = UIDatePicker()
         cal.translatesAutoresizingMaskIntoConstraints = false
         cal.datePickerMode = .date
         cal.preferredDatePickerStyle = .inline
         cal.locale = Locale(identifier: "ko_KR")
+        cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        
+//        cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        
         return cal
     }()
     
@@ -42,7 +48,7 @@ class AddViewController: UIViewController {
         
         //선택 폰트
         segment.setTitleTextAttributes([
-            NSAttributedString.Key.foregroundColor: UIColor.systemFill,
+            NSAttributedString.Key.foregroundColor: UIColor.systemGreen,
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold)
         ], for: .selected)
         
@@ -56,7 +62,7 @@ class AddViewController: UIViewController {
     
     private lazy var underLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemFill
+        view.backgroundColor = .systemGreen
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -91,6 +97,7 @@ class AddViewController: UIViewController {
         moneyField.borderStyle = .roundedRect
         moneyField.translatesAutoresizingMaskIntoConstraints = false
         moneyField.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        moneyField.keyboardType = .numberPad
         
         moneyField.addTarget(self, action: #selector(moneyTextChanged(moneyField:)), for: .editingChanged)
         
@@ -115,6 +122,8 @@ class AddViewController: UIViewController {
         category.borderStyle = .roundedRect
         category.translatesAutoresizingMaskIntoConstraints = false
         category.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        
+        category.addTarget(self, action: #selector(categoryTextChanged(categoryField:)), for: .editingChanged)
         
         categoryStackView.addArrangedSubview(labelComponent)
         categoryStackView.addArrangedSubview(category)
@@ -144,27 +153,27 @@ class AddViewController: UIViewController {
         return contentsStackView
     }()
     
-    let photoField: UIStackView = {
-        let photoStackView = UIStackView()
-        photoStackView.axis = .horizontal
-        photoStackView.alignment = .fill
-        photoStackView.distribution = .fill
-        photoStackView.spacing = 8
-        
-        let labelComponent = UILabel()
-        labelComponent.text = "사진: "
-        
-        let photo = UITextField()
-        photo.placeholder = "사진 추가 하는 기능.."
-        photo.borderStyle = .roundedRect
-        photo.translatesAutoresizingMaskIntoConstraints = false
-        photo.widthAnchor.constraint(equalToConstant: 310).isActive = true
-        
-        photoStackView.addArrangedSubview(labelComponent)
-        photoStackView.addArrangedSubview(photo)
-        
-        return photoStackView
-    }()
+//    let photoField: UIStackView = {
+//        let photoStackView = UIStackView()
+//        photoStackView.axis = .horizontal
+//        photoStackView.alignment = .fill
+//        photoStackView.distribution = .fill
+//        photoStackView.spacing = 8
+//        
+//        let labelComponent = UILabel()
+//        labelComponent.text = "사진: "
+//        
+//        let photo = UITextField()
+//        photo.placeholder = "사진 추가 하는 기능"
+//        photo.borderStyle = .roundedRect
+//        photo.translatesAutoresizingMaskIntoConstraints = false
+//        photo.widthAnchor.constraint(equalToConstant: 310).isActive = true
+//        
+//        photoStackView.addArrangedSubview(labelComponent)
+//        photoStackView.addArrangedSubview(photo)
+//        
+//        return photoStackView
+//    }()
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
@@ -182,13 +191,15 @@ class AddViewController: UIViewController {
         return button
     }()
     
-    lazy var keyBoardTapGesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+    lazy var keyBoardTapGesture: UITapGestureRecognizer = { let gesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+        gesture.cancelsTouchesInView = false
+        return gesture
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupInitialValues()
-        //navigationItem.title = "지출"
         view.backgroundColor = .white
         
         view.addSubview(segmentControl)
@@ -198,7 +209,7 @@ class AddViewController: UIViewController {
         textFieldContainer.addArrangedSubview(moneyTextField)
         textFieldContainer.addArrangedSubview(categoryField)
         textFieldContainer.addArrangedSubview(contentsField)
-        textFieldContainer.addArrangedSubview(photoField)
+        //textFieldContainer.addArrangedSubview(photoField)
         view.addSubview(textFieldContainer)
         view.addSubview(saveButton)
         
@@ -225,7 +236,7 @@ class AddViewController: UIViewController {
             textFieldContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
             textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5),
             
-            saveButton.topAnchor.constraint(equalTo: photoField.bottomAnchor, constant: 30),
+            saveButton.topAnchor.constraint(equalTo: contentsField.bottomAnchor, constant: 30),
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
@@ -233,11 +244,18 @@ class AddViewController: UIViewController {
     }
     
     //MARK: Methods
+    
+    // navigation 타이틀 초기화
     private func setupInitialValues() {
         segmentControl.selectedSegmentIndex = 0
         changeSegmentedControlLinePosition()
         
         navigationItem.title = "수입"
+    }
+    
+    // datePikcer
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        print("Selected date: \(datePicker.date)")
     }
     
     @objc private func changeSegmentedControlLinePosition() {
@@ -265,13 +283,8 @@ class AddViewController: UIViewController {
         updateSaveButtonState()
     }
     
-    @objc private func saveItem() {
-        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
-              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
-        else {
-            return
-        }
-        dismiss(animated: true)
+    @objc func categoryTextChanged(categoryField: UITextField) {
+        updateSaveButtonState()
     }
     
     func updateSaveButtonState() {
@@ -282,6 +295,24 @@ class AddViewController: UIViewController {
             return
         }
         saveButton.isEnabled = true
+    }
+    
+    @objc private func saveItem() {
+        guard let moneyText = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !moneyText.isEmpty,
+              let amount = Double(moneyText),
+              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+        else {
+            return
+        }
+        
+        let date = datePicker.date
+        let saveType: Categories = .expense
+        let spendType: String? = nil
+        
+        let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
+        spendDataManager.saveSpend(newSpend: gagyebooData)
+        
+        dismiss(animated: true)
     }
     
     //MARK: KeyBoardTapGesture
