@@ -321,7 +321,11 @@ class AddViewController: UIViewController {
         
         let date = datePicker.date
         let saveType: Categories = segmentControl.selectedSegmentIndex == 0 ? .income : .expense
-        let spendType: String? = nil
+        var spendType: String? = nil
+        
+        if let spendContent = (contentsField.arrangedSubviews[1] as? UITextField)?.text, !spendContent.isEmpty {
+            spendType = spendContent
+        }
         
         let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
         spendDataManager.saveSpend(newSpend: gagyebooData)
