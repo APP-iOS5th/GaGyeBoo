@@ -91,6 +91,7 @@ class MainViewController: UIViewController {
         calendar.delegate = self
         calendar.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
         calendar.tintColor = .primary100
+        calendar.locale = Locale(identifier: "ko_KR")
         
         return calendar
     }()
@@ -239,6 +240,29 @@ class MainViewController: UIViewController {
             calendarView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             calendarView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+        
+        DispatchQueue.main.async {
+            self.changeWeekdayHeaderColors()
+        }
+    }
+    
+    func changeWeekdayHeaderColors() {
+        // Traverse the subviews to find the weekday labels
+        for subview in calendarView.subviews {
+            for weekParent in subview.subviews[1].subviews {
+                for weekLabel in weekParent.subviews {
+                    if let dayLabel = weekLabel as? UILabel {
+                        if dayLabel.text == "일" {
+                            dayLabel.textColor = .systemRed
+                        } else if dayLabel.text == "토" {
+                            dayLabel.textColor = .systemBlue
+                        } else {
+                            dayLabel.textColor = .label
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func setSpendList() {
