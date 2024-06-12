@@ -68,7 +68,7 @@ class AddViewController: UIViewController {
     
     let textFieldContainer: UIStackView = {
         let stackView = UIStackView()
-        stackView.axis = .vertib
+        stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fill
         stackView.spacing = 16
