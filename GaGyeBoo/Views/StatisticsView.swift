@@ -19,6 +19,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         label.text = "최근 6개월 통계"
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         label.textAlignment = .center
+        
         return label
     }()
     
@@ -69,6 +70,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(StatisticsTableCell.self, forCellReuseIdentifier: StatisticsTableCell.identifier)
+        
         return tableView
     }()
     

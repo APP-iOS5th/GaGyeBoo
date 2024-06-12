@@ -58,11 +58,19 @@ class StatisticsTableCell: UITableViewCell {
     
     func configure(with month: String, incomeAmount: String?, expenseAmount: String?) {
         monthLabel.text = month
-        incomeAmountLabel.text = incomeAmount ?? ""
-        expenseAmountLabel.text = expenseAmount ?? ""
+        if let income = incomeAmount {
+            incomeAmountLabel.isHidden = false
+            incomeAmountLabel.text = "+ \(income)"
+        } else {
+            incomeAmountLabel.isHidden = true
+        }
         
-        expenseAmountLabel.isHidden = incomeAmount != nil
-        incomeAmountLabel.isHidden = expenseAmount != nil
+        if let expense = expenseAmount {
+            expenseAmountLabel.isHidden = false
+            expenseAmountLabel.text = "- \(expense)"
+        } else {
+            expenseAmountLabel.isHidden = true
+        }
         
         layoutIfNeeded()
     }
