@@ -293,7 +293,7 @@ class MainViewController: UIViewController {
     @objc func toAddPage() {
         // TODO: 수입/지출 내역 작성 페이지로 이동
         let addPageController = AddViewController()
-        addPageController.calendarDelegate = self
+//        addPageController.calendarDelegate = self
         let navigationController = UINavigationController(rootViewController: addPageController)
         present(navigationController, animated: true)
     }
