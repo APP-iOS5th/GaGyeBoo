@@ -153,27 +153,27 @@ class AddViewController: UIViewController {
         return contentsStackView
     }()
     
-    let photoField: UIStackView = {
-        let photoStackView = UIStackView()
-        photoStackView.axis = .horizontal
-        photoStackView.alignment = .fill
-        photoStackView.distribution = .fill
-        photoStackView.spacing = 8
-        
-        let labelComponent = UILabel()
-        labelComponent.text = "사진: "
-        
-        let photo = UITextField()
-        photo.placeholder = "사진 추가 하는 기능"
-        photo.borderStyle = .roundedRect
-        photo.translatesAutoresizingMaskIntoConstraints = false
-        photo.widthAnchor.constraint(equalToConstant: 310).isActive = true
-        
-        photoStackView.addArrangedSubview(labelComponent)
-        photoStackView.addArrangedSubview(photo)
-        
-        return photoStackView
-    }()
+//    let photoField: UIStackView = {
+//        let photoStackView = UIStackView()
+//        photoStackView.axis = .horizontal
+//        photoStackView.alignment = .fill
+//        photoStackView.distribution = .fill
+//        photoStackView.spacing = 8
+//        
+//        let labelComponent = UILabel()
+//        labelComponent.text = "사진: "
+//        
+//        let photo = UITextField()
+//        photo.placeholder = "사진 추가 하는 기능"
+//        photo.borderStyle = .roundedRect
+//        photo.translatesAutoresizingMaskIntoConstraints = false
+//        photo.widthAnchor.constraint(equalToConstant: 310).isActive = true
+//        
+//        photoStackView.addArrangedSubview(labelComponent)
+//        photoStackView.addArrangedSubview(photo)
+//        
+//        return photoStackView
+//    }()
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
@@ -209,7 +209,7 @@ class AddViewController: UIViewController {
         textFieldContainer.addArrangedSubview(moneyTextField)
         textFieldContainer.addArrangedSubview(categoryField)
         textFieldContainer.addArrangedSubview(contentsField)
-        textFieldContainer.addArrangedSubview(photoField)
+        //textFieldContainer.addArrangedSubview(photoField)
         view.addSubview(textFieldContainer)
         view.addSubview(saveButton)
         
@@ -236,7 +236,7 @@ class AddViewController: UIViewController {
             textFieldContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
             textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5),
             
-            saveButton.topAnchor.constraint(equalTo: photoField.bottomAnchor, constant: 30),
+            saveButton.topAnchor.constraint(equalTo: contentsField.bottomAnchor, constant: 30),
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
