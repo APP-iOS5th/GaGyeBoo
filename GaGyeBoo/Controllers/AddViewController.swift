@@ -312,7 +312,7 @@ class AddViewController: UIViewController {
         let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
         spendDataManager.saveSpend(newSpend: gagyebooData)
         
-        dismiss(animated: true)
+        dismiss(animated: true, completion: nil)
     }
     
     //MARK: KeyBoardTapGesture
@@ -339,6 +339,7 @@ class AddViewController: UIViewController {
     
     @objc func keyboardWillShow(_ notification: NSNotification) {
         print("keyboardup")
+
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             let keyboardHeight = keyboardSize.height
             if view.frame.origin.y == 0 {
