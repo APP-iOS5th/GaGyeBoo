@@ -88,7 +88,6 @@
 				CD0E38C12C0D9C4300F9BF92 /* .gitignore */,
 				CD0E38A62C0D99BE00F9BF92 /* GaGyeBoo */,
 				CD0E38A52C0D99BE00F9BF92 /* Products */,
-				CD11381E2C1841260015CC7D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -146,13 +145,6 @@
 				CD994AAB2C12E52C00681C50 /* SpendDataManager.swift */,
 			);
 			path = Datas;
-			sourceTree = "<group>";
-		};
-		CD11381E2C1841260015CC7D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		CD2574142C0ECEA300BC4844 /* Views */ = {
@@ -216,7 +208,7 @@
 			);
 			mainGroup = CD0E389B2C0D99BE00F9BF92;
 			packageReferences = (
-				7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */,
+				7FE7D5C92C19C6ED000B7530 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			productRefGroup = CD0E38A52C0D99BE00F9BF92 /* Products */;
 			projectDirPath = "";
@@ -479,7 +471,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		7F81439E2C0F4D0F00741BBA /* XCRemoteSwiftPackageReference "Charts" */ = {
+		7FE7D5C92C19C6ED000B7530 /* XCRemoteSwiftPackageReference "Charts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ChartsOrg/Charts.git";
 			requirement = {

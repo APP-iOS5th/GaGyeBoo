@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "originHash" : "895a99aa035dd600386f2e6575e6f6c994ab617afe2ec9d65191a729eb996cc3",
-=======
-  "originHash" : "8d06e4a59b99e484e3d28b72db9b2667e033519a64d67067875a321abf593e97",
->>>>>>> 14c6bd1 (불필요 부분 삭제)
   "pins" : [
     {
       "identity" : "charts",
