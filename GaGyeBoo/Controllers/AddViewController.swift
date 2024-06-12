@@ -11,13 +11,14 @@ class AddViewController: UIViewController {
     
     let spendDataManager: SpendDataManager = SpendDataManager()
     
-    let datePicker: UIDatePicker = {
+    private lazy var datePicker: UIDatePicker = {
         let cal = UIDatePicker()
         cal.translatesAutoresizingMaskIntoConstraints = false
         cal.datePickerMode = .date
         cal.preferredDatePickerStyle = .inline
         cal.locale = Locale(identifier: "ko_KR")
         cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        cal.tintColor = .primary100
         
 //        cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
@@ -48,7 +49,7 @@ class AddViewController: UIViewController {
         
         //선택 폰트
         segment.setTitleTextAttributes([
-            NSAttributedString.Key.foregroundColor: UIColor.systemGreen,
+            NSAttributedString.Key.foregroundColor: UIColor.label,
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold)
         ], for: .selected)
         
@@ -62,7 +63,7 @@ class AddViewController: UIViewController {
     
     private lazy var underLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGreen
+        view.backgroundColor = .primary100
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -82,7 +83,7 @@ class AddViewController: UIViewController {
         return stackView
     }()
     
-    let moneyTextField: UIStackView = {
+    lazy var moneyTextField: UIStackView = {
         let moneyStackView = UIStackView()
         moneyStackView.axis = .horizontal
         moneyStackView.alignment = .fill
@@ -107,7 +108,7 @@ class AddViewController: UIViewController {
         return moneyStackView
     }()
     
-    let categoryField: UIStackView = {
+    lazy var categoryField: UIStackView = {
         let categoryStackView = UIStackView()
         categoryStackView.axis = .horizontal
         categoryStackView.alignment = .fill
@@ -185,6 +186,7 @@ class AddViewController: UIViewController {
             return outgoing
         }
         button.configuration = config
+        button.tintColor = .bg300
         button.translatesAutoresizingMaskIntoConstraints = false
         button.widthAnchor.constraint(equalToConstant: 350).isActive = true
         
@@ -195,6 +197,8 @@ class AddViewController: UIViewController {
         gesture.cancelsTouchesInView = false
         return gesture
     }()
+    
+    var calendarDelegate: ReloadCalendarDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -223,7 +227,7 @@ class AddViewController: UIViewController {
             segmentControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
             segmentControl.heightAnchor.constraint(equalToConstant: 30),
             
-            underLineView.bottomAnchor.constraint(equalTo: segmentControl.bottomAnchor),
+            underLineView.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 5),
             underLineView.heightAnchor.constraint(equalToConstant: 5),
             leadingDistance,
             underLineView.widthAnchor.constraint(equalTo: segmentControl.widthAnchor, multiplier: 1 / CGFloat(segmentControl.numberOfSegments)),
@@ -292,8 +296,10 @@ class AddViewController: UIViewController {
               let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
         else {
             saveButton.isEnabled = false
+            saveButton.tintColor = .bg200
             return
         }
+        saveButton.tintColor = .primary100
         saveButton.isEnabled = true
     }
     
@@ -306,11 +312,12 @@ class AddViewController: UIViewController {
         }
         
         let date = datePicker.date
-        let saveType: Categories = .expense
+        let saveType: Categories = self.segmentControl.selectedSegmentIndex == 0 ? .income : .expense
         let spendType: String? = nil
         
         let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
         spendDataManager.saveSpend(newSpend: gagyebooData)
+        calendarDelegate?.reloadCalendar(newSpend: gagyebooData)
         
         dismiss(animated: true, completion: nil)
     }
