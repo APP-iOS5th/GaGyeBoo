@@ -17,6 +17,7 @@ class AddViewController: UIViewController {
         cal.datePickerMode = .date
         cal.preferredDatePickerStyle = .inline
         cal.locale = Locale(identifier: "ko_KR")
+        cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
 //        cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
@@ -121,6 +122,8 @@ class AddViewController: UIViewController {
         category.translatesAutoresizingMaskIntoConstraints = false
         category.widthAnchor.constraint(equalToConstant: 310).isActive = true
         
+        category.addTarget(self, action: #selector(categoryTextChanged(categoryField:)), for: .editingChanged)
+        
         categoryStackView.addArrangedSubview(labelComponent)
         categoryStackView.addArrangedSubview(category)
         
@@ -187,7 +190,10 @@ class AddViewController: UIViewController {
         return button
     }()
     
-    lazy var keyBoardTapGesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+    lazy var keyBoardTapGesture: UITapGestureRecognizer = { let gesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+        gesture.cancelsTouchesInView = false
+        return gesture
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -247,9 +253,9 @@ class AddViewController: UIViewController {
     }
     
     // datePikcer
-//    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-//        let selectedDate = sender.date
-//    }
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        print("Selected date: \(datePicker.date)")
+    }
     
     @objc private func changeSegmentedControlLinePosition() {
         let segmentIndex = CGFloat(segmentControl.selectedSegmentIndex)
@@ -276,6 +282,20 @@ class AddViewController: UIViewController {
         updateSaveButtonState()
     }
     
+    @objc func categoryTextChanged(categoryField: UITextField) {
+        updateSaveButtonState()
+    }
+    
+    func updateSaveButtonState() {
+        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
+              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
+        else {
+            saveButton.isEnabled = false
+            return
+        }
+        saveButton.isEnabled = true
+    }
+    
     @objc private func saveItem() {
         guard let moneyText = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !moneyText.isEmpty,
               let amount = Double(moneyText),
@@ -292,16 +312,6 @@ class AddViewController: UIViewController {
         spendDataManager.saveSpend(newSpend: gagyebooData)
         
         dismiss(animated: true)
-    }
-    
-    func updateSaveButtonState() {
-        guard let money = (moneyTextField.arrangedSubviews[1] as? UITextField)?.text, !money.isEmpty,
-              let category = (categoryField.arrangedSubviews[1] as? UITextField)?.text, !category.isEmpty
-        else {
-            saveButton.isEnabled = false
-            return
-        }
-        saveButton.isEnabled = true
     }
     
     //MARK: KeyBoardTapGesture
