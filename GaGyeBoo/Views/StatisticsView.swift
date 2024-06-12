@@ -35,18 +35,19 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let recentMonths = StatisticsDataManager.shared.getRecentMonths()
         let months = recentMonths.map { ($0.components(separatedBy: "-").last ?? "") + "월" }
         let maxLabelCount = months.count
-        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.translatesAutoresizingMaskIntoConstraints = false
         barChartView.backgroundColor = .bg100
         
-        barChartView.xAxis.labelPosition = .bottom
+        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
-        
+        barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
         barChartView.xAxis.drawGridLinesEnabled = false
+        
+        
         barChartView.rightAxis.enabled = false
         barChartView.leftAxis.enabled = false
-//                barChartView.leftAxis.valueFormatter = DefaultAxisValueFormatter(formatter: numberFormatter)
+        //                barChartView.leftAxis.valueFormatter = DefaultAxisValueFormatter(formatter: numberFormatter)
         barChartView.doubleTapToZoomEnabled = false
         barChartView.legend.font = .systemFont(ofSize: 12)
         
@@ -155,11 +156,13 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         
         let chartData = BarChartData(dataSet: dataSet)
         chartData.barWidth = 0.5
+        
         return chartData
     }
     
     private func entryData(values: [Double]) -> [BarChartDataEntry] {
         var barDataEntries: [BarChartDataEntry] = []
+        
         for i in 0..<values.count {
             let barDataEntry = BarChartDataEntry(x: Double(i), y: values[i])
             barDataEntries.append(barDataEntry)
@@ -194,17 +197,19 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         
         if (!data.isEmpty) {
             let entries = entryData(values: data)
-            let dataSet = BarChartDataSet(entries: entries.filter { $0.y != 0 }, label: selectedIndex == 0 ? "수입" : "지출")
+            let dataSet = BarChartDataSet(entries: entries, label: selectedIndex == 0 ? "수입" : "지출")
             dataSet.colors = selectedIndex == 0 ? [.textBlue] : [.accent100]
             dataSet.valueFont = .systemFont(ofSize: 12)
             
             let chartData = BarChartData(dataSet: dataSet)
-            chartData.barWidth = 0.2
-            barChartView.data = chartData
+            chartData.barWidth = 0.3
             
+            barChartView.data = chartData
             dataSet.valueFormatter = valueFormatter
             
-            barChartView.animate(xAxisDuration: 4, yAxisDuration: 4, easingOption: .easeInOutBounce)
+            barChartView.setNeedsLayout()
+            barChartView.layoutIfNeeded()
+            barChartView.animate(xAxisDuration: 3, yAxisDuration: 3, easingOption: .easeInOutBounce)
         } else {
             barChartView.data = nil
         }

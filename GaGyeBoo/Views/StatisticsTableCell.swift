@@ -44,16 +44,15 @@ class StatisticsTableCell: UITableViewCell {
         contentView.addSubview(expenseAmountLabel)
         
         NSLayoutConstraint.activate([
-            monthLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            monthLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             monthLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            incomeAmountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            incomeAmountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             incomeAmountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            expenseAmountLabel.trailingAnchor.constraint(equalTo: incomeAmountLabel.leadingAnchor, constant: -16),
+            expenseAmountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             expenseAmountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            incomeAmountLabel.leadingAnchor.constraint(greaterThanOrEqualTo: monthLabel.trailingAnchor, constant: 16)
         ])
     }
     
