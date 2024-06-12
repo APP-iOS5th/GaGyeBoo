@@ -8,7 +8,7 @@
 import UIKit
 
 class RecurringExpenseSettingViewController: UIViewController {
-    
+    private let dataManager = SpendDataManager()
     private let expenseCategories = ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타"]
     
     private let categoryHeaderLabel = UILabel()
@@ -237,11 +237,26 @@ class RecurringExpenseSettingViewController: UIViewController {
         let selectedCategory = selectedCategoryButton?.titleLabel?.text ?? ""
         let selectedDay = dayPicker.selectedRow(inComponent: 0) + 1
         
+        if UserDefaults.standard.integer(forKey: "selectedDay") > 0 {
+            dataManager.removeDefaultSpends()
+        }
+        
         // Save the recurring expense data
         UserDefaults.standard.set(selectedCategory, forKey: "selectedCategory")
         UserDefaults.standard.set(name, forKey: "expenseName")
         UserDefaults.standard.set(expense, forKey: "expenseAmount")
         UserDefaults.standard.set(selectedDay, forKey: "selectedDay")
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        for year in 2024...2026 {
+            for month in 1...12 {
+                let dateStr = "\(year)-\(month)-\(selectedDay)"
+                if let date = formatter.date(from: dateStr) {
+                    dataManager.saveSpend(newSpend: GaGyeBooModel(date: date, saveType: .expense, category: selectedCategory, spendType: name, amount: Double(expense)), isUserDefault: true)
+                }
+            }
+        }
         
         print("Saved recurring expense: \(name), \(expense) for category: \(selectedCategory) on day: \(selectedDay)")
         
