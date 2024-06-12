@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F0AF4AE2C195DFA00D7C82A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0AF4AD2C195DFA00D7C82A /* SettingsViewController.swift */; };
 		7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */; };
 		7F8143BD2C16EB9800741BBA /* StatisticsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */; };
 		CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7F0AF4AD2C195DFA00D7C82A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTableCell.swift; sourceTree = "<group>"; };
 		7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsDataModel.swift; sourceTree = "<group>"; };
 		CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetSettingViewController.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */,
 				CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */,
 				CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */,
+				7F0AF4AD2C195DFA00D7C82A /* SettingsViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
 				CD25741A2C0ECEBA00BC4844 /* SettingsView.swift in Sources */,
 				7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */,
+				7F0AF4AE2C195DFA00D7C82A /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
