@@ -29,7 +29,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let maxLabelCount = months.count
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.translatesAutoresizingMaskIntoConstraints = false
-        barChartView.backgroundColor = .systemGray6
+        barChartView.backgroundColor = .bg100
         
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
@@ -139,7 +139,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let entries = entryData(values: values)
         let dataSet = BarChartDataSet(entries: entries, label: label)
         
-        dataSet.colors = dataSet.label == "수입" ? [.blue] : [.red]
+        dataSet.colors = dataSet.label == "수입" ? [.textBlue] : [.accent100]
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
@@ -182,7 +182,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         if (!data.isEmpty) {
             let entries = entryData(values: data)
             let dataSet = BarChartDataSet(entries: entries.filter { $0.y != 0 }, label: selectedIndex == 0 ? "수입" : "지출")
-            dataSet.colors = selectedIndex == 0 ? [.blue] : [.red]
+            dataSet.colors = selectedIndex == 0 ? [.textBlue] : [.accent100]
             dataSet.valueFont = .systemFont(ofSize: 12)
             
             let chartData = BarChartData(dataSet: dataSet)
