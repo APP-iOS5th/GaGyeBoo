@@ -21,6 +21,7 @@ class BudgetTextField: UITextField {
     private func setup() {
         keyboardType = .numberPad
         addTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEndOnExit)
+        backgroundColor = .linen
     }
     
     @objc private func textFieldDidEndEditing() {

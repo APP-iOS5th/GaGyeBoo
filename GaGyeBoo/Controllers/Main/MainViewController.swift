@@ -78,7 +78,7 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
     }
     
     func setDailySpendView() {
-        view.backgroundColor = .bg100
+        view.backgroundColor = .linen
         
         setSubscriber()
         setNavigationComponents()

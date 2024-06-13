@@ -49,7 +49,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let months = recentMonths.map { ($0.components(separatedBy: "-").last ?? "") + "월" }
         let maxLabelCount = months.count
         barChartView.translatesAutoresizingMaskIntoConstraints = false
-        barChartView.backgroundColor = .bg100
+        barChartView.backgroundColor = .linen
         
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
@@ -128,13 +128,14 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
     }
     private func setupView() {
-        backgroundColor = .white
+        backgroundColor = .linen
         addSubview(titleLabel)
         addSubview(segmentedControl)
         addSubview(budgetLabel)
         addSubview(barChartView)
         addSubview(noDataLabel)
         addSubview(tableView)
+        
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: -30),
@@ -164,7 +165,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
-        
+        tableView.backgroundColor = .linen
         updateBarChartData()
     }
     
@@ -202,7 +203,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         if segmentedControl.selectedSegmentIndex == 0 {
             let storedBudget = UserDefaults.standard.integer(forKey: "budgetAmount")
             budgetLabel.text = "\(monthString)월 예상 예산: \(numberFormatter.string(from: NSNumber(value: storedBudget)) ?? "0") 원"
-            budgetLabel.textColor = .textBlue
+            budgetLabel.textColor = .text200
             budgetLabel.isHidden = false
         } else {
             let userExpenseData = UserDefaults.standard.integer(forKey: "expenseAmount")
@@ -217,7 +218,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let entries = entryData(values: values)
         let dataSet = BarChartDataSet(entries: entries, label: label)
         
-        dataSet.colors = dataSet.label == "수입" ? [.textBlue] : [.accent100]
+        dataSet.colors = dataSet.label == "수입" ? [.text200] : [.accent100]
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
@@ -265,7 +266,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             
             let entries = entryData(values: data)
             let dataSet = BarChartDataSet(entries: entries, label: selectedIndex == 0 ? "수입" : "지출")
-            dataSet.colors = selectedIndex == 0 ? [.textBlue] : [.accent100]
+            dataSet.colors = selectedIndex == 0 ? [.text200] : [.accent100]
             dataSet.valueFont = .systemFont(ofSize: 12)
             
             let chartData = BarChartData(dataSet: dataSet)
