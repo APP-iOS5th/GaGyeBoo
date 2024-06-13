@@ -1,15 +1,9 @@
-//
-//  AddViewController.swift
-//  GaGyeBoo
-//
-//  Created by MadCow on 2024/6/4.
-//
-
 import UIKit
 
-class AddViewController: UIViewController {
+class EditSpendViewController: UIViewController {
     
     let spendDataManager: SpendDataManager = SpendDataManager()
+    var selectedSpend: GaGyeBooModel?
     
     private lazy var datePicker: UIDatePicker = {
         let cal = UIDatePicker()
@@ -27,13 +21,6 @@ class AddViewController: UIViewController {
     private lazy var segmentControl: UISegmentedControl = {
         let segment = UISegmentedControl()
         
-        segment.selectedSegmentTintColor = .clear
-        
-        //배경색 제거
-        segment.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
-        //구분 라인 제거
-        segment.setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
-        
         segment.insertSegment(withTitle: "수입", at: 0, animated: true)
         segment.insertSegment(withTitle: "지출", at: 1, animated: true)
         
@@ -49,8 +36,8 @@ class AddViewController: UIViewController {
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold)
         ], for: .selected)
         
+        segment.selectedSegmentTintColor = .primary100
         segment.addTarget(self, action: #selector(changeSegmentedControlLinePosition), for: .valueChanged)
-        
         segment.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
         
         segment.translatesAutoresizingMaskIntoConstraints = false
@@ -59,7 +46,7 @@ class AddViewController: UIViewController {
     
     private lazy var underLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .primary100
+        view.backgroundColor = .none
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -173,6 +160,7 @@ class AddViewController: UIViewController {
             button.configuration = config
             button.layer.cornerRadius = 5.0
             button.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
+
             stackView.addArrangedSubview(button)
         }
         scrollView.addSubview(stackView)
@@ -219,7 +207,7 @@ class AddViewController: UIViewController {
             return outgoing
         }
         button.configuration = config
-        button.tintColor = .bg300
+        button.tintColor = .primary100
         button.translatesAutoresizingMaskIntoConstraints = false
         button.widthAnchor.constraint(equalToConstant: 350).isActive = true
         
@@ -249,7 +237,7 @@ class AddViewController: UIViewController {
         view.addSubview(textFieldContainer)
         view.addSubview(saveButton)
         
-        saveButton.isEnabled = false
+        saveButton.isEnabled = true
         saveButton.addTarget(self, action: #selector(saveItem), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
@@ -276,13 +264,35 @@ class AddViewController: UIViewController {
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
-        
+        if let selectedSpend = self.selectedSpend {
+            datePicker.setDate(selectedSpend.date, animated: true)
+            segmentControl.selectedSegmentIndex = selectedSpend.saveType == .income ? 0 : 1
+            
+            (moneyTextField.arrangedSubviews[1] as? UITextField)?.text = "\(Int(selectedSpend.amount))"
+            (contentsField.arrangedSubviews[1] as? UITextField)?.text = selectedSpend.spendType ?? ""
+            
+            let categories: [String] = segmentControl.selectedSegmentIndex == 0 ? ["월급", "용돈", "기타", "추가"] : ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타", "추가"]
+            
+            print(categories.filter{ selectedSpend.category == $0 })
+            if let category = categories.filter({ selectedSpend.category == $0 }).first {
+                let buttonStack = textFieldContainer.arrangedSubviews[1].subviews[0] as! UIStackView
+                for button in buttonStack.subviews {
+                    if let button = button as? UIButton {
+                        if let buttonConfig = button.configuration, let buttonTitle = buttonConfig.title {
+                            if category == buttonTitle {
+                                button.isSelected = true
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     //MARK: Methods
     // navigation 타이틀 초기화
     private func setupInitialValues() {
-        segmentControl.selectedSegmentIndex = 0
         changeSegmentedControlLinePosition()
         navigationItem.title = "새로운 가계부"
     }

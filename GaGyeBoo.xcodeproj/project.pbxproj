@@ -17,6 +17,7 @@
 		CBD462A32C1A39BC008B7D3F /* BudgetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD462A22C1A39BC008B7D3F /* BudgetTextField.swift */; };
 		CBDBB26A2C182D5A00F7E869 /* InquiryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */; };
 		CD04C9A52C1A19950026DA51 /* GaGyeBooColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */; };
+		CD04C9A82C1A8E750026DA51 /* EditSpendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */; };
 		CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */; };
 		CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */; };
 		CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */; };
@@ -59,6 +60,7 @@
 		CBD462A22C1A39BC008B7D3F /* BudgetTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetTextField.swift; sourceTree = "<group>"; };
 		CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryViewController.swift; sourceTree = "<group>"; };
 		CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaGyeBooColors.swift; sourceTree = "<group>"; };
+		CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSpendViewController.swift; sourceTree = "<group>"; };
 		CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaGyeBoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +98,15 @@
 				CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */,
 			);
 			path = Colors;
+			sourceTree = "<group>";
+		};
+		CD04C9A62C1A8E640026DA51 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */,
+				CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 		CD0E389B2C0D99BE00F9BF92 = {
@@ -144,7 +155,7 @@
 		CD0E38BF2C0D99DF00F9BF92 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */,
+				CD04C9A62C1A8E640026DA51 /* Main */,
 				CD25740E2C0ECC3900BC4844 /* AddViewController.swift */,
 				CD2574122C0ECC6300BC4844 /* StatisticsViewController.swift */,
 				CB981F812C19415F00163FB3 /* SettingsViewController.swift */,
@@ -266,6 +277,7 @@
 				CB2578542C1780A900D67DFB /* RecurringExpenseSettingViewController.swift in Sources */,
 				CD0E38C42C0D9DB300F9BF92 /* GaGyeBooModel.swift in Sources */,
 				CD2574132C0ECC6300BC4844 /* StatisticsViewController.swift in Sources */,
+				CD04C9A82C1A8E750026DA51 /* EditSpendViewController.swift in Sources */,
 				CBDBB26A2C182D5A00F7E869 /* InquiryViewController.swift in Sources */,
 				CD25740F2C0ECC3900BC4844 /* AddViewController.swift in Sources */,
 				CD994AAC2C12E52C00681C50 /* SpendDataManager.swift in Sources */,

@@ -28,6 +28,26 @@ class SpendDataManager {
         }
     }
     
+    func removeDefaultStatistics() {
+        monthlySpendFetchRequest.predicate = NSPredicate(format: "month CONTAINS %@", "\(2024)")
+        
+        do {
+            let defaultExpense = Double(UserDefaults.standard.integer(forKey: "expenseAmount"))
+            let defaultSpends = try context.fetch(monthlySpendFetchRequest)
+            if defaultSpends.count > 0 {
+                for spend in defaultSpends {
+                    var spendExpense = spend.value(forKey: "totalExpense") as! Double
+                    spendExpense -= defaultExpense
+                    spend.setValue(spendExpense, forKey: "totalExpense")
+                }
+                
+                try context.save()
+            }
+        } catch {
+            print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
+        }
+    }
+    
     func saveSpend(newSpend: GaGyeBooModel, isUserDefault: Bool = false) {
         if let entity = NSEntityDescription.entity(forEntityName: "GaGyeBoo", in: context) {
             let spend = NSManagedObject(entity: entity, insertInto: context)
