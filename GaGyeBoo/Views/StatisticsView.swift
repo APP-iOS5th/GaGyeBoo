@@ -17,7 +17,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "최근 6개월 통계"
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         label.textAlignment = .center
         
         return label
@@ -44,11 +44,11 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
         barChartView.xAxis.drawGridLinesEnabled = false
-        
+        barChartView.leftAxis.axisMinimum = 0.0 
         
         barChartView.rightAxis.enabled = false
         barChartView.leftAxis.enabled = false
-        //                barChartView.leftAxis.valueFormatter = DefaultAxisValueFormatter(formatter: numberFormatter)
+        
         barChartView.doubleTapToZoomEnabled = false
         barChartView.legend.font = .systemFont(ofSize: 12)
         
@@ -119,10 +119,10 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             segmentedControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             segmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            barChartView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 20),
+            barChartView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
             barChartView.leadingAnchor.constraint(equalTo: leadingAnchor),
             barChartView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.35),
+            barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3),
             
             noDataLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             noDataLabel.centerYAnchor.constraint(equalTo: barChartView.centerYAnchor),
@@ -170,7 +170,6 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
-        chartData.barWidth = 0.5
         
         return chartData
     }
@@ -219,7 +218,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             dataSet.valueFont = .systemFont(ofSize: 12)
             
             let chartData = BarChartData(dataSet: dataSet)
-            chartData.barWidth = 0.3
+            chartData.barWidth = 0.35
             
             barChartView.data = chartData
             dataSet.valueFormatter = DefaultValueFormatter(formatter: numberFormatter)
