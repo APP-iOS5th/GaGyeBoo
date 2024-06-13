@@ -23,7 +23,7 @@ class SpendDataManager {
                 
                 try context.save()
                 
-                removeDefaultStatistics()
+                removeDefaultStatistics(month: "2024", amount: Double(UserDefaults.standard.integer(forKey: "expenseAmount")), isExpense: true)
             }
         } catch {
             print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
@@ -58,7 +58,7 @@ class SpendDataManager {
             spend.setValue(newSpend.category, forKey: "category")
             spend.setValue(newSpend.spendType, forKey: "spendType")
             spend.setValue(newSpend.amount, forKey: "amount")
-            spend.setValue(isUserDefault, forKey: "isUserDefault")
+            spend.setValue(newSpend.isUserDefault, forKey: "isUserDefault")
         }
         
         do {
@@ -76,6 +76,11 @@ class SpendDataManager {
     }
     
     func removeSpend(removeSpend: GaGyeBooModel) {
+        let dateStrArr = removeSpend.dateStr.components(separatedBy: "-")
+        removeDefaultStatistics(month: "\(dateStrArr[0])-\(dateStrArr[1])",
+                                amount: removeSpend.amount,
+                                isExpense: removeSpend.saveType == .expense)
+        
         gaGyeBooFetchRequest.predicate = NSPredicate(format: "id == %@", removeSpend.id as CVarArg)
         
         do {
@@ -160,29 +165,6 @@ class SpendDataManager {
         return totalSpend
     }
     
-    func getAllSpends() {
-        var spendRecords: [GaGyeBooModel] = []
-        do {
-            let allSpends = try context.fetch(gaGyeBooFetchRequest)
-            if allSpends.count > 0 {
-                for spend in allSpends {
-                    let date = spend.value(forKey: "date") as! Date
-                    let saveType = spend.value(forKey: "saveType") as! String
-                    let category = spend.value(forKey: "category") as! String
-                    let spendType = spend.value(forKey: "spendType") as? String
-                    let amount = spend.value(forKey: "amount") as! Double
-                    if let saveTypeToEnum = Categories.allCases.filter({ $0.rawValue == saveType }).first {
-                        spendRecords.append(GaGyeBooModel(id: UUID(), date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
-                    }
-                }
-            }
-        } catch let error {
-            print("error in SpendDataManager getAllSpends() >> \(error.localizedDescription)")
-        }
-        
-        allSpends = spendRecords
-    }
-    
     func getRecordsBy(year: Int, month: Int? = nil, day: Int? = nil, target: ShowTarget) {
         let calendar = Calendar.current
         
@@ -223,7 +205,7 @@ class SpendDataManager {
                         let amount = spend.value(forKey: "amount") as! Double
                         let isUserDefault = spend.value(forKey: "isUserDefault") as! Bool
                         if let saveTypeToEnum = Categories.allCases.filter({ $0.rawValue == saveType }).first {
-                            spendList.append(GaGyeBooModel(id: id, date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
+                            spendList.append(GaGyeBooModel(id: id, date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount, isUserDefault: isUserDefault))
                         }
                     }
                     if target == .calendar {

@@ -273,6 +273,14 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 let action2 = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
                     guard let self = self else { return }
                     let copiedSpend = self.spendList[idx]
+                    
+                    if copiedSpend.isUserDefault == true {
+                        let alert = UIAlertController(title: "오류", message: "고정 지출 금액은 삭제할 수 없습니다.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                        present(alert, animated: true, completion: nil)
+                        return
+                    }
+                    
                     dataManager.removeSpend(removeSpend: copiedSpend)
                     reloadCalendar(newSpend: copiedSpend, isDeleted: true)
                 }
@@ -450,6 +458,9 @@ extension MainViewController: ReloadCalendarDelegate {
         dataManager.getRecordsBy(year: currentYear, month: currentMonth, day: currentDay, target: .list)
         reloadAfterSave = true
         if isDeleted == false {
+            if let index = currentSpend.firstIndex(where: { $0.id == newSpend.id }) {
+                currentSpend.remove(at: index)
+            }
             currentSpend.append(newSpend)
             self.setSpendList()
         } else {
