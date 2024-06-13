@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7F0AF4AE2C195DFA00D7C82A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0AF4AD2C195DFA00D7C82A /* SettingsViewController.swift */; };
 		7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */; };
 		7F8143BD2C16EB9800741BBA /* StatisticsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */; };
 		CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */; };
@@ -18,6 +17,7 @@
 		CBDBB26A2C182D5A00F7E869 /* InquiryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */; };
 		CD04C9A52C1A19950026DA51 /* GaGyeBooColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */; };
 		CD04C9A82C1A8E750026DA51 /* EditSpendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */; };
+		CD04C9AA2C1AF8EC0026DA51 /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A92C1AF8EC0026DA51 /* CustomComponents.swift */; };
 		CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */; };
 		CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */; };
 		CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */; };
@@ -61,6 +61,7 @@
 		CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryViewController.swift; sourceTree = "<group>"; };
 		CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaGyeBooColors.swift; sourceTree = "<group>"; };
 		CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSpendViewController.swift; sourceTree = "<group>"; };
+		CD04C9A92C1AF8EC0026DA51 /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaGyeBoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -92,12 +93,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CD04C9A32C1A19850026DA51 /* Colors */ = {
+		CD04C9A32C1A19850026DA51 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */,
+				CD04C9A92C1AF8EC0026DA51 /* CustomComponents.swift */,
 			);
-			path = Colors;
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		CD04C9A62C1A8E640026DA51 /* Main */ = {
@@ -129,7 +131,7 @@
 		CD0E38A62C0D99BE00F9BF92 /* GaGyeBoo */ = {
 			isa = PBXGroup;
 			children = (
-				CD04C9A32C1A19850026DA51 /* Colors */,
+				CD04C9A32C1A19850026DA51 /* Utils */,
 				CD0E38C02C0D9A3900F9BF92 /* Datas */,
 				CD0E38BE2C0D99DA00F9BF92 /* Models */,
 				CD2574142C0ECEA300BC4844 /* Views */,
@@ -269,6 +271,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */,
+				CD04C9AA2C1AF8EC0026DA51 /* CustomComponents.swift in Sources */,
 				CD2574162C0ECEB000BC4844 /* MainView.swift in Sources */,
 				CBD462A12C1A357F008B7D3F /* CategoryButton.swift in Sources */,
 				CD04C9A52C1A19950026DA51 /* GaGyeBooColors.swift in Sources */,

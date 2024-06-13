@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-class MainViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+class MainViewController: UIViewController, UIPopoverPresentationControllerDelegate, ShowAlertDelegate, ShowEditDelegate {
     
     private lazy var currentMonthSpendLabel: UILabel = {
         let label = UILabel()
@@ -69,23 +69,39 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private lazy var prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
     private lazy var currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
     
+    private let mainView = MainView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        mainView.alertDelegate = self
+        mainView.editDelegate = self
+        self.view = mainView
+        
+        setNavigationComponents()
 //        mockData.getSampleDataBy(year: 2024).forEach{ dataManager.saveSpend(newSpend: $0) }
-        dataManager.getRecordsBy(year: currentYear, month: currentMonth, target: .calendar)
-        setDailySpendView()
+//        dataManager.getRecordsBy(year: currentYear, month: currentMonth, target: .calendar)
+//        setDailySpendView()
         // setMonthlySpendView()
     }
     
-    func setDailySpendView() {
-        view.backgroundColor = .bg100
-        
-        setSubscriber()
-        setNavigationComponents()
-        setScrollView()
-        setPrevLabel()
-        setCalendarData()
-        setCalendarView()
+    func showAlert(controller: UIAlertController) {
+        self.present(controller, animated: true, completion: nil)
+    }
+    
+    func showEditPage(controller: UIViewController, selectedSpend: GaGyeBooModel) {
+        if let editView = controller as? EditSpendViewController {
+            editView.calendarDelegate = self
+            editView.selectedSpend = selectedSpend
+            
+            self.present(editView, animated: true)
+        }
+    }
+    
+    func setNavigationComponents() {
+        // +버튼 오른쪽 아래 float?버튼
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(toAddPage))
+        navigationItem.rightBarButtonItem?.tintColor = .primary100
     }
     
     func setMonthlySpendView() {
@@ -94,22 +110,14 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
 //        view.backgroundColor = .yellow
     }
     
-    func setSubscriber() {
-        cancellable?.cancel()
-        cancellable = dataManager.$allSpends.sink { [weak self] spend in
-            self?.currentSpend = spend
-        }
+    func setDailySpendView() {
+        view.backgroundColor = .bg100
         
-        cancellable?.cancel()
-        cancellable = dataManager.$spendsForDetailList.sink { [weak self] spend in
-            self?.spendList = spend
-        }
-    }
-    
-    func setNavigationComponents() {
-        // +버튼 오른쪽 아래 float?버튼
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(toAddPage))
-        navigationItem.rightBarButtonItem?.tintColor = .primary100
+        setNavigationComponents()
+        setScrollView()
+        setPrevLabel()
+        setCalendarData()
+        setCalendarView()
     }
     
     func setScrollView() {
@@ -314,15 +322,14 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 
                 editButton.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 20),
                 editButton.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
-//                editButton.widthAnchor.constraint(equalToConstant: 50),
-//                editButton.heightAnchor.constraint(equalToConstant: 50),
 
                 amountLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 20),
                 amountLabel.trailingAnchor.constraint(equalTo: editButton.leadingAnchor, constant: -10),
 
                 seperator.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 10),
                 seperator.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
-                seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10)
+                seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
+                seperator.bottomAnchor.constraint(equalTo: secondContentView.bottomAnchor)
             ])
             
             if let spendType = spendType {
@@ -480,20 +487,5 @@ extension MainViewController: ReloadCalendarDelegate {
         currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
         prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
         updateSpendLabels(month: currentMonth)
-    }
-}
-
-class HorizontalSeparator: UIView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        self.translatesAutoresizingMaskIntoConstraints = false
-        self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.lightGray.cgColor
-        self.heightAnchor.constraint(equalToConstant: 1).isActive = true
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

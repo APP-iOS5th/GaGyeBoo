@@ -110,10 +110,6 @@ struct MockStruct {
     }
 }
 
-protocol ReloadCalendarDelegate {
-    func reloadCalendar(newSpend: GaGyeBooModel, isDeleted: Bool)
-}
-
 enum ShowTarget {
     case calendar
     case list
