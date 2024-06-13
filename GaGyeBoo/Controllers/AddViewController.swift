@@ -402,7 +402,7 @@ class AddViewController: UIViewController {
             spendType = spendContent
         }
         
-        let gagyebooData = GaGyeBooModel(id: UUID(), date: date, saveType: saveType, category: category, spendType: spendType, amount: amount, isUserDefault: false)
+        let gagyebooData = GaGyeBooModel(id: UUID(), date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
         spendDataManager.saveSpend(newSpend: gagyebooData)
         calendarDelegate?.reloadCalendar(newSpend: gagyebooData, isDeleted: false)
         
