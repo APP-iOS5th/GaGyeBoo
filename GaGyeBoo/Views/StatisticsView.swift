@@ -31,6 +31,14 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         return control
     }()
     
+    lazy var budgetLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+        label.textAlignment = .center
+        return label
+    }()
+    
     lazy var barChartView: BarChartView = {
         let barChartView = BarChartView()
         let recentMonths = StatisticsDataManager.shared.getRecentMonths()
@@ -92,6 +100,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         updateMonthlySummaries()
         updateBarChartData()
         tableView.reloadData()
+        updateBudget()
         
         if !filteredSummaries.isEmpty {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
@@ -104,6 +113,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         backgroundColor = .white
         addSubview(titleLabel)
         addSubview(segmentedControl)
+        addSubview(budgetLabel)
         addSubview(barChartView)
         addSubview(noDataLabel)
         addSubview(tableView)
@@ -119,7 +129,11 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             segmentedControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             segmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            barChartView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
+            budgetLabel.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 8),
+            budgetLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            budgetLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            barChartView.topAnchor.constraint(equalTo: budgetLabel.bottomAnchor, constant: 8),
             barChartView.leadingAnchor.constraint(equalTo: leadingAnchor),
             barChartView.trailingAnchor.constraint(equalTo: trailingAnchor),
             barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3),
@@ -139,6 +153,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         updateMonthlySummaries()
         updateBarChartData()
+        updateBudget()
         tableView.reloadData()
     }
     
@@ -150,8 +165,8 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             filteredSummaries = monthlySummaries.filter { $0.totalExpense > 0 }
         }
         filteredSummaries.reverse()
-        
         tableView.reloadData()
+        
         if filteredSummaries.isEmpty {
             barChartView.isHidden = true
             noDataLabel.isHidden = false
@@ -161,6 +176,24 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    private func updateBudget() {
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: Date())
+        let monthString = String(format: "%d", month)
+        
+        if segmentedControl.selectedSegmentIndex == 0 {
+            let storedBudget = UserDefaults.standard.integer(forKey: "budgetAmount")
+            budgetLabel.text = "\(monthString)월 예상 예산: \(numberFormatter.string(from: NSNumber(value: storedBudget)) ?? "0") 원"
+            budgetLabel.textColor = .textBlue
+            budgetLabel.isHidden = false
+        } else {
+            let userExpenseData = UserDefaults.standard.integer(forKey: "expenseAmount")
+            let userSelectedDay = UserDefaults.standard.integer(forKey: "selectedDay")
+            budgetLabel.text = "매월 \(userSelectedDay)일 고정지출: \(numberFormatter.string(from: NSNumber(value: userExpenseData)) ?? "0") 원"
+            budgetLabel.textColor = .accent100
+            budgetLabel.isEnabled = true
+        }
+    }
     
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
         let entries = entryData(values: values)
