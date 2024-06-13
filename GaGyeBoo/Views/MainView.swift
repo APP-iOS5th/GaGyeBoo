@@ -20,6 +20,7 @@ class MainView: UIView {
         return calendar
     }()
     
+    @Published var selectedDate: Date?
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
     private var firstCancellable: Cancellable?
     private var secondCancellable: Cancellable?
@@ -217,7 +218,7 @@ class MainView: UIView {
                 seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
             ])
             
-            if idx == self.currentYearMonthSpends.count - 1 {
+            if idx == self.currentYearMonthDaySpends.count - 1 {
                 seperator.bottomAnchor.constraint(equalTo: secondContentView.bottomAnchor).isActive = true
                 break
             }
@@ -245,6 +246,7 @@ extension MainView: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegat
             let month = dateComponent.month,
             let day = dateComponent.day {
             
+            selectedDate = dateComponent.date
             dataManager.getCurrentYearMonthDaySpends(year: year, month: month, day: day)
             setDailySpendList()
         }
@@ -279,22 +281,10 @@ extension MainView: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegat
                 numberFormatter.numberStyle = .decimal
                 
                 if income > 0 {
-                    let incomeLabel = UILabel()
-                    incomeLabel.font = UIFont.systemFont(ofSize: 9)
-                    incomeLabel.textColor = .textBlue
-                    let amountText = numberFormatter.string(from: NSNumber(value: abs(Int(income)))) ?? ""
-                    incomeLabel.text = "+\(amountText)"
-                    
-                    vStack.addArrangedSubview(incomeLabel)
+                    vStack.addArrangedSubview(CustomLabel(text: "+\(income.DoubleWithSeperator)", size: 9, color: .textBlue))
                 }
                 if expense > 0 {
-                    let expenseLabel = UILabel()
-                    expenseLabel.font = UIFont.systemFont(ofSize: 9)
-                    expenseLabel.textColor = .accent100
-                    let amountText = numberFormatter.string(from: NSNumber(value: abs(Int(expense)))) ?? ""
-                    expenseLabel.text = "-\(amountText)"
-                    
-                    vStack.addArrangedSubview(expenseLabel)
+                    vStack.addArrangedSubview(CustomLabel(text: "-\(expense.DoubleWithSeperator)", size: 9, color: .accent100))
                 }
                 
                 return vStack
