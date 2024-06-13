@@ -177,7 +177,7 @@ class AddViewController: UIViewController {
                 config.image = UIImage(systemName: "questionmark.circle")
             }
 
-            config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 30)
+            config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 28)
             config.imagePadding = 5
             config.imagePlacement = .top
             let topButton = UIButton(configuration: config)
