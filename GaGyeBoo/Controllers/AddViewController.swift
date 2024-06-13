@@ -117,11 +117,15 @@ class AddViewController: UIViewController {
         let labelComponent = UILabel()
         labelComponent.text = "분류: "
         labelComponent.translatesAutoresizingMaskIntoConstraints = false
+        labelComponent.widthAnchor.constraint(equalToConstant: 50).isActive = true
+     
         containerView.addSubview(labelComponent)
         
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        
         containerView.addSubview(scrollView)
         
         let stackView = UIStackView()
@@ -183,11 +187,11 @@ class AddViewController: UIViewController {
             stackView.addArrangedSubview(button)
         }
         NSLayoutConstraint.activate([
-               labelComponent.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+               labelComponent.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                labelComponent.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
                labelComponent.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8),
                
-               scrollView.leadingAnchor.constraint(equalTo: labelComponent.trailingAnchor, constant: 8),
+               scrollView.leadingAnchor.constraint(equalTo: labelComponent.trailingAnchor),
                scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
                scrollView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
                scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8),
