@@ -1,6 +1,28 @@
 # GaGeyBoo
 
-**팀원**
+## Income and Expense Tracking App
+
+## Project Duration
+2024.06.10  ~ 2024.06.13
+
+## Tech Stack
+
+- **Collaboration Tools**: Figma, GitHub
+- **Programming Language**: Swift v5.10
+- **Frameworks**: UIKit, CoreData, Combine
+- **Libraries**: Charts library v5.1.0
+- **Development Tools**: Xcode v15.3
+- **iOS Version**: iOS Target 17.4 
+
+## Key Features
+
+- 
+-
+-
+-
+
+
+**contributors**
 
 |  김정우   |   송주현   |   최광우   |   홍준범   |      
 |:---------:|:---------:|:---------:|:---------:|
@@ -9,34 +31,3 @@
 |           |           |           |           |        
 |           |           |           |           |  
 | [@JeongWo](https://github.com/JeongWo) | [@jinxwift](https://github.com/jinxwift) | [@MadCow](https://github.com/madcow95) | [@KuKaH](https://github.com/KuKaH) |  
-
-## 수입 지출 기록 관리 앱
-
-## 프로젝트 기간
-2024년 06월 10일  ~ 2024년 06월 13일
-
-### 협업 도구
-- Figem
-- GitHub
-  
-### 프로그래밍 언어
-- Swift -v 5.10
-
-### 프레임워크
-- UIKit
-- CoreData
-- Combine
-
-### 라이브러리
-- Charts library v5.1.0
-
-### 개발 도구
-- Xcode v15.3
-  
-### iOS 버전
-- iOS Target: 17.4
-
-## 주요 기능
-
-
----
