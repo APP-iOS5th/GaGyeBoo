@@ -1,29 +1,7 @@
 import UIKit
 import Combine
 
-class MainViewController: UIViewController {
-    
-    private lazy var picker: UISegmentedControl = {
-        let pk = UISegmentedControl(items: ["일간", "월간"])
-        pk.translatesAutoresizingMaskIntoConstraints = false
-        /*
-        TODO: picker의 값이 변경되면 그 값에 맞게 보여지는 화면 다르게 하기
-        pk.addAction(UIAction { [weak self] _ in
-            switch pk.selectedSegmentIndex {
-            case 0:
-                self?.setDailySpendView()
-            case 1:
-                self?.setMonthlySpendView()
-            default:
-                break
-            }
-        }, for: .valueChanged)
-        */
-        pk.selectedSegmentIndex = 0
-        pk.selectedSegmentTintColor = .primary100
-        
-        return pk
-    }()
+class MainViewController: UIViewController, UIPopoverPresentationControllerDelegate {
     
     private lazy var currentMonthSpendLabel: UILabel = {
         let label = UILabel()
@@ -103,7 +81,6 @@ class MainViewController: UIViewController {
         
         setSubscriber()
         setNavigationComponents()
-        setSegmentPicker()
         setScrollView()
         setPrevLabel()
         setCalendarData()
@@ -134,23 +111,13 @@ class MainViewController: UIViewController {
         navigationItem.rightBarButtonItem?.tintColor = .primary100
     }
     
-    func setSegmentPicker() {
-        view.addSubview(picker)
-        
-        NSLayoutConstraint.activate([
-            picker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
-        ])
-    }
-    
     func setScrollView() {
         scrollView.addSubview(contentView)
         scrollView.addSubview(secondContentView)
         view.addSubview(scrollView)
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: picker.bottomAnchor, constant: 10),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -276,9 +243,46 @@ class MainViewController: UIViewController {
             dateLabel.font = UIFont.systemFont(ofSize: 12)
             dateLabel.textColor = .lightGray
             
+            let editButton = UIButton()
+            editButton.translatesAutoresizingMaskIntoConstraints = false
+            editButton.setImage(UIImage(systemName: "ellipsis.circle.fill"), for: .normal)
+            editButton.tintColor = .primary100
+            editButton.tag = idx
+            editButton.addAction(UIAction{ [weak self] _ in
+                guard let self = self else { return }
+                
+                let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                
+                let action1 = UIAlertAction(title: "수정", style: .default) { [weak self] _ in
+                    guard let self = self else { return }
+                    let editView = EditSpendViewController()
+                    editView.selectedSpend = self.spendList[idx]
+                    
+                    present(editView, animated: true)
+                }
+                let action2 = UIAlertAction(title: "삭제", style: .default) { _ in
+                    print("Action 2 selected")
+                }
+                let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+                
+                alertController.addAction(action1)
+                alertController.addAction(action2)
+                alertController.addAction(cancelAction)
+                
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                }
+                
+                present(alertController, animated: true, completion: nil)
+            }, for: .touchUpInside)
+            
+            // minus.circle.fill
+            
             let seperator = HorizontalSeparator()
             
-            [categoryLabel, amountLabel, dateLabel, seperator].forEach{ secondContentView.addSubview($0) }
+            [categoryLabel, amountLabel, dateLabel, seperator, editButton].forEach{ secondContentView.addSubview($0) }
             
             NSLayoutConstraint.activate([
                 dateLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 10),
@@ -286,9 +290,14 @@ class MainViewController: UIViewController {
                 
                 categoryLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 8),
                 categoryLabel.leadingAnchor.constraint(equalTo: dateLabel.leadingAnchor),
+                
+                editButton.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 20),
+                editButton.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
+//                editButton.widthAnchor.constraint(equalToConstant: 50),
+//                editButton.heightAnchor.constraint(equalToConstant: 50),
 
                 amountLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 20),
-                amountLabel.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
+                amountLabel.trailingAnchor.constraint(equalTo: editButton.leadingAnchor, constant: -10),
 
                 seperator.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 10),
                 seperator.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
@@ -311,13 +320,17 @@ class MainViewController: UIViewController {
                 ])
             }
             
-            [categoryLabel, amountLabel, dateLabel, seperator].forEach{ tempSpendView.append($0) }
+            [categoryLabel, amountLabel, dateLabel, seperator, editButton].forEach{ tempSpendView.append($0) }
             
             prevBottomAnchorForScrollView = seperator.bottomAnchor
             if idx == spendList.count - 1 {
                 seperator.bottomAnchor.constraint(equalTo: secondContentView.bottomAnchor, constant: -10).isActive = true
             }
         }
+    }
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
     }
     
     @objc func toAddPage() {
