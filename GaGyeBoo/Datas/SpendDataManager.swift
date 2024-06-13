@@ -95,26 +95,6 @@ class SpendDataManager {
         }
     }
     
-    func removeSpend(removeSpend: GaGyeBooModel) {
-        let dateStrArr = removeSpend.dateStr.components(separatedBy: "-")
-        removeDefaultStatistics(month: "\(dateStrArr[0])-\(dateStrArr[1])",
-                                amount: removeSpend.amount,
-                                isExpense: removeSpend.saveType == .expense)
-        
-        gaGyeBooFetchRequest.predicate = NSPredicate(format: "id == %@", removeSpend.id as CVarArg)
-        
-        do {
-            let spends = try context.fetch(gaGyeBooFetchRequest)
-            if let deleteEntity = spends.first {
-                context.delete(deleteEntity)
-            }
-            
-            try context.save()
-        } catch {
-            print("error in SpendDataManager removeSpend() >> \(error.localizedDescription)")
-        }
-    }
-    
     func saveStatisticsData(newSpend: GaGyeBooModel) {
         let newSpendDate = newSpend.dateStr.components(separatedBy: "-")
         let searchDateStr = "\(newSpendDate[0])-\(newSpendDate[1])"
