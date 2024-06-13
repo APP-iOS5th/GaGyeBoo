@@ -10,7 +10,45 @@ class SpendDataManager {
     @Published var spendsForDetailList: [GaGyeBooModel] = []
     var cancellable: Cancellable?
     
-    func saveSpend(newSpend: GaGyeBooModel) {
+    func removeDefaultSpends() {
+        gaGyeBooFetchRequest.predicate = NSPredicate(format: "isUserDefault == %@", NSNumber(value: true))
+        gaGyeBooFetchRequest.includesPropertyValues = false
+        
+        do {
+            let defaultSpends = try context.fetch(gaGyeBooFetchRequest)
+            if defaultSpends.count > 0 {
+                for spend in defaultSpends {
+                    context.delete(spend)
+                }
+                
+                try context.save()
+            }
+        } catch {
+            print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
+        }
+    }
+    
+    func removeDefaultStatistics() {
+        monthlySpendFetchRequest.predicate = NSPredicate(format: "month CONTAINS %@", "\(2024)")
+        
+        do {
+            let defaultExpense = Double(UserDefaults.standard.integer(forKey: "expenseAmount"))
+            let defaultSpends = try context.fetch(monthlySpendFetchRequest)
+            if defaultSpends.count > 0 {
+                for spend in defaultSpends {
+                    var spendExpense = spend.value(forKey: "totalExpense") as! Double
+                    spendExpense -= defaultExpense
+                    spend.setValue(spendExpense, forKey: "totalExpense")
+                }
+                
+                try context.save()
+            }
+        } catch {
+            print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
+        }
+    }
+    
+    func saveSpend(newSpend: GaGyeBooModel, isUserDefault: Bool = false) {
         if let entity = NSEntityDescription.entity(forEntityName: "GaGyeBoo", in: context) {
             let spend = NSManagedObject(entity: entity, insertInto: context)
             spend.setValue(newSpend.date, forKey: "date")
@@ -18,6 +56,9 @@ class SpendDataManager {
             spend.setValue(newSpend.category, forKey: "category")
             spend.setValue(newSpend.spendType, forKey: "spendType")
             spend.setValue(newSpend.amount, forKey: "amount")
+            if isUserDefault == true {
+                spend.setValue(true, forKey: "isUserDefault")
+            }
         }
         
         do {
@@ -289,12 +330,12 @@ class StatisticsDataManager {
         }
         
         // Mock Data
-        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
-        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
-        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
-        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
-        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
-        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
+//        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
+//        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
+//        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
+//        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
+//        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
+//        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
         saveContext()
     }
 }
