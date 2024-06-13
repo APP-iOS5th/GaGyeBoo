@@ -1,9 +1,14 @@
 import UIKit
 import DGCharts
+import Combine
+
+
 
 class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     private var monthlySummaries: [MonthlyStatistics] = []
     private var filteredSummaries: [MonthlyStatistics] = []
+    
+    private var cancellables = Set<AnyCancellable>()
     
     private let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -11,7 +16,6 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         formatter.maximumFractionDigits = 0
         return formatter
     }()
-    
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -82,21 +86,38 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         return tableView
     }()
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupSubscriptions()
         loadData()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+        setupSubscriptions()
         loadData()
     }
     
+    private func setupSubscriptions() {
+        StatisticsDataManager.shared.$monthlyStatistics
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.loadData()
+            }
+            .store(in: &cancellables)
+        
+        StatisticsDataManager.shared.statisticsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.loadData()
+            }
+            .store(in: &cancellables)
+    }
+    
     private func loadData() {
-        monthlySummaries = StatisticsDataManager.shared.fetchMonthlyStatistics()
+        monthlySummaries = StatisticsDataManager.shared.monthlyStatistics
         updateMonthlySummaries()
         updateBarChartData()
         tableView.reloadData()
@@ -106,9 +127,6 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
     }
-    
-    
-    
     private func setupView() {
         backgroundColor = .white
         addSubview(titleLabel)
@@ -129,11 +147,11 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             segmentedControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             segmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            budgetLabel.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 8),
+            budgetLabel.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 13),
             budgetLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            budgetLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            budgetLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15),
             
-            barChartView.topAnchor.constraint(equalTo: budgetLabel.bottomAnchor, constant: 8),
+            barChartView.topAnchor.constraint(equalTo: budgetLabel.bottomAnchor, constant: 10),
             barChartView.leadingAnchor.constraint(equalTo: leadingAnchor),
             barChartView.trailingAnchor.constraint(equalTo: trailingAnchor),
             barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3),
@@ -141,7 +159,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             noDataLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             noDataLabel.centerYAnchor.constraint(equalTo: barChartView.centerYAnchor),
             
-            tableView.topAnchor.constraint(equalTo: barChartView.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: barChartView.bottomAnchor, constant: 30),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
@@ -150,12 +168,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         updateBarChartData()
     }
     
-    @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        updateMonthlySummaries()
-        updateBarChartData()
-        updateBudget()
-        tableView.reloadData()
-    }
+    
     
     private func updateMonthlySummaries() {
         let selectedIndex = segmentedControl.selectedSegmentIndex
@@ -165,6 +178,11 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             filteredSummaries = monthlySummaries.filter { $0.totalExpense > 0 }
         }
         filteredSummaries.reverse()
+        
+        let startIndex = max(filteredSummaries.count - 6, 0)
+        filteredSummaries = Array(filteredSummaries[startIndex..<filteredSummaries.count])
+        
+        
         tableView.reloadData()
         
         if filteredSummaries.isEmpty {
@@ -262,6 +280,14 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    
+    
+    @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        updateMonthlySummaries()
+        updateBarChartData()
+        updateBudget()
+        tableView.reloadData()
+    }
     
     
     
