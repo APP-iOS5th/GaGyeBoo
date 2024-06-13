@@ -110,10 +110,23 @@ class AddViewController: UIViewController {
     private var selectedCategory: String?
     private var selectedButton: UIButton?
     
-    private func createCategoryButtons() -> UIScrollView {
+    private func createCategoryButtons() -> UIView {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let labelComponent = UILabel()
+        labelComponent.text = "분류: "
+        labelComponent.translatesAutoresizingMaskIntoConstraints = false
+        labelComponent.widthAnchor.constraint(equalToConstant: 50).isActive = true
+     
+        containerView.addSubview(labelComponent)
+        
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.widthAnchor.constraint(equalToConstant: 310).isActive = true
+        
+        containerView.addSubview(scrollView)
         
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -122,10 +135,8 @@ class AddViewController: UIViewController {
         stackView.distribution = .fillProportionally
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let labelComponent = UILabel()
-        labelComponent.text = "분류: "
-        stackView.addArrangedSubview(labelComponent)
-        
+        scrollView.addSubview(stackView)
+
         var categories: [String]
         if segmentControl.selectedSegmentIndex == 0 {
             categories = ["월급", "용돈", "기타", "추가"]
@@ -175,16 +186,23 @@ class AddViewController: UIViewController {
             button.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
             stackView.addArrangedSubview(button)
         }
-        scrollView.addSubview(stackView)
-
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                   stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-                   stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-                   stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-                   stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
-        ])
-        return scrollView
+               labelComponent.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+               labelComponent.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+               labelComponent.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8),
+               
+               scrollView.leadingAnchor.constraint(equalTo: labelComponent.trailingAnchor),
+               scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+               scrollView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+               scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8),
+               
+               stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+               stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+               stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+               stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+               stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+           ])
+        return containerView
     }
     
     let contentsField: UIStackView = {
