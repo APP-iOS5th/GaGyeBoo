@@ -9,13 +9,6 @@ import UIKit
 
 class BudgetSettingViewController: UIViewController {
     
-    private let headerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemBackground
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     private let budgetSectionLabel: UILabel = {
         let label = UILabel()
         label.text = "월 예산 설정"
@@ -24,10 +17,9 @@ class BudgetSettingViewController: UIViewController {
         return label
     }()
     
-    private let budgetTextField: UITextField = {
-        let textField = UITextField()
+    private let budgetTextField: BudgetTextField = {
+        let textField = BudgetTextField()
         textField.placeholder = "예산을 입력하세요."
-        textField.keyboardType = .numberPad
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -39,26 +31,24 @@ class BudgetSettingViewController: UIViewController {
         return label
     }()
     
-    private lazy var saveButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("저장", for: .normal)
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-        button.tintColor = .primary100
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        
+        let storedBudget = UserDefaults.standard.integer(forKey: "budgetAmount")
+        budgetTextField.text = "\(storedBudget)"
+        
+        navigationController?.navigationBar.tintColor = .primary100
     }
     
     private func setupViews() {
         title = "예산 설정"
-        view.backgroundColor = .systemBackground
-        view.addSubview(headerView)
-        headerView.addSubview(saveButton)
+        view.backgroundColor = .bg100
+        
+        let saveButton = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveButtonTapped))
+        navigationItem.rightBarButtonItem = saveButton
+        
         view.addSubview(budgetSectionLabel)
         view.addSubview(budgetTextField)
         view.addSubview(wonLabel)
@@ -66,18 +56,11 @@ class BudgetSettingViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            headerView.heightAnchor.constraint(equalToConstant: 44),
-            
-            saveButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor, constant: 10),
-            saveButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20),
-            
-            budgetSectionLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor, constant: 10),
+            budgetSectionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             budgetSectionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
-            budgetTextField.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+            
+            budgetTextField.topAnchor.constraint(equalTo: budgetSectionLabel.bottomAnchor, constant: 16),
             budgetTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
             wonLabel.centerYAnchor.constraint(equalTo: budgetTextField.centerYAnchor),
@@ -93,7 +76,9 @@ class BudgetSettingViewController: UIViewController {
         
         let budget = Int(budgetText) ?? 0
         
-        // Save the budget data
+        // Save the budget data to UserDefaults
+        UserDefaults.standard.set(budget, forKey: "budgetAmount")
+        
         print("Saved budget: \(budget)")
     }
     

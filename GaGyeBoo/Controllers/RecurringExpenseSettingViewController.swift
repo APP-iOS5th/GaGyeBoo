@@ -8,10 +8,16 @@
 import UIKit
 
 class RecurringExpenseSettingViewController: UIViewController {
-    
-    private let expenseCategories = ["식비", "교통비", "쇼핑", "유흥", "기타"]
+    private let dataManager = SpendDataManager()
+    private let expenseCategories = ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타"]
     
     private let categoryHeaderLabel = UILabel()
+    private let categoryScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsHorizontalScrollIndicator = false
+        return scrollView
+    }()
     private let categoryStackView = UIStackView()
     private var selectedCategoryButton: UIButton?
     
@@ -30,21 +36,50 @@ class RecurringExpenseSettingViewController: UIViewController {
     
     private let saveButton = UIBarButtonItem(title: "저장", style: .done, target: nil, action: nil)
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.tintColor = .primary100
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         expenseTextField.delegate = self
         setupViews()
         setupConstraints()
+        
+        //Retrieve the stored data from UserDefaults
+        let storedCategory = UserDefaults.standard.string(forKey: "selectedCategory")
+        let storedName = UserDefaults.standard.string(forKey: "expenseName")
+        let storedExpense = UserDefaults.standard.integer(forKey: "expenseAmount")
+        let storedDay = UserDefaults.standard.integer(forKey: "selectedDay")
+        
+        //뿌려주기
+        if let storedCategory = storedCategory {
+            for (index, categoryButton) in categoryStackView.arrangedSubviews.enumerated() {
+                if let button = categoryButton as? UIButton, button.titleLabel?.text == storedCategory {
+                    categoryButtonTapped(button)
+                    break
+                }
+            }
+        }
+        
+        nameTextField.text = storedName
+        expenseTextField.text = "\(storedExpense)"
+        
+        if storedDay > 0 {
+            dayPicker.selectRow(storedDay - 1, inComponent: 0, animated: false)
+            dayTextField.text = "\(storedDay)"
+        }
     }
     
     private func setupViews() {
-        title = "고정 지출 설정"
+        title = "월 고정 지출 설정"
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = saveButton
         saveButton.target = self
         saveButton.action = #selector(saveButtonTapped)
         
-        categoryHeaderLabel.text = "카테고리"
+        categoryHeaderLabel.text = "분류"
         categoryHeaderLabel.font = UIFont.boldSystemFont(ofSize: 16)
         categoryHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(categoryHeaderLabel)
@@ -54,10 +89,10 @@ class RecurringExpenseSettingViewController: UIViewController {
         categoryStackView.alignment = .center
         categoryStackView.spacing = 10
         categoryStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(categoryStackView)
+        categoryScrollView.addSubview(categoryStackView)
         
         for category in expenseCategories {
-            let categoryButton = UIButton(type: .system)
+            let categoryButton = CategoryButton(type: .system)
             categoryButton.setTitle(category, for: .normal)
             categoryButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
             categoryButton.configuration?.cornerStyle = .medium
@@ -68,15 +103,19 @@ class RecurringExpenseSettingViewController: UIViewController {
             categoryButton.layer.cornerRadius = 8
             categoryButton.clipsToBounds = true
             categoryButton.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
+            categoryButton.setContentHuggingPriority(.required, for: .horizontal)
+            categoryButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             categoryStackView.addArrangedSubview(categoryButton)
         }
         
-        nameHeaderLabel.text = "항목"
+        view.addSubview(categoryScrollView)
+        
+        nameHeaderLabel.text = "내역"
         nameHeaderLabel.font = UIFont.boldSystemFont(ofSize: 16)
         nameHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(nameHeaderLabel)
         
-        nameTextField.placeholder = "지출 항목을 입력하세요."
+        nameTextField.placeholder = "지출 내역을 입력하세요."
         nameTextField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(nameTextField)
         
@@ -124,11 +163,17 @@ class RecurringExpenseSettingViewController: UIViewController {
             categoryHeaderLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             categoryHeaderLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
-            categoryStackView.topAnchor.constraint(equalTo: categoryHeaderLabel.bottomAnchor, constant: 8),
-            categoryStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            categoryScrollView.topAnchor.constraint(equalTo: categoryHeaderLabel.bottomAnchor, constant: 8),
+            categoryScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            categoryScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            categoryScrollView.heightAnchor.constraint(equalToConstant: 50),
             
-            nameHeaderLabel.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor, constant: 24),
+            categoryStackView.topAnchor.constraint(equalTo: categoryScrollView.topAnchor),
+            categoryStackView.leadingAnchor.constraint(equalTo: categoryScrollView.leadingAnchor, constant: 16),
+            categoryStackView.trailingAnchor.constraint(equalTo: categoryScrollView.trailingAnchor, constant: -16),
+            categoryStackView.bottomAnchor.constraint(equalTo: categoryScrollView.bottomAnchor),
+            
+            nameHeaderLabel.topAnchor.constraint(equalTo: categoryScrollView.bottomAnchor, constant: 24),
             nameHeaderLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
             nameTextField.topAnchor.constraint(equalTo: nameHeaderLabel.bottomAnchor, constant: 12),
@@ -169,7 +214,7 @@ class RecurringExpenseSettingViewController: UIViewController {
         selectedCategoryButton?.setTitleColor(.label, for: .selected)
         
         sender.isSelected = true
-        sender.backgroundColor = .systemBlue
+        sender.backgroundColor = .primary100
         sender.setTitleColor(.white, for: .normal)
         sender.setTitleColor(.white, for: .selected)
         
@@ -179,7 +224,7 @@ class RecurringExpenseSettingViewController: UIViewController {
     
     @objc private func saveButtonTapped() {
         guard let name = nameTextField.text, !name.isEmpty else {
-            showAlert(title: "오류", message: "고정 지출 항목을 입력해 주세요.")
+            showAlert(title: "오류", message: "고정 지출 내역을 입력해 주세요.")
             return
         }
         
@@ -192,7 +237,27 @@ class RecurringExpenseSettingViewController: UIViewController {
         let selectedCategory = selectedCategoryButton?.titleLabel?.text ?? ""
         let selectedDay = dayPicker.selectedRow(inComponent: 0) + 1
         
+        if UserDefaults.standard.integer(forKey: "selectedDay") > 0 {
+            dataManager.removeDefaultSpends()
+        }
+        
         // Save the recurring expense data
+        UserDefaults.standard.set(selectedCategory, forKey: "selectedCategory")
+        UserDefaults.standard.set(name, forKey: "expenseName")
+        UserDefaults.standard.set(expense, forKey: "expenseAmount")
+        UserDefaults.standard.set(selectedDay, forKey: "selectedDay")
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        for year in 2024...2026 {
+            for month in 1...12 {
+                let dateStr = "\(year)-\(month)-\(selectedDay)"
+                if let date = formatter.date(from: dateStr) {
+                    dataManager.saveSpend(newSpend: GaGyeBooModel(date: date, saveType: .expense, category: selectedCategory, spendType: name, amount: Double(expense)), isUserDefault: true)
+                }
+            }
+        }
+        
         print("Saved recurring expense: \(name), \(expense) for category: \(selectedCategory) on day: \(selectedDay)")
         
     }
@@ -256,4 +321,4 @@ extension RecurringExpenseSettingViewController: UIPickerViewDelegate {
         dayTextField.resignFirstResponder()
     }
 }
-
+ 

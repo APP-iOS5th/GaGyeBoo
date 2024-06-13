@@ -106,3 +106,12 @@ struct MockStruct {
         }.sorted{ $0.date < $1.date }
     }
 }
+
+protocol ReloadCalendarDelegate {
+    func reloadCalendar(newSpend: GaGyeBooModel)
+}
+
+enum ShowTarget {
+    case calendar
+    case list
+}
