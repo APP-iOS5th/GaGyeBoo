@@ -147,6 +147,7 @@ class RecurringExpenseSettingViewController: UIViewController {
         dayTextField.inputView = dayPicker
         dayTextField.adjustsFontSizeToFitWidth = true
         dayTextField.minimumFontSize = 12
+        dayTextField.textAlignment = .center
         view.addSubview(dayTextField)
         
         dayLabel.text = "일"
@@ -197,11 +198,11 @@ class RecurringExpenseSettingViewController: UIViewController {
             eachMonthLabel.widthAnchor.constraint(equalToConstant: 40),
             
             dayTextField.centerYAnchor.constraint(equalTo: eachMonthLabel.centerYAnchor),
-            dayTextField.leadingAnchor.constraint(equalTo: eachMonthLabel.trailingAnchor, constant: 8),
+            dayTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             dayTextField.widthAnchor.constraint(greaterThanOrEqualToConstant: 40),
             
             dayLabel.centerYAnchor.constraint(equalTo: dayTextField.centerYAnchor),
-            dayLabel.leadingAnchor.constraint(equalTo: dayTextField.trailingAnchor, constant: 8),
+//            dayLabel.leadingAnchor.constraint(equalTo: dayTextField.trailingAnchor, constant: 8),
             dayLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
             
         ])
@@ -259,6 +260,9 @@ class RecurringExpenseSettingViewController: UIViewController {
 //        }
         
         print("Saved recurring expense: \(name), \(expense) for category: \(selectedCategory) on day: \(selectedDay)")
+        
+        // Navigate back to the previous view controller
+        navigationController?.popViewController(animated: true)
         
     }
     
