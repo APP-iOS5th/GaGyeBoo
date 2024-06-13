@@ -44,7 +44,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
         barChartView.xAxis.drawGridLinesEnabled = false
-        barChartView.leftAxis.axisMinimum = 0.0 
+        barChartView.leftAxis.axisMinimum = 0.0
         
         barChartView.rightAxis.enabled = false
         barChartView.leftAxis.enabled = false
