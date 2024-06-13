@@ -140,7 +140,7 @@ class AddViewController: UIViewController {
             titleContainer.font = UIFont.boldSystemFont(ofSize: 20)
             config.attributedTitle = AttributedString(category, attributes: titleContainer)
             
-            config.baseForegroundColor = .bg300
+            config.baseForegroundColor = .lightGray
             
             switch category {
             case "월급":
@@ -271,7 +271,7 @@ class AddViewController: UIViewController {
             textFieldContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
             textFieldContainer.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5),
             
-            saveButton.topAnchor.constraint(equalTo: contentsField.bottomAnchor, constant: 30),
+            saveButton.topAnchor.constraint(equalTo: contentsField.bottomAnchor, constant: 20),
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
@@ -331,6 +331,7 @@ class AddViewController: UIViewController {
         guard let category = sender.title(for: .normal) else { return }
         selectedCategory = category
         updateSaveButtonState()
+        
         print("선택된 카테고리: \(category)")
     }
     
