@@ -44,7 +44,7 @@ class BudgetSettingViewController: UIViewController {
     
     private func setupViews() {
         title = "예산 설정"
-        view.backgroundColor = .bg100
+        view.backgroundColor = .linen
         
         let saveButton = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveButtonTapped))
         navigationItem.rightBarButtonItem = saveButton

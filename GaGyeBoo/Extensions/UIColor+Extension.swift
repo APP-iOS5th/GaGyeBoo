@@ -19,29 +19,28 @@ extension UIColor {
     static let tempBlue = UIColor(red: 0, green: 112/255, blue: 192/255, alpha: 1)
     static let tempBlue2 = UIColor(red: 33/255, green: 150/255, blue: 243/255, alpha: 1)
     static let textBlue = UIColor(red: 0/255, green: 119/255, blue: 194/255, alpha: 1)
+    static let linen = UIColor(red: 250/255, green: 240/255, blue: 230/255, alpha: 1.0)
+    static let whitePaper = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0)
     
-    // Hex 문자열을 UIColor로 변환하는 이니셜라이저
+    // Hex -> UIColor
     convenience init?(hex: String) {
-        // 입력된 Hex 문자열을 정리
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
         
         var rgb: UInt64 = 0
         
-        // Hex 문자열이 유효한지 확인
         guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
         
         let length = hexSanitized.count
         let r, g, b, a: CGFloat
         
-        // Hex 문자열 길이에 따른 색상 값 추출
         switch length {
-        case 6: // RGB (24비트)
+        case 6: // RGB (24bit)
             r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
             g = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
             b = CGFloat(rgb & 0x0000FF) / 255.0
             a = 1.0
-        case 8: // RGBA (32비트)
+        case 8: // RGBA (32bit)
             r = CGFloat((rgb & 0xFF000000) >> 24) / 255.0
             g = CGFloat((rgb & 0x00FF0000) >> 16) / 255.0
             b = CGFloat((rgb & 0x0000FF00) >> 8) / 255.0
@@ -49,8 +48,6 @@ extension UIColor {
         default:
             return nil
         }
-        
-        // UIColor 객체 생성
         self.init(red: r, green: g, blue: b, alpha: a)
     }
 }

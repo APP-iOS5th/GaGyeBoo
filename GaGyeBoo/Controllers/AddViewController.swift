@@ -241,7 +241,7 @@ class AddViewController: UIViewController {
             return outgoing
         }
         button.configuration = config
-        button.tintColor = .bg300
+        button.tintColor = .linen
         button.translatesAutoresizingMaskIntoConstraints = false
         button.widthAnchor.constraint(equalToConstant: 350).isActive = true
         
@@ -259,7 +259,7 @@ class AddViewController: UIViewController {
         super.viewDidLoad()
         
         setupInitialValues()
-        view.backgroundColor = .white
+        view.backgroundColor = .linen
         
         view.addSubview(segmentControl)
         view.addSubview(underLineView)
@@ -378,7 +378,7 @@ class AddViewController: UIViewController {
               let category = selectedCategory, !category.isEmpty
         else {
             saveButton.isEnabled = false
-            saveButton.tintColor = .bg200
+            saveButton.tintColor = .linen
             return
         }
         saveButton.tintColor = .primary100

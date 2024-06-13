@@ -15,7 +15,7 @@ class StatisticsTableCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .textBlue
+        label.textColor = .text200
         label.textAlignment = .right
         return label
     }()
