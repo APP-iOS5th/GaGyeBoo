@@ -64,8 +64,34 @@ class SpendDataManager {
         do {
             try context.save()
             saveStatisticsData(newSpend: newSpend)
+            notifyStatisticsDataManager()
         } catch let error {
             print("error in SpendDataManager saveSpend() >> \(error.localizedDescription)")
+        }
+    }
+    private func notifyStatisticsDataManager() {
+        DispatchQueue.main.async {
+            StatisticsDataManager.shared.fetchMonthlyStatistics()
+        }
+    }
+    
+    func removeSpend(removeSpend: GaGyeBooModel) {
+        let dateStrArr = removeSpend.dateStr.components(separatedBy: "-")
+        removeDefaultStatistics(month: "\(dateStrArr[0])-\(dateStrArr[1])",
+                                amount: removeSpend.amount,
+                                isExpense: removeSpend.saveType == .expense)
+        
+        gaGyeBooFetchRequest.predicate = NSPredicate(format: "id == %@", removeSpend.id as CVarArg)
+        
+        do {
+            let spends = try context.fetch(gaGyeBooFetchRequest)
+            if let deleteEntity = spends.first {
+                context.delete(deleteEntity)
+            }
+            
+            try context.save()
+        } catch {
+            print("error in SpendDataManager removeSpend() >> \(error.localizedDescription)")
         }
     }
     
@@ -166,7 +192,7 @@ class SpendDataManager {
         startComponents.year = year
         startComponents.month = 1
         startComponents.hour = 0
-
+        
         var endComponents = DateComponents()
         endComponents.year = year + 1
         endComponents.month = 1
@@ -247,6 +273,11 @@ extension String {
 class StatisticsDataManager {
     static let shared = StatisticsDataManager()
     
+    private var cancellable: AnyCancellable?
+    let statisticsPublisher = PassthroughSubject<Void, Never>()
+    
+    @Published private(set) var monthlyStatistics: [MonthlyStatistics] = []
+    
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "GaGyeBoo")
         container.loadPersistentStores { (_, error) in
@@ -266,32 +297,25 @@ class StatisticsDataManager {
     }()
     
     private init() {
-        _ = fetchMonthlyStatistics()
+        fetchMonthlyStatistics()
         addMockupDataIfNeeded()
     }
     
-    // Initial Data
-    func loadInitialDataIfNeeded() {
-        let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
-        let count = (try? context.count(for: fetchRequest)) ?? 0
-        _ = Calendar.current.component(.month, from: Date())
-        if count == 0 {
-            
-        }
-    }
+    
     
     // Fetch Month Data
-    func fetchMonthlyStatistics() -> [MonthlyStatistics] {
+    func fetchMonthlyStatistics() {
         let fetchRequest: NSFetchRequest<StatisticsData> = StatisticsData.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "month", ascending: true)]
         
         do {
             let statisticsData = try context.fetch(fetchRequest)
             let months = Set(statisticsData.map { $0.month ?? "" })
-            return months.map { MonthlyStatistics(from: statisticsData, month: $0) }.sorted { $0.month < $1.month }
+            monthlyStatistics = months.map { MonthlyStatistics(from: statisticsData, month: $0) }.sorted { $0.month < $1.month }
+            statisticsPublisher.send() // Upload and send data
         } catch {
             print("Failed to fetch statistics data: \(error)")
-            return []
+            monthlyStatistics = []
         }
     }
     
@@ -334,6 +358,7 @@ class StatisticsDataManager {
         if context.hasChanges {
             do {
                 try context.save()
+                fetchMonthlyStatistics() // Save data and reload it immediately
             } catch {
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
@@ -349,13 +374,18 @@ class StatisticsDataManager {
         }
         
         // Mock Data
-//        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
-//        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
-//        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
-//        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
-//        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
-//        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
+        //        createMonthlyStatistics(month: "2024-01", totalIncome: 1000.0, totalExpense: 500.0)
+        //        createMonthlyStatistics(month: "2024-02", totalIncome: 1200.0, totalExpense: 600.0)
+        //        createMonthlyStatistics(month: "2024-03", totalIncome: 1500.0, totalExpense: 730.0)
+        //        createMonthlyStatistics(month: "2024-04", totalIncome: 300.0, totalExpense: 192.0)
+        //        createMonthlyStatistics(month: "2024-05", totalIncome: 584.0, totalExpense: 598.0)
+        //        createMonthlyStatistics(month: "2024-06", totalIncome: 238.0, totalExpense: 458.0)
         saveContext()
+    }
+    func subscribeToStatisticsChanges(_ subscriber: @escaping () -> Void) -> AnyCancellable {
+        return statisticsPublisher.sink { _ in
+            subscriber()
+        }
     }
 }
 
