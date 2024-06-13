@@ -109,12 +109,16 @@ class AddViewController: UIViewController {
     //카테고리 버튼
     private var selectedCategory: String?
     
-    private func createCatefgoryButtons() -> UIStackView {
+    private func createCategoryButtons() -> UIScrollView {
+        let scrollView = UIScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .fillEqually
-        stackView.spacing = 12
+        stackView.spacing = 10
+        stackView.alignment = .center
+        stackView.distribution = .fillProportionally
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         let labelComponent = UILabel()
@@ -123,22 +127,63 @@ class AddViewController: UIViewController {
         
         var categories: [String]
         if segmentControl.selectedSegmentIndex == 0 {
-            categories = ["월급", "용돈", "주식", "코인", "기타"]
+            categories = ["월급", "용돈", "기타", "추가"]
         } else {
-            categories = ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타"]
+            categories = ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타", "추가"]
         }
     
         for category in categories {
             let button = UIButton(type: .system)
             button.setTitle(category, for: .normal)
-            button.setTitleColor(.white, for: .normal)
-            button.backgroundColor = .bg300
+            var config = UIButton.Configuration.plain()
+            var titleContainer = AttributeContainer()
+            titleContainer.font = UIFont.boldSystemFont(ofSize: 20)
+            config.attributedTitle = AttributedString(category, attributes: titleContainer)
+            
+            config.baseForegroundColor = .bg300
+            
+            switch category {
+            case "월급":
+                config.image = UIImage(systemName: "dollarsign.circle")
+            case "용돈":
+                config.image = UIImage(systemName: "wonsign.circle")
+            case "식비":
+                config.image = UIImage(systemName: "fork.knife.circle")
+            case "교통":
+                config.image = UIImage(systemName: "car.circle")
+            case "쇼핑":
+                config.image = UIImage(systemName: "bag.circle")
+            case "문화생활":
+                config.image = UIImage(systemName: "film.circle")
+            case "공과금":
+                config.image = UIImage(systemName: "doc.circle")
+            case "기타":
+                config.image = UIImage(systemName: "ellipsis.circle")
+            case "추가":
+                config.image = UIImage(systemName: "plus.circle")
+            default:
+                config.image = UIImage(systemName: "questionmark.circle")
+            }
+
+            config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 30)
+            config.imagePadding = 10
+            config.imagePlacement = .top
+            let topButton = UIButton(configuration: config)
+            button.configuration = config
             button.layer.cornerRadius = 5.0
             button.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
             stackView.addArrangedSubview(button)
         }
-        
-        return stackView
+        scrollView.addSubview(stackView)
+
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+                   stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+                   stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                   stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                   stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        ])
+        return scrollView
     }
     
     let contentsField: UIStackView = {
@@ -149,7 +194,7 @@ class AddViewController: UIViewController {
         contentsStackView.spacing = 12
         
         let labelComponent = UILabel()
-        labelComponent.text = "내용: "
+        labelComponent.text = "내역: "
         
         let contents = UITextField()
         contents.placeholder = "세부 사항을 입력하세요."
@@ -198,7 +243,7 @@ class AddViewController: UIViewController {
         view.addSubview(datePicker)
         
         textFieldContainer.addArrangedSubview(moneyTextField)
-        textFieldContainer.addArrangedSubview(createCatefgoryButtons())
+        textFieldContainer.addArrangedSubview(createCategoryButtons())
         textFieldContainer.addArrangedSubview(contentsField)
         view.addSubview(textFieldContainer)
         view.addSubview(saveButton)
@@ -262,7 +307,7 @@ class AddViewController: UIViewController {
             view.removeFromSuperview()
         }
         textFieldContainer.addArrangedSubview(moneyTextField)
-        textFieldContainer.addArrangedSubview(createCatefgoryButtons())
+        textFieldContainer.addArrangedSubview(createCategoryButtons())
         textFieldContainer.addArrangedSubview(contentsField)
         textFieldContainer.addArrangedSubview(saveButton)
         view.layoutIfNeeded()
