@@ -8,7 +8,7 @@
 import Foundation
 
 struct GaGyeBooModel {
-    let id = UUID()
+    let id: UUID
     let date: Date
     let saveType: Categories
     let category: String
@@ -69,6 +69,7 @@ struct MockStruct {
                 let date = Calendar.current.date(from: dateComponents)!
                 
                 let expense = GaGyeBooModel(
+                    id: UUID(),
                     date: date,
                     saveType: saveType,
                     category: category,
@@ -108,7 +109,7 @@ struct MockStruct {
 }
 
 protocol ReloadCalendarDelegate {
-    func reloadCalendar(newSpend: GaGyeBooModel)
+    func reloadCalendar(newSpend: GaGyeBooModel, isDeleted: Bool)
 }
 
 enum ShowTarget {

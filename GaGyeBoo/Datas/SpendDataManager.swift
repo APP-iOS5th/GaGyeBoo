@@ -22,6 +22,8 @@ class SpendDataManager {
                 }
                 
                 try context.save()
+                
+                removeDefaultStatistics()
             }
         } catch {
             print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
@@ -51,14 +53,13 @@ class SpendDataManager {
     func saveSpend(newSpend: GaGyeBooModel, isUserDefault: Bool = false) {
         if let entity = NSEntityDescription.entity(forEntityName: "GaGyeBoo", in: context) {
             let spend = NSManagedObject(entity: entity, insertInto: context)
+            spend.setValue(newSpend.id, forKey: "id")
             spend.setValue(newSpend.date, forKey: "date")
             spend.setValue(newSpend.saveType.rawValue, forKey: "saveType")
             spend.setValue(newSpend.category, forKey: "category")
             spend.setValue(newSpend.spendType, forKey: "spendType")
             spend.setValue(newSpend.amount, forKey: "amount")
-            if isUserDefault == true {
-                spend.setValue(true, forKey: "isUserDefault")
-            }
+            spend.setValue(isUserDefault, forKey: "isUserDefault")
         }
         
         do {
@@ -72,6 +73,21 @@ class SpendDataManager {
     private func notifyStatisticsDataManager() {
         DispatchQueue.main.async {
             StatisticsDataManager.shared.fetchMonthlyStatistics()
+        }
+    }
+    
+    func removeSpend(removeSpend: GaGyeBooModel) {
+        gaGyeBooFetchRequest.predicate = NSPredicate(format: "id == %@", removeSpend.id as CVarArg)
+        
+        do {
+            let spends = try context.fetch(gaGyeBooFetchRequest)
+            if let deleteEntity = spends.first {
+                context.delete(deleteEntity)
+            }
+            
+            try context.save()
+        } catch {
+            print("error in SpendDataManager removeSpend() >> \(error.localizedDescription)")
         }
     }
     
@@ -137,7 +153,7 @@ class SpendDataManager {
                     let spendType = spend.value(forKey: "spendType") as? String
                     let amount = spend.value(forKey: "amount") as! Double
                     if let saveTypeToEnum = Categories.allCases.filter({ $0.rawValue == saveType }).first {
-                        spendRecords.append(GaGyeBooModel(date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
+                        spendRecords.append(GaGyeBooModel(id: UUID(), date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
                     }
                 }
             }
@@ -180,13 +196,14 @@ class SpendDataManager {
                 if spends.count > 0 {
                     var spendList: [GaGyeBooModel] = []
                     for spend in spends {
+                        let id = spend.value(forKey: "id") as! UUID
                         let date = spend.value(forKey: "date") as! Date
                         let saveType = spend.value(forKey: "saveType") as! String
                         let category = spend.value(forKey: "category") as! String
                         let spendType = spend.value(forKey: "spendType") as? String
                         let amount = spend.value(forKey: "amount") as! Double
                         if let saveTypeToEnum = Categories.allCases.filter({ $0.rawValue == saveType }).first {
-                            spendList.append(GaGyeBooModel(date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
+                            spendList.append(GaGyeBooModel(id: id, date: date, saveType: saveTypeToEnum, category: category, spendType: spendType, amount: amount))
                         }
                     }
                     if target == .calendar {

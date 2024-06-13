@@ -253,7 +253,7 @@ class RecurringExpenseSettingViewController: UIViewController {
             for month in 1...12 {
                 let dateStr = "\(2024)-\(month)-\(selectedDay)"
                 if let date = formatter.date(from: dateStr) {
-                    dataManager.saveSpend(newSpend: GaGyeBooModel(date: date, saveType: .expense, category: selectedCategory, spendType: name, amount: Double(expense)), isUserDefault: true)
+                    dataManager.saveSpend(newSpend: GaGyeBooModel(id: UUID(), date: date, saveType: .expense, category: selectedCategory, spendType: name, amount: Double(expense)), isUserDefault: true)
                 }
             }
 //        }
