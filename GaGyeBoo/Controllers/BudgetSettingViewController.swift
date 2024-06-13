@@ -80,6 +80,9 @@ class BudgetSettingViewController: UIViewController {
         UserDefaults.standard.set(budget, forKey: "budgetAmount")
         
         print("Saved budget: \(budget)")
+        
+        // Navigate back to the previous view controller
+        navigationController?.popViewController(animated: true)
     }
     
     private func showAlert(title: String, message: String) {
