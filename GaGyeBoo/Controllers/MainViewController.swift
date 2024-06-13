@@ -1,6 +1,8 @@
 import UIKit
 import Combine
 
+
+
 extension UIColor {
     static let paperColor = UIColor(red: 245/255, green: 245/255, blue: 220/255, alpha: 1.0) // #F5F5DC
     static let softColor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1.0)  // #F0F0F0
@@ -41,6 +43,7 @@ class MainViewController: UIViewController {
         }, for: .valueChanged)
         */
         pk.selectedSegmentIndex = 0
+        pk.selectedSegmentTintColor = .primary100
         
         return pk
     }()
@@ -91,6 +94,7 @@ class MainViewController: UIViewController {
         calendar.delegate = self
         calendar.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
         calendar.tintColor = .primary100
+        calendar.locale = Locale(identifier: "ko_KR")
         
         return calendar
     }()
@@ -239,6 +243,28 @@ class MainViewController: UIViewController {
             calendarView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             calendarView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+        
+        DispatchQueue.main.async {
+            self.changeWeekdayHeaderColors()
+        }
+    }
+    
+    func changeWeekdayHeaderColors() {
+        for subview in calendarView.subviews {
+            for weekParent in subview.subviews[1].subviews {
+                for weekLabel in weekParent.subviews {
+                    if let dayLabel = weekLabel as? UILabel {
+                        if dayLabel.text == "일" {
+                            dayLabel.textColor = .systemRed
+                        } else if dayLabel.text == "토" {
+                            dayLabel.textColor = .systemBlue
+                        } else {
+                            dayLabel.textColor = .label
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func setSpendList() {
@@ -286,13 +312,7 @@ class MainViewController: UIViewController {
 
                 amountLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 20),
                 amountLabel.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
-                
-//                categoryLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 10),
-//                categoryLabel.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
-//                
-//                dateLabel.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 8),
-//                dateLabel.trailingAnchor.constraint(equalTo: amountLabel.trailingAnchor),
-//                
+
                 seperator.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 10),
                 seperator.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
                 seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10)
@@ -343,6 +363,8 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
             reloadAfterSave = false
         }
         let models = currentSpend.filter { $0.dateStr == dateString }
+//        print(models)
+//        print("=========================")
         // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
         if models.count > 0 {
             return .customView {
@@ -449,50 +471,5 @@ class HorizontalSeparator: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-protocol ReloadCalendarDelegate {
-    func reloadCalendar(newSpend: GaGyeBooModel)
-}
-
-enum ShowTarget {
-    case calendar
-    case list
-}
-
-extension UIColor {
-    // Hex 문자열을 UIColor로 변환하는 이니셜라이저
-    convenience init?(hex: String) {
-        // 입력된 Hex 문자열을 정리
-        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-        
-        var rgb: UInt64 = 0
-        
-        // Hex 문자열이 유효한지 확인
-        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
-        
-        let length = hexSanitized.count
-        let r, g, b, a: CGFloat
-        
-        // Hex 문자열 길이에 따른 색상 값 추출
-        switch length {
-        case 6: // RGB (24비트)
-            r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
-            g = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
-            b = CGFloat(rgb & 0x0000FF) / 255.0
-            a = 1.0
-        case 8: // RGBA (32비트)
-            r = CGFloat((rgb & 0xFF000000) >> 24) / 255.0
-            g = CGFloat((rgb & 0x00FF0000) >> 16) / 255.0
-            b = CGFloat((rgb & 0x0000FF00) >> 8) / 255.0
-            a = CGFloat(rgb & 0x000000FF) / 255.0
-        default:
-            return nil
-        }
-        
-        // UIColor 객체 생성
-        self.init(red: r, green: g, blue: b, alpha: a)
     }
 }

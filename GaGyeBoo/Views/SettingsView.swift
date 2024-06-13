@@ -1,6 +1,19 @@
 import UIKit
 
-class SettingsViewController: UIViewController {
+protocol SettingsViewDelegate: AnyObject {
+    func showBudgetSettingViewController()
+    func showRecurringExpenseSettingViewController()
+    func showInquiryViewController()
+}
+
+struct Setting {
+    let title: String
+    let action: (() -> Void)?
+}
+
+class SettingsView: UIView, UITableViewDataSource, UITableViewDelegate {
+    
+    weak var delegate: SettingsViewDelegate?
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -17,39 +30,37 @@ class SettingsViewController: UIViewController {
         [
             Setting(title: "문의하기", action: nil)
         ]
-        
     ]
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupViews()
-        setupConstraints()
+        configureTableView()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupViews()
         configureTableView()
     }
     
     private func setupViews() {
-        title = "설정"
-        view.backgroundColor = .systemBackground
-        view.addSubview(tableView)
-    }
-    
-    private func setupConstraints() {
+        addSubview(tableView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.topAnchor.constraint(equalTo: topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        tableView.contentInset.top = -10
+        tableView.backgroundColor = .bg100
     }
     
     private func configureTableView() {
         tableView.dataSource = self
         tableView.delegate = self
     }
-    
-}
-
-extension SettingsViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return settings.count
@@ -70,31 +81,28 @@ extension SettingsViewController: UITableViewDataSource {
         return section == 0 ? "자산 설정" : "고객센터"
     }
     
-}
-
-extension SettingsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let setting = settings[indexPath.section][indexPath.row]
         
         switch setting.title {
         case "예산 설정":
-            let budgetSettingVC = BudgetSettingViewController()
-            navigationController?.pushViewController(budgetSettingVC, animated: true)
+            delegate?.showBudgetSettingViewController()
         case "고정 지출 설정":
-            let recurringExpenseSettingVC = RecurringExpenseSettingViewController()
-            navigationController?.pushViewController(recurringExpenseSettingVC, animated: true)
+            delegate?.showRecurringExpenseSettingViewController()
         case "문의하기":
-            let inquiryVC = InquiryViewController()
-            navigationController?.pushViewController(inquiryVC, animated: true)
+            delegate?.showInquiryViewController()
         default:
             break
-            
         }
     }
 }
 
-struct Setting {
-    let title: String
-    let action: (() -> Void)?
-}
+
+
+
+

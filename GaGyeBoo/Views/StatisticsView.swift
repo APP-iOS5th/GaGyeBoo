@@ -5,12 +5,21 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     private var monthlySummaries: [MonthlyStatistics] = []
     private var filteredSummaries: [MonthlyStatistics] = []
     
+    private let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }()
+    
+    
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "최근 6개월 통계"
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         label.textAlignment = .center
+        
         return label
     }()
     
@@ -27,19 +36,21 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let recentMonths = StatisticsDataManager.shared.getRecentMonths()
         let months = recentMonths.map { ($0.components(separatedBy: "-").last ?? "") + "월" }
         let maxLabelCount = months.count
-        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.translatesAutoresizingMaskIntoConstraints = false
         barChartView.backgroundColor = .bg100
         
-        barChartView.xAxis.labelPosition = .bottom
+        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
-        
+        barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.labelFont = .systemFont(ofSize: 12)
         barChartView.xAxis.drawGridLinesEnabled = false
+        barChartView.leftAxis.axisMinimum = 0.0
+        
         barChartView.rightAxis.enabled = false
         barChartView.leftAxis.enabled = false
+        
         barChartView.doubleTapToZoomEnabled = false
-        barChartView.legend.font = .systemFont(ofSize: 15)
+        barChartView.legend.font = .systemFont(ofSize: 12)
         
         return barChartView
     }()
@@ -59,6 +70,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(StatisticsTableCell.self, forCellReuseIdentifier: StatisticsTableCell.identifier)
+        
         return tableView
     }()
     
@@ -80,7 +92,12 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         updateMonthlySummaries()
         updateBarChartData()
         tableView.reloadData()
+        
+        if !filteredSummaries.isEmpty {
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
     }
+    
     
     
     private func setupView() {
@@ -102,10 +119,10 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             segmentedControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             segmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            barChartView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 20),
-            barChartView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            barChartView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.4),
+            barChartView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
+            barChartView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            barChartView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3),
             
             noDataLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             noDataLabel.centerYAnchor.constraint(equalTo: barChartView.centerYAnchor),
@@ -132,6 +149,16 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         } else {
             filteredSummaries = monthlySummaries.filter { $0.totalExpense > 0 }
         }
+        filteredSummaries.reverse()
+        
+        tableView.reloadData()
+        if filteredSummaries.isEmpty {
+            barChartView.isHidden = true
+            noDataLabel.isHidden = false
+        } else {
+            barChartView.isHidden = false
+            noDataLabel.isHidden = true
+        }
     }
     
     
@@ -143,12 +170,13 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
-        chartData.barWidth = 0.4
+        
         return chartData
     }
     
     private func entryData(values: [Double]) -> [BarChartDataEntry] {
         var barDataEntries: [BarChartDataEntry] = []
+        
         for i in 0..<values.count {
             let barDataEntry = BarChartDataEntry(x: Double(i), y: values[i])
             barDataEntries.append(barDataEntry)
@@ -176,23 +204,33 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             }
         }
         
-        barChartView.isHidden = data.isEmpty
-        noDataLabel.isHidden = !data.isEmpty
-        
-        if (!data.isEmpty) {
+        if data.allSatisfy({ $0 == 0.0 }) {
+            barChartView.data = nil
+            barChartView.isHidden = true
+            noDataLabel.isHidden = false
+        } else {
+            barChartView.isHidden = false
+            noDataLabel.isHidden = true
+            
             let entries = entryData(values: data)
-            let dataSet = BarChartDataSet(entries: entries.filter { $0.y != 0 }, label: selectedIndex == 0 ? "수입" : "지출")
+            let dataSet = BarChartDataSet(entries: entries, label: selectedIndex == 0 ? "수입" : "지출")
             dataSet.colors = selectedIndex == 0 ? [.textBlue] : [.accent100]
             dataSet.valueFont = .systemFont(ofSize: 12)
             
             let chartData = BarChartData(dataSet: dataSet)
-            chartData.barWidth = 0.4
+            chartData.barWidth = 0.35
+            
             barChartView.data = chartData
-            barChartView.animate(xAxisDuration: 4, yAxisDuration: 4, easingOption: .easeInOutBounce)
-        } else {
-            barChartView.data = nil
+            dataSet.valueFormatter = DefaultValueFormatter(formatter: numberFormatter)
+            
+            barChartView.setNeedsLayout()
+            barChartView.layoutIfNeeded()
+            barChartView.animate(xAxisDuration: 3, yAxisDuration: 3, easingOption: .easeInOutBounce)
         }
     }
+    
+    
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredSummaries.count
@@ -213,10 +251,10 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let selectedIndex = segmentedControl.selectedSegmentIndex
         
         if selectedIndex == 0 {
-            let incomeAmount = "\(Int(summary.totalIncome))원"
+            let incomeAmount = numberFormatter.string(from: NSNumber(value: summary.totalIncome))! + "원"
             cell.configure(with: "\(month)월", incomeAmount: incomeAmount, expenseAmount: nil)
         } else {
-            let expenseAmount = "\(Int(summary.totalExpense))원"
+            let expenseAmount = numberFormatter.string(from: NSNumber(value: summary.totalExpense))! + "원"
             cell.configure(with: "\(month)월", incomeAmount: nil, expenseAmount: expenseAmount)
         }
         
