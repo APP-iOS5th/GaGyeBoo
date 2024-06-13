@@ -155,7 +155,7 @@ class SpendDataManager {
             
             try context.save()
             
-            removeDefaultStatistics(month: "\(targetYear)-\(targetMonth)",
+            removeDefaultStatistics(month: "\(targetYear)-\(String(targetMonth).count == 1 ? "0\(targetMonth)" : "\(targetMonth)")",
                                     amount: targetAmount,
                                     isExpense: isExpense)
             
