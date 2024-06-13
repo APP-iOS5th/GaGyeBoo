@@ -65,6 +65,7 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
     private var cancellable: Cancellable?
     private var reloadAfterSave: Bool = false
+    private var selectedDate: Date = Date()
     private lazy var prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
     private lazy var currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
     
@@ -255,13 +256,33 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 
                 let action1 = UIAlertAction(title: "수정", style: .default) { [weak self] _ in
                     guard let self = self else { return }
+                    
+                    if self.spendList[idx].isUserDefault == true {
+                        let alert = UIAlertController(title: "오류", message: "고정 지출 금액은 수정할 수 없습니다.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                        present(alert, animated: true, completion: nil)
+                        return
+                    }
+                    
                     let editView = EditSpendViewController()
+                    editView.calendarDelegate = self
                     editView.selectedSpend = self.spendList[idx]
                     
                     present(editView, animated: true)
                 }
-                let action2 = UIAlertAction(title: "삭제", style: .default) { _ in
-                    print("Action 2 selected")
+                let action2 = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
+                    guard let self = self else { return }
+                    let copiedSpend = self.spendList[idx]
+                    
+                    if copiedSpend.isUserDefault == true {
+                        let alert = UIAlertController(title: "오류", message: "고정 지출 금액은 삭제할 수 없습니다.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                        present(alert, animated: true, completion: nil)
+                        return
+                    }
+                    
+                    dataManager.removeSpend(removeSpend: copiedSpend)
+                    reloadCalendar(newSpend: copiedSpend, isDeleted: true)
                 }
                 let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
                 
@@ -337,6 +358,7 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
         // TODO: 수입/지출 내역 작성 페이지로 이동
         let addPageController = AddViewController()
         addPageController.calendarDelegate = self
+        addPageController.selectedDate = selectedDate
         let navigationController = UINavigationController(rootViewController: addPageController)
         present(navigationController, animated: true)
     }
@@ -349,12 +371,13 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
         guard let date = Calendar.current.date(from: dateComponents) else { return nil }
         var dateString = dateFormatter.string(from: date)
         if reloadAfterSave == true {
-            dateString = dateFormatter.string(from: currentSpend.last!.date)
+            if currentSpend.count > 0 {
+                dateString = dateFormatter.string(from: currentSpend.last!.date)
+            }
             reloadAfterSave = false
         }
         let models = currentSpend.filter { $0.dateStr == dateString }
-//        print(models)
-//        print("=========================")
+        
         // MARK: - UIStackView의 Constraint가 모호해서 위치가 깨지는 현상 있음
         if models.count > 0 {
             return .customView {
@@ -401,6 +424,7 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
     }
     
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+        
         selection.setSelected(dateComponents, animated: true)
         tempSpendView.forEach{ $0.removeFromSuperview() }
         tempSpendView.removeAll()
@@ -409,7 +433,7 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
             let year = dateComponent.year,
             let month = dateComponent.month,
             let day = dateComponent.day {
-            
+            selectedDate = dateComponent.date!
             dataManager.getRecordsBy(year: year, month: month, day: day, target: .list)
             self.setSpendList()
         }
@@ -427,22 +451,32 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
 }
 
 extension MainViewController: ReloadCalendarDelegate {
-    func reloadCalendar(newSpend: GaGyeBooModel) {
+    func reloadCalendar(newSpend: GaGyeBooModel, isDeleted: Bool = false) {
         tempSpendView.forEach{ $0.removeFromSuperview() }
         tempSpendView.removeAll()
         
-        currentSpend.append(newSpend)
-        reloadAfterSave = true
         dataManager.getRecordsBy(year: currentYear, month: currentMonth, day: currentDay, target: .list)
-        self.setSpendList()
+        reloadAfterSave = true
+        if isDeleted == false {
+            if let index = currentSpend.firstIndex(where: { $0.id == newSpend.id }) {
+                currentSpend.remove(at: index)
+            }
+            currentSpend.append(newSpend)
+            self.setSpendList()
+        } else {
+            if let index = currentSpend.firstIndex(where: { $0.id == newSpend.id }) {
+                currentSpend.remove(at: index)
+            }
+        }
         
         let spendDate = newSpend.dateStr.components(separatedBy: "-").map{ Int($0) }
         
         guard let newYear = spendDate[0], 
               let newMonth = spendDate[1],
               let newDay = spendDate[2] else { return }
+        
         calendarView.reloadDecorations(forDateComponents: [DateComponents(year: newYear, month: newMonth, day: newDay)], animated: true)
-        dataManager.getRecordsBy(year: currentYear, month: currentMonth, target: .calendar)
+        dataManager.getRecordsBy(year: newYear, month: newMonth, target: .calendar)
         currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
         prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
         updateSpendLabels(month: currentMonth)

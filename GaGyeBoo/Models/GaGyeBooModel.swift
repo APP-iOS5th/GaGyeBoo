@@ -8,12 +8,13 @@
 import Foundation
 
 struct GaGyeBooModel {
-    let id = UUID()
+    let id: UUID
     let date: Date
     let saveType: Categories
     let category: String
     let spendType: String?
     let amount: Double
+    let isUserDefault: Bool
     var dateStr: String {
         get {
             let formatter = DateFormatter()
@@ -69,11 +70,13 @@ struct MockStruct {
                 let date = Calendar.current.date(from: dateComponents)!
                 
                 let expense = GaGyeBooModel(
+                    id: UUID(),
                     date: date,
                     saveType: saveType,
                     category: category,
                     spendType: saveType == .expense ? ["현금", "카드"].randomElement()! : nil,
-                    amount: randomAmount
+                    amount: randomAmount,
+                    isUserDefault: false
                 )
                 
                 datas.append(expense)
@@ -108,7 +111,7 @@ struct MockStruct {
 }
 
 protocol ReloadCalendarDelegate {
-    func reloadCalendar(newSpend: GaGyeBooModel)
+    func reloadCalendar(newSpend: GaGyeBooModel, isDeleted: Bool)
 }
 
 enum ShowTarget {

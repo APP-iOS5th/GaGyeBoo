@@ -10,6 +10,7 @@ import UIKit
 class AddViewController: UIViewController {
     
     let spendDataManager: SpendDataManager = SpendDataManager()
+    var selectedDate: Date?
     
     private lazy var datePicker: UIDatePicker = {
         let cal = UIDatePicker()
@@ -19,6 +20,9 @@ class AddViewController: UIViewController {
         cal.locale = Locale(identifier: "ko_KR")
         cal.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         cal.tintColor = .primary100
+        if let selectedDate = self.selectedDate {
+            cal.setDate(selectedDate, animated: true)
+        }
         
         return cal
     }()
@@ -177,7 +181,7 @@ class AddViewController: UIViewController {
                 config.image = UIImage(systemName: "questionmark.circle")
             }
 
-            config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 30)
+            config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 28)
             config.imagePadding = 5
             config.imagePlacement = .top
             let topButton = UIButton(configuration: config)
@@ -398,9 +402,9 @@ class AddViewController: UIViewController {
             spendType = spendContent
         }
         
-        let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
+        let gagyebooData = GaGyeBooModel(id: UUID(), date: date, saveType: saveType, category: category, spendType: spendType, amount: amount, isUserDefault: false)
         spendDataManager.saveSpend(newSpend: gagyebooData)
-        calendarDelegate?.reloadCalendar(newSpend: gagyebooData)
+        calendarDelegate?.reloadCalendar(newSpend: gagyebooData, isDeleted: false)
         
         dismiss(animated: true, completion: nil)
     }

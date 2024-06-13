@@ -114,7 +114,7 @@ class EditSpendViewController: UIViewController {
         stackView.addArrangedSubview(labelComponent)
         
         var categories: [String]
-        if segmentControl.selectedSegmentIndex == 0 {
+        if selectedSpend!.saveType == .income {
             categories = ["월급", "용돈", "기타", "추가"]
         } else {
             categories = ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타", "추가"]
@@ -390,9 +390,9 @@ class EditSpendViewController: UIViewController {
             spendType = spendContent
         }
         
-        let gagyebooData = GaGyeBooModel(date: date, saveType: saveType, category: category, spendType: spendType, amount: amount)
-        spendDataManager.saveSpend(newSpend: gagyebooData)
-        calendarDelegate?.reloadCalendar(newSpend: gagyebooData)
+        let gagyebooData = GaGyeBooModel(id: selectedSpend!.id, date: date, saveType: saveType, category: category, spendType: spendType, amount: amount, isUserDefault: false)
+        spendDataManager.editSpendData(target: gagyebooData)
+        calendarDelegate?.reloadCalendar(newSpend: gagyebooData, isDeleted: false)
         
         dismiss(animated: true, completion: nil)
     }
