@@ -1,10 +1,3 @@
-//
-//  AddViewController.swift
-//  GaGyeBoo
-//
-//  Created by MadCow on 2024/6/4.
-//
-
 import UIKit
 
 class AddViewController: UIViewController {
@@ -184,7 +177,7 @@ class AddViewController: UIViewController {
             config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 28)
             config.imagePadding = 5
             config.imagePlacement = .top
-            let topButton = UIButton(configuration: config)
+//            let topButton = UIButton(configuration: config)
             button.configuration = config
             button.layer.cornerRadius = 5.0
             button.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
@@ -332,14 +325,14 @@ class AddViewController: UIViewController {
         textFieldContainer.addArrangedSubview(contentsField)
         textFieldContainer.addArrangedSubview(saveButton)
         view.layoutIfNeeded()
-        switch sender.selectedSegmentIndex {
-        case 0:
-            let saveType: Categories = .income
-        case 1:
-            let saveType: Categories = .expense
-        default:
-            break
-        }
+//        switch sender.selectedSegmentIndex {
+//        case 0:
+//            let saveType: Categories = .income
+//        case 1:
+//            let saveType: Categories = .expense
+//        default:
+//            break
+//        }
     }
     
     // 금액 입력 부분 감지

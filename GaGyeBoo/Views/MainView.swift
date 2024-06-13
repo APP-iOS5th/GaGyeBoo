@@ -3,9 +3,11 @@ import Combine
 
 class MainView: UIView {
     
-    let scrollView = UIScrollView()
-    let contentView = UIView()
-    let secondContentView = UIView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    private let secondContentView = UIView()
+    private let currentMonthSpendLabel = CustomLabel(text: "", size: 20)
+    private let prevMonthSpendLabel = CustomLabel(text: "", size: 12, color: .lightColor)
     
     private lazy var calendarView: UICalendarView = {
         var calendar = UICalendarView()

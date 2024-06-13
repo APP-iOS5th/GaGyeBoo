@@ -190,6 +190,25 @@ class SpendDataManager {
         }
     }
     
+    func removeDefaultStatistics(month: String, amount: Double, isExpense: Bool) {
+        monthlySpendFetchRequest.predicate = NSPredicate(format: "month CONTAINS %@", month)
+        let minusType = isExpense == true ? "totalExpense" : "totalIncome"
+        do {
+            let spends = try context.fetch(monthlySpendFetchRequest)
+            if spends.count > 0 {
+                for spend in spends {
+                    var incomeExpense = spend.value(forKey: minusType) as! Double
+                    incomeExpense -= amount
+                    spend.setValue(incomeExpense, forKey: minusType)
+                }
+                
+                try context.save()
+            }
+        } catch {
+            print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
+        }
+    }
+    
     func removeDefaultSpends() {
         gaGyeBooFetchRequest.predicate = NSPredicate(format: "isUserDefault == %@", NSNumber(value: true))
         gaGyeBooFetchRequest.includesPropertyValues = false
@@ -204,25 +223,6 @@ class SpendDataManager {
                 try context.save()
                 
                 removeDefaultStatistics(month: "2024", amount: Double(UserDefaults.standard.integer(forKey: "expenseAmount")), isExpense: true)
-            }
-        } catch {
-            print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
-        }
-    }
-    
-    func removeDefaultStatistics(month: String, amount: Double, isExpense: Bool) {
-        monthlySpendFetchRequest.predicate = NSPredicate(format: "month CONTAINS %@", month)
-        let minusType = isExpense == true ? "totalExpense" : "totalIncome"
-        do {
-            let spends = try context.fetch(monthlySpendFetchRequest)
-            if spends.count > 0 {
-                for spend in spends {
-                    var incomeExpense = spend.value(forKey: minusType) as! Double
-                    incomeExpense -= amount
-                    spend.setValue(incomeExpense, forKey: minusType)
-                }
-                
-                try context.save()
             }
         } catch {
             print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")

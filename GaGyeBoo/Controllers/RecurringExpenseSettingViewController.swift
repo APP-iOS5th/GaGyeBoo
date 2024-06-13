@@ -1,10 +1,3 @@
-//
-//  RecurringExpenseSettingViewController.swift
-//  GaGyeBoo
-//
-//  Created by Jude Song on 6/11/24.
-//
-
 import UIKit
 
 class RecurringExpenseSettingViewController: UIViewController {
@@ -55,7 +48,7 @@ class RecurringExpenseSettingViewController: UIViewController {
         
         //뿌려주기
         if let storedCategory = storedCategory {
-            for (index, categoryButton) in categoryStackView.arrangedSubviews.enumerated() {
+            for categoryButton in categoryStackView.arrangedSubviews {
                 if let button = categoryButton as? UIButton, button.titleLabel?.text == storedCategory {
                     categoryButtonTapped(button)
                     break
@@ -250,14 +243,12 @@ class RecurringExpenseSettingViewController: UIViewController {
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-//        for year in 2024...2026 {
-            for month in 1...12 {
-                let dateStr = "\(2024)-\(month)-\(selectedDay)"
-                if let date = formatter.date(from: dateStr) {
-                    dataManager.saveSpend(newSpend: GaGyeBooModel(id: UUID(), date: date, saveType: .expense, category: selectedCategory, spendType: name, amount: Double(expense), isUserDefault: true))
-                }
+        for month in 1...12 {
+            let dateStr = "\(2024)-\(month)-\(selectedDay)"
+            if let date = formatter.date(from: dateStr) {
+                dataManager.saveSpend(newSpend: GaGyeBooModel(id: UUID(), date: date, saveType: .expense, category: selectedCategory, spendType: name, amount: Double(expense), isUserDefault: true))
             }
-//        }
+        }
         
         print("Saved recurring expense: \(name), \(expense) for category: \(selectedCategory) on day: \(selectedDay)")
         
