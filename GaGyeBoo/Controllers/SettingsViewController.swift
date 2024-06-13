@@ -11,7 +11,6 @@ class SettingsViewController: UIViewController, SettingsViewDelegate {
         super.viewDidLoad()
         settingsView.delegate = self
         title = "설정"
-        view.backgroundColor = .systemBackground
     }
     
     func showBudgetSettingViewController() {

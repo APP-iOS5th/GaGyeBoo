@@ -52,6 +52,9 @@ class SettingsView: UIView, UITableViewDataSource, UITableViewDelegate {
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        tableView.contentInset.top = -10
+        tableView.backgroundColor = .bg100
     }
     
     private func configureTableView() {
@@ -78,6 +81,9 @@ class SettingsView: UIView, UITableViewDataSource, UITableViewDelegate {
         return section == 0 ? "자산 설정" : "고객센터"
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -95,7 +101,6 @@ class SettingsView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
     }
 }
-
 
 
 

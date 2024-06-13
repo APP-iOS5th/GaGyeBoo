@@ -43,6 +43,7 @@ class MainViewController: UIViewController {
         }, for: .valueChanged)
         */
         pk.selectedSegmentIndex = 0
+        pk.selectedSegmentTintColor = .primary100
         
         return pk
     }()
@@ -93,6 +94,7 @@ class MainViewController: UIViewController {
         calendar.delegate = self
         calendar.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
         calendar.tintColor = .primary100
+        calendar.locale = Locale(identifier: "ko_KR")
         
         return calendar
     }()
@@ -107,6 +109,7 @@ class MainViewController: UIViewController {
     private var tempSpendView: [UIView] = []
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
     private var cancellable: Cancellable?
+    private var reloadAfterSave: Bool = false
     private lazy var prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
     private lazy var currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
     
@@ -205,11 +208,16 @@ class MainViewController: UIViewController {
     }
     
     private func updateSpendLabels(month: Int) {
-        guard let prevMonthSpend = prevMonthSpend, let currentMonthSpend = currentMonthSpend else { return }
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
-        let spendLabelText = numberFormatter.string(from: NSNumber(value: abs(currentMonthSpend))) ?? ""
         
+        guard let prevMonthSpend = prevMonthSpend, let currentMonthSpend = currentMonthSpend else {
+            currentMonthSpendLabel.text = ""
+            prevMonthSpendLabel.text = "\(month)월 혹은 지난달에 지출내역이 없습니다."
+            return
+        }
+        
+        let spendLabelText = numberFormatter.string(from: NSNumber(value: abs(currentMonthSpend))) ?? ""
         currentMonthSpendLabel.text = "\(month)월 사용금액: \(spendLabelText)원"
         let comparePrevAndCurrentMonthSpend = Int(prevMonthSpend - currentMonthSpend) / 10000
         let spendStr: String
@@ -235,11 +243,32 @@ class MainViewController: UIViewController {
             calendarView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             calendarView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+        
+        DispatchQueue.main.async {
+            self.changeWeekdayHeaderColors()
+        }
+    }
+    
+    func changeWeekdayHeaderColors() {
+        for subview in calendarView.subviews {
+            for weekParent in subview.subviews[1].subviews {
+                for weekLabel in weekParent.subviews {
+                    if let dayLabel = weekLabel as? UILabel {
+                        if dayLabel.text == "일" {
+                            dayLabel.textColor = .systemRed
+                        } else if dayLabel.text == "토" {
+                            dayLabel.textColor = .systemBlue
+                        } else {
+                            dayLabel.textColor = .label
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func setSpendList() {
         prevBottomAnchorForScrollView = secondContentView.topAnchor
-        
         for (idx, spend) in spendList.enumerated() {
             let category = spend.category
             let date = spend.date
@@ -255,12 +284,6 @@ class MainViewController: UIViewController {
             categoryLabel.text = category
             categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
             
-            let dateLabel = UILabel()
-            dateLabel.translatesAutoresizingMaskIntoConstraints = false
-            dateLabel.text = dateText
-            dateLabel.font = UIFont.systemFont(ofSize: 12, weight: .bold)
-            dateLabel.textColor = .lightGray
-            
             let amountLabel = UILabel()
             amountLabel.translatesAutoresizingMaskIntoConstraints = false
             let numberFormatter = NumberFormatter()
@@ -270,42 +293,48 @@ class MainViewController: UIViewController {
             amountLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
             amountLabel.textColor = saveType == .income ? .textBlue : .accent100
             
+            let dateLabel = UILabel()
+            dateLabel.translatesAutoresizingMaskIntoConstraints = false
+            dateLabel.text = dateText
+            dateLabel.font = UIFont.systemFont(ofSize: 12)
+            dateLabel.textColor = .lightGray
+            
             let seperator = HorizontalSeparator()
             
-            [categoryLabel, dateLabel, amountLabel, seperator].forEach{ secondContentView.addSubview($0) }
+            [categoryLabel, amountLabel, dateLabel, seperator].forEach{ secondContentView.addSubview($0) }
             
             NSLayoutConstraint.activate([
-                categoryLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 10),
-                categoryLabel.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
+                dateLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 10),
+                dateLabel.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
                 
-                dateLabel.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 8),
-                dateLabel.leadingAnchor.constraint(equalTo: categoryLabel.leadingAnchor),
-                
-                amountLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 10),
+                categoryLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 8),
+                categoryLabel.leadingAnchor.constraint(equalTo: dateLabel.leadingAnchor),
+
+                amountLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 20),
                 amountLabel.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
-                
-                seperator.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 10),
+
+                seperator.topAnchor.constraint(equalTo: categoryLabel.bottomAnchor, constant: 10),
                 seperator.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
-                seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
+                seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10)
             ])
-            
-            [categoryLabel, dateLabel, amountLabel, seperator].forEach{ tempSpendView.append($0) }
             
             if let spendType = spendType {
                 let spendTypeLabel = UILabel()
                 spendTypeLabel.translatesAutoresizingMaskIntoConstraints = false
-                spendTypeLabel.text = spendType
-                spendTypeLabel.font = UIFont.systemFont(ofSize: 12, weight: .bold)
-                spendTypeLabel.textColor = .lightGray
+                spendTypeLabel.text = "-  \(spendType)"
+                spendTypeLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+                spendTypeLabel.textColor = .label
                 
                 tempSpendView.append(spendTypeLabel)
                 secondContentView.addSubview(spendTypeLabel)
                 
                 NSLayoutConstraint.activate([
-                    spendTypeLabel.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 10),
-                    spendTypeLabel.trailingAnchor.constraint(equalTo: amountLabel.trailingAnchor)
+                    spendTypeLabel.centerYAnchor.constraint(equalTo: categoryLabel.centerYAnchor),
+                    spendTypeLabel.leadingAnchor.constraint(equalTo: categoryLabel.trailingAnchor, constant: 10),
                 ])
             }
+            
+            [categoryLabel, amountLabel, dateLabel, seperator].forEach{ tempSpendView.append($0) }
             
             prevBottomAnchorForScrollView = seperator.bottomAnchor
             if idx == spendList.count - 1 {
@@ -317,7 +346,7 @@ class MainViewController: UIViewController {
     @objc func toAddPage() {
         // TODO: 수입/지출 내역 작성 페이지로 이동
         let addPageController = AddViewController()
-//        addPageController.calendarDelegate = self
+        addPageController.calendarDelegate = self
         let navigationController = UINavigationController(rootViewController: addPageController)
         present(navigationController, animated: true)
     }
@@ -328,10 +357,11 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         guard let date = Calendar.current.date(from: dateComponents) else { return nil }
-        let dateString = dateFormatter.string(from: date)
-//        print("=========================")
-//        print(currentSpend.map{ $0.dateStr })
-//        print(dateString)
+        var dateString = dateFormatter.string(from: date)
+        if reloadAfterSave == true {
+            dateString = dateFormatter.string(from: currentSpend.last!.date)
+            reloadAfterSave = false
+        }
         let models = currentSpend.filter { $0.dateStr == dateString }
 //        print(models)
 //        print("=========================")
@@ -399,13 +429,9 @@ extension MainViewController: UICalendarViewDelegate, UICalendarSelectionSingleD
         if let newYear = calendarView.visibleDateComponents.year, let newMonth = calendarView.visibleDateComponents.month {
             currentMonthSpend = dataManager.getPrevExpense(year: newYear, month: newMonth)
             prevMonthSpend = dataManager.getPrevExpense(year: newYear, month: newMonth - 1)
-            updateSpendLabels(month: newMonth)
             dataManager.getRecordsBy(year: newYear, month: newMonth, target: .calendar)
-            
-            if let recentSpend = currentSpend.last {
-                calendarView.visibleDateComponents.day = Int(recentSpend.dateStr.components(separatedBy: "-")[2])
-                calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
-            }
+            calendarView.reloadDecorations(forDateComponents: [DateComponents(year: newYear, month: newMonth)], animated: true)
+            updateSpendLabels(month: newMonth)
         }
     }
 }
@@ -415,14 +441,21 @@ extension MainViewController: ReloadCalendarDelegate {
         tempSpendView.forEach{ $0.removeFromSuperview() }
         tempSpendView.removeAll()
         
-//        dataManager.getRecordsBy(year: currentYear, month: currentMonth, target: .calendar)
         currentSpend.append(newSpend)
+        reloadAfterSave = true
         dataManager.getRecordsBy(year: currentYear, month: currentMonth, day: currentDay, target: .list)
-        
-        print(calendarView.visibleDateComponents)
-        calendarView.visibleDateComponents.day = Int(newSpend.dateStr.components(separatedBy: "-")[2])
-        calendarView.reloadDecorations(forDateComponents: [calendarView.visibleDateComponents], animated: true)
         self.setSpendList()
+        
+        let spendDate = newSpend.dateStr.components(separatedBy: "-").map{ Int($0) }
+        
+        guard let newYear = spendDate[0], 
+              let newMonth = spendDate[1],
+              let newDay = spendDate[2] else { return }
+        calendarView.reloadDecorations(forDateComponents: [DateComponents(year: newYear, month: newMonth, day: newDay)], animated: true)
+        dataManager.getRecordsBy(year: currentYear, month: currentMonth, target: .calendar)
+        currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
+        prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
+        updateSpendLabels(month: currentMonth)
     }
 }
 
@@ -438,50 +471,5 @@ class HorizontalSeparator: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-protocol ReloadCalendarDelegate {
-    func reloadCalendar(newSpend: GaGyeBooModel)
-}
-
-enum ShowTarget {
-    case calendar
-    case list
-}
-
-extension UIColor {
-    // Hex 문자열을 UIColor로 변환하는 이니셜라이저
-    convenience init?(hex: String) {
-        // 입력된 Hex 문자열을 정리
-        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-        
-        var rgb: UInt64 = 0
-        
-        // Hex 문자열이 유효한지 확인
-        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
-        
-        let length = hexSanitized.count
-        let r, g, b, a: CGFloat
-        
-        // Hex 문자열 길이에 따른 색상 값 추출
-        switch length {
-        case 6: // RGB (24비트)
-            r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
-            g = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
-            b = CGFloat(rgb & 0x0000FF) / 255.0
-            a = 1.0
-        case 8: // RGBA (32비트)
-            r = CGFloat((rgb & 0xFF000000) >> 24) / 255.0
-            g = CGFloat((rgb & 0x00FF0000) >> 16) / 255.0
-            b = CGFloat((rgb & 0x0000FF00) >> 8) / 255.0
-            a = CGFloat(rgb & 0x000000FF) / 255.0
-        default:
-            return nil
-        }
-        
-        // UIColor 객체 생성
-        self.init(red: r, green: g, blue: b, alpha: a)
     }
 }

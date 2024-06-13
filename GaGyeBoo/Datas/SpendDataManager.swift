@@ -10,7 +10,25 @@ class SpendDataManager {
     @Published var spendsForDetailList: [GaGyeBooModel] = []
     var cancellable: Cancellable?
     
-    func saveSpend(newSpend: GaGyeBooModel) {
+    func removeDefaultSpends() {
+        gaGyeBooFetchRequest.predicate = NSPredicate(format: "isUserDefault == %@", NSNumber(value: true))
+        gaGyeBooFetchRequest.includesPropertyValues = false
+        
+        do {
+            let defaultSpends = try context.fetch(gaGyeBooFetchRequest)
+            if defaultSpends.count > 0 {
+                for spend in defaultSpends {
+                    context.delete(spend)
+                }
+                
+                try context.save()
+            }
+        } catch {
+            print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
+        }
+    }
+    
+    func saveSpend(newSpend: GaGyeBooModel, isUserDefault: Bool = false) {
         if let entity = NSEntityDescription.entity(forEntityName: "GaGyeBoo", in: context) {
             let spend = NSManagedObject(entity: entity, insertInto: context)
             spend.setValue(newSpend.date, forKey: "date")
@@ -18,6 +36,9 @@ class SpendDataManager {
             spend.setValue(newSpend.category, forKey: "category")
             spend.setValue(newSpend.spendType, forKey: "spendType")
             spend.setValue(newSpend.amount, forKey: "amount")
+            if isUserDefault == true {
+                spend.setValue(true, forKey: "isUserDefault")
+            }
         }
         
         do {
