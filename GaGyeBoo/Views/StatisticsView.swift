@@ -92,8 +92,12 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         updateMonthlySummaries()
         updateBarChartData()
         tableView.reloadData()
-        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        
+        if !filteredSummaries.isEmpty {
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
     }
+    
     
     
     private func setupView() {
@@ -146,6 +150,15 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             filteredSummaries = monthlySummaries.filter { $0.totalExpense > 0 }
         }
         filteredSummaries.reverse()
+        
+        tableView.reloadData()
+        if filteredSummaries.isEmpty {
+            barChartView.isHidden = true
+            noDataLabel.isHidden = false
+        } else {
+            barChartView.isHidden = false
+            noDataLabel.isHidden = true
+        }
     }
     
     
@@ -192,12 +205,14 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             }
         }
         
-        barChartView.isHidden = data.isEmpty
-        noDataLabel.isHidden = !data.isEmpty
-        
-        let valueFormatter = DefaultValueFormatter(formatter: numberFormatter)
-        
-        if (!data.isEmpty) {
+        if data.allSatisfy({ $0 == 0.0 }) {
+            barChartView.data = nil
+            barChartView.isHidden = true
+            noDataLabel.isHidden = false
+        } else {
+            barChartView.isHidden = false
+            noDataLabel.isHidden = true
+            
             let entries = entryData(values: data)
             let dataSet = BarChartDataSet(entries: entries, label: selectedIndex == 0 ? "수입" : "지출")
             dataSet.colors = selectedIndex == 0 ? [.textBlue] : [.accent100]
@@ -207,15 +222,15 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             chartData.barWidth = 0.3
             
             barChartView.data = chartData
-            dataSet.valueFormatter = valueFormatter
+            dataSet.valueFormatter = DefaultValueFormatter(formatter: numberFormatter)
             
             barChartView.setNeedsLayout()
             barChartView.layoutIfNeeded()
             barChartView.animate(xAxisDuration: 3, yAxisDuration: 3, easingOption: .easeInOutBounce)
-        } else {
-            barChartView.data = nil
         }
     }
+    
+    
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
