@@ -108,6 +108,7 @@ class AddViewController: UIViewController {
     
     //카테고리 버튼
     private var selectedCategory: String?
+    private var selectedButton: UIButton?
     
     private func createCategoryButtons() -> UIScrollView {
         let scrollView = UIScrollView()
@@ -166,7 +167,7 @@ class AddViewController: UIViewController {
             }
 
             config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 30)
-            config.imagePadding = 10
+            config.imagePadding = 5
             config.imagePlacement = .top
             let topButton = UIButton(configuration: config)
             button.configuration = config
@@ -329,7 +330,21 @@ class AddViewController: UIViewController {
     // 카테고리 버튼 선택 감지 및 선택한 값 저장
     @objc private func categoryTapped(_ sender: UIButton) {
         guard let category = sender.title(for: .normal) else { return }
-        selectedCategory = category
+        
+        if sender == selectedButton {
+            sender.isSelected = false
+            sender.setTitleColor(.gray, for: .normal)
+            selectedButton = nil
+            selectedCategory = nil
+        } else {
+            selectedButton?.isSelected = false
+            selectedButton?.setTitleColor(.gray, for: .normal)
+            
+            sender.isSelected = true
+            sender.setTitleColor(.label, for: .normal)
+            selectedButton = sender
+            selectedCategory = category
+        }
         updateSaveButtonState()
         
         print("선택된 카테고리: \(category)")
