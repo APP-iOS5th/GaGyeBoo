@@ -391,8 +391,10 @@ class EditSpendViewController: UIViewController {
         }
         
         let gagyebooData = GaGyeBooModel(id: selectedSpend!.id, date: date, saveType: saveType, category: category, spendType: spendType, amount: amount, isUserDefault: false)
+        
         spendDataManager.editSpendData(target: gagyebooData)
         calendarDelegate?.reloadCalendar(newSpend: gagyebooData, isDeleted: false)
+        
         
         dismiss(animated: true, completion: nil)
     }

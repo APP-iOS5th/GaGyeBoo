@@ -22,10 +22,11 @@ class MainView: UIView {
     
     @Published var selectedDate: Date?
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
-    private var firstCancellable: Cancellable?
-    private var secondCancellable: Cancellable?
-    var currentYearMonthSpends: [GaGyeBooModel] = []
-    var currentYearMonthDaySpends: [GaGyeBooModel] = []
+    private var yearMonthCancellable: Cancellable?
+    private var fullDateCancellable: Cancellable?
+    private var calendarReloadDateCancellable: Cancellable?
+    private var currentYearMonthSpends: [GaGyeBooModel] = []
+    private var currentYearMonthDaySpends: [GaGyeBooModel] = []
     private var tempSpendView: [UIView] = []
     private let currentYear = Calendar.current.component(.year, from: Date())
     private let currentMonth = Calendar.current.component(.month, from: Date())
@@ -48,9 +49,10 @@ class MainView: UIView {
     }
     
     func setSubscriber() {
-        firstCancellable?.cancel()
-        firstCancellable = dataManager.$currentYearMonthSpends.sink(receiveValue: { [weak self] spends in
+        yearMonthCancellable?.cancel()
+        yearMonthCancellable = dataManager.$currentYearMonthSpends.sink(receiveValue: { [weak self] spends in
             guard let self = self else { return }
+            
             self.currentYearMonthSpends = spends
             if let recentSpend = spends.last {
                 let recentSpendStrArr = recentSpend.dateStr.components(separatedBy: "-").map{ Int($0)! }
@@ -60,16 +62,29 @@ class MainView: UIView {
             }
         })
         
-        secondCancellable?.cancel()
-        secondCancellable = dataManager.$currentYearMonthDaySpends.sink(receiveValue: { [weak self] spends in
+        fullDateCancellable?.cancel()
+        fullDateCancellable = dataManager.$currentYearMonthDaySpends.sink(receiveValue: { [weak self] spends in
             guard let self = self else { return }
-            self.currentYearMonthDaySpends = spends
             
+            self.currentYearMonthDaySpends = spends
             tempSpendView.forEach{ $0.removeFromSuperview() }
             tempSpendView.removeAll()
             self.setDailySpendList()
             
-            self.calendarView.reloadDecorations(forDateComponents: [DateComponents(year: currentYear, month: currentMonth, day: currentDay)], animated: true)
+            self.calendarView.reloadDecorations(forDateComponents: [DateComponents(year: currentYear, 
+                                                                                   month: currentMonth,
+                                                                                   day: currentDay)], animated: true)
+        })
+        
+        calendarReloadDateCancellable?.cancel()
+        calendarReloadDateCancellable = dataManager.$dateForReloadCalendar.sink(receiveValue: { [weak self] dateTuple in
+            guard let self = self else { return }
+            
+            if dateTuple.0 > 0 && dateTuple.1 > 0 && dateTuple.1 > 0 {
+                self.calendarView.reloadDecorations(forDateComponents: [DateComponents(year: dateTuple.0,
+                                                                                       month: dateTuple.1,
+                                                                                       day: dateTuple.2)], animated: true)
+            }
         })
     }
     
@@ -169,19 +184,21 @@ class MainView: UIView {
                 let editAction = UIAlertAction(title: "수정", style: .default) { [weak self] _ in
                     guard let self = self else { return }
                     
-                    if self.currentYearMonthSpends[idx].isUserDefault == true {
+                    let copiedSpend = self.currentYearMonthDaySpends[idx]
+                    if copiedSpend.isUserDefault == true {
                         let alert = UIAlertController(title: "오류", message: "고정 지출 금액은 수정할 수 없습니다.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
                         alertDelegate?.showAlert(controller: alert)
                         return
                     }
                     
-                    editDelegate?.showEditPage(controller: EditSpendViewController(), selectedSpend: self.currentYearMonthSpends[idx])
+                    editDelegate?.showEditPage(controller: EditSpendViewController(), selectedSpend: self.currentYearMonthDaySpends[idx])
                 }
+                
                 let deleteAction = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
                     guard let self = self else { return }
-                    let copiedSpend = self.currentYearMonthSpends[idx]
                     
+                    let copiedSpend = self.currentYearMonthDaySpends[idx]
                     if copiedSpend.isUserDefault == true {
                         let alert = UIAlertController(title: "오류", message: "고정 지출 금액은 삭제할 수 없습니다.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
@@ -191,6 +208,7 @@ class MainView: UIView {
                     
                     dataManager.removeSpend(removeSpend: copiedSpend)
                 }
+                
                 let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
                 
                 alertController.addAction(editAction)
