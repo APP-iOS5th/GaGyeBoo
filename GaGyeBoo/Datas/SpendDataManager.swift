@@ -50,7 +50,6 @@ class SpendDataManager {
     }
     
     func getCurrentYearMonthDaySpends(year: Int, month: Int, day: Int) {
-        
         let calendar = Calendar.current
         
         var startComponents = DateComponents()
@@ -62,7 +61,7 @@ class SpendDataManager {
         var endComponents = DateComponents()
         endComponents.year = year
         endComponents.month = month
-        endComponents.month = day
+        endComponents.day = day
         endComponents.hour = 24
         
         if let startDate = calendar.date(from: startComponents), let endDate = calendar.date(from: endComponents) {
@@ -91,6 +90,26 @@ class SpendDataManager {
             } catch {
                 print("error in SpendDataManager getCurrentYearMonthDaySpend() >> \(error.localizedDescription)")
             }
+        }
+    }
+    
+    func saveSpend(newSpend: GaGyeBooModel) {
+        if let entity = NSEntityDescription.entity(forEntityName: "GaGyeBoo", in: context) {
+            let spend = NSManagedObject(entity: entity, insertInto: context)
+            spend.setValue(newSpend.id, forKey: "id")
+            spend.setValue(newSpend.date, forKey: "date")
+            spend.setValue(newSpend.saveType.rawValue, forKey: "saveType")
+            spend.setValue(newSpend.category, forKey: "category")
+            spend.setValue(newSpend.spendType, forKey: "spendType")
+            spend.setValue(newSpend.amount, forKey: "amount")
+            spend.setValue(newSpend.isUserDefault, forKey: "isUserDefault")
+        }
+        
+        do {
+            try context.save()
+            saveStatisticsData(newSpend: newSpend)
+        } catch let error {
+            print("error in SpendDataManager saveSpend() >> \(error.localizedDescription)")
         }
     }
     
@@ -130,26 +149,6 @@ class SpendDataManager {
             }
         } catch {
             print("error in SpendDataManager in removeDefaultSpends >> \(error.localizedDescription)")
-        }
-    }
-    
-    func saveSpend(newSpend: GaGyeBooModel) {
-        if let entity = NSEntityDescription.entity(forEntityName: "GaGyeBoo", in: context) {
-            let spend = NSManagedObject(entity: entity, insertInto: context)
-            spend.setValue(newSpend.id, forKey: "id")
-            spend.setValue(newSpend.date, forKey: "date")
-            spend.setValue(newSpend.saveType.rawValue, forKey: "saveType")
-            spend.setValue(newSpend.category, forKey: "category")
-            spend.setValue(newSpend.spendType, forKey: "spendType")
-            spend.setValue(newSpend.amount, forKey: "amount")
-            spend.setValue(newSpend.isUserDefault, forKey: "isUserDefault")
-        }
-        
-        do {
-            try context.save()
-            saveStatisticsData(newSpend: newSpend)
-        } catch let error {
-            print("error in SpendDataManager saveSpend() >> \(error.localizedDescription)")
         }
     }
     

@@ -24,8 +24,8 @@ class MainView: UIView {
     private var prevBottomAnchorForScrollView: NSLayoutYAxisAnchor!
     private var firstCancellable: Cancellable?
     private var secondCancellable: Cancellable?
-    private var currentYearMonthSpends: [GaGyeBooModel] = []
-    private var currentYearMonthDaySpends: [GaGyeBooModel] = []
+    var currentYearMonthSpends: [GaGyeBooModel] = []
+    var currentYearMonthDaySpends: [GaGyeBooModel] = []
     private var tempSpendView: [UIView] = []
     private let currentYear = Calendar.current.component(.year, from: Date())
     private let currentMonth = Calendar.current.component(.month, from: Date())
@@ -52,13 +52,23 @@ class MainView: UIView {
         firstCancellable = dataManager.$currentYearMonthSpends.sink(receiveValue: { [weak self] spends in
             guard let self = self else { return }
             self.currentYearMonthSpends = spends
-            self.calendarView.reloadDecorations(forDateComponents: [DateComponents(year: currentYear, month: currentMonth)], animated: true)
+            if let recentSpend = spends.last {
+                let recentSpendStrArr = recentSpend.dateStr.components(separatedBy: "-").map{ Int($0)! }
+                self.calendarView.reloadDecorations(forDateComponents: [DateComponents(year: recentSpendStrArr[0],
+                                                                                       month: recentSpendStrArr[1],
+                                                                                       day: recentSpendStrArr[2])], animated: true)
+            }
         })
         
         secondCancellable?.cancel()
         secondCancellable = dataManager.$currentYearMonthDaySpends.sink(receiveValue: { [weak self] spends in
             guard let self = self else { return }
             self.currentYearMonthDaySpends = spends
+            
+            tempSpendView.forEach{ $0.removeFromSuperview() }
+            tempSpendView.removeAll()
+            self.setDailySpendList()
+            
             self.calendarView.reloadDecorations(forDateComponents: [DateComponents(year: currentYear, month: currentMonth, day: currentDay)], animated: true)
         })
     }
@@ -199,6 +209,7 @@ class MainView: UIView {
             let seperator = HorizontalSeparator()
             
             [categoryLabel, amountLabel, dateLabel, editButton, seperator].forEach{ secondContentView.addSubview($0) }
+            [categoryLabel, amountLabel, dateLabel, editButton, seperator].forEach{ tempSpendView.append($0) }
             
             NSLayoutConstraint.activate([
                 dateLabel.topAnchor.constraint(equalTo: prevBottomAnchorForScrollView, constant: 10),
@@ -217,6 +228,18 @@ class MainView: UIView {
                 seperator.leadingAnchor.constraint(equalTo: secondContentView.leadingAnchor, constant: 10),
                 seperator.trailingAnchor.constraint(equalTo: secondContentView.trailingAnchor, constant: -10),
             ])
+            
+            if let spendType = spendType {
+                let spendTypeLabel = CustomLabel(text: "-  \(spendType)")
+                
+                secondContentView.addSubview(spendTypeLabel)
+                tempSpendView.append(spendTypeLabel)
+                
+                NSLayoutConstraint.activate([
+                    spendTypeLabel.topAnchor.constraint(equalTo: categoryLabel.topAnchor),
+                    spendTypeLabel.leadingAnchor.constraint(equalTo: categoryLabel.trailingAnchor, constant: 10)
+                ])
+            }
             
             if idx == self.currentYearMonthDaySpends.count - 1 {
                 seperator.bottomAnchor.constraint(equalTo: secondContentView.bottomAnchor).isActive = true
@@ -292,38 +315,13 @@ extension MainView: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegat
         }
         return nil
     }
-}
-
-extension MainView: ReloadCalendarDelegate {
-    func reloadCalendar(newSpend: GaGyeBooModel, isDeleted: Bool = false) {
-        tempSpendView.forEach{ $0.removeFromSuperview() }
-        tempSpendView.removeAll()
-        
-        dataManager.getCurrentYearMonthDaySpends(year: currentYear, month: currentMonth, day: currentDay)
-        
-//        reloadAfterSave = true
-//        if isDeleted == false {
-//            if let index = currentSpend.firstIndex(where: { $0.id == newSpend.id }) {
-//                currentSpend.remove(at: index)
-//            }
-//            currentSpend.append(newSpend)
-//            self.setSpendList()
-//        } else {
-//            if let index = currentSpend.firstIndex(where: { $0.id == newSpend.id }) {
-//                currentSpend.remove(at: index)
-//            }
-//        }
-//        
-//        let spendDate = newSpend.dateStr.components(separatedBy: "-").map{ Int($0) }
-//        
-//        guard let newYear = spendDate[0],
-//              let newMonth = spendDate[1],
-//              let newDay = spendDate[2] else { return }
-//        
-//        calendarView.reloadDecorations(forDateComponents: [DateComponents(year: newYear, month: newMonth, day: newDay)], animated: true)
-//        dataManager.getRecordsBy(year: newYear, month: newMonth, target: .calendar)
-//        currentMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth)
-//        prevMonthSpend = dataManager.getPrevExpense(year: currentYear, month: currentMonth - 1)
-//        updateSpendLabels(month: currentMonth)
+    
+    func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
+        if let newYear = calendarView.visibleDateComponents.year,
+           let newMonth = calendarView.visibleDateComponents.month{
+            loadCurrentYearMonthData(year: newYear, month: newMonth)
+            
+            calendarView.reloadDecorations(forDateComponents: [DateComponents(year: newYear, month: newMonth)], animated: true)
+        }
     }
 }

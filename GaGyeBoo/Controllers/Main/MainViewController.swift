@@ -8,6 +8,7 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private var cancellable: Cancellable?
     
     private let mainView = MainView()
+    private let dataManager = SpendDataManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +42,7 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
         let addPageController = AddViewController()
         addPageController.calendarDelegate = self
         addPageController.selectedDate = selectedDate
+        
         present(UINavigationController(rootViewController: addPageController), animated: true)
     }
 }
@@ -64,7 +66,9 @@ extension MainViewController: ShowEditDelegate {
 
 extension MainViewController: ReloadCalendarDelegate {
     func reloadCalendar(newSpend: GaGyeBooModel, isDeleted: Bool) {
-        print(newSpend)
+        let dateArr = newSpend.dateStr.components(separatedBy: "-").map{ Int($0)! }
+        mainView.loadCurrentYearMonthData(year: dateArr[0], month: dateArr[1])
+        mainView.loadCurrentYearMonthDayData(year: dateArr[0], month: dateArr[1], day: dateArr[2])
     }
 }
 

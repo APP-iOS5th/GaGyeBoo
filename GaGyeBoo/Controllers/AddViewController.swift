@@ -297,8 +297,6 @@ class AddViewController: UIViewController {
             saveButton.topAnchor.constraint(equalTo: contentsField.bottomAnchor, constant: 20),
             saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
-        
-        
     }
     
     //MARK: Methods
@@ -403,6 +401,7 @@ class AddViewController: UIViewController {
         }
         
         let gagyebooData = GaGyeBooModel(id: UUID(), date: date, saveType: saveType, category: category, spendType: spendType, amount: amount, isUserDefault: false)
+        
         spendDataManager.saveSpend(newSpend: gagyebooData)
         calendarDelegate?.reloadCalendar(newSpend: gagyebooData, isDeleted: false)
         
