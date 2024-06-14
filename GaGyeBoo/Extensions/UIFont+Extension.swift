@@ -43,6 +43,7 @@ extension UITextView {
 class CustomLabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.setCustomFont()
     }
     
     convenience init(
@@ -108,18 +109,6 @@ extension Double {
             let amountText = numberFormatter.string(from: NSNumber(value: abs(self))) ?? ""
             
             return amountText
-        }
-    }
-}
-
-extension UIView {
-    func findViewController() -> UIViewController? {
-        if let nextResponder = self.next as? UIViewController {
-            return nextResponder
-        } else if let nextResponder = self.next as? UIView {
-            return nextResponder.findViewController()
-        } else {
-            return nil
         }
     }
 }

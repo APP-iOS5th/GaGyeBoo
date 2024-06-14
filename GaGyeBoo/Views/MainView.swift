@@ -82,7 +82,7 @@ class MainView: UIView {
         calendarReloadDateCancellable = dataManager.$dateForReloadCalendar.sink(receiveValue: { [weak self] dateTuple in
             guard let self = self else { return }
             
-            if dateTuple.0 > 0 && dateTuple.1 > 0 && dateTuple.1 > 0 {
+            if dateTuple.0 > 0 && dateTuple.1 > 0 && dateTuple.2 > 0 {
                 self.calendarView.reloadDecorations(forDateComponents: [DateComponents(year: dateTuple.0,
                                                                                        month: dateTuple.1,
                                                                                        day: dateTuple.2)], animated: true)
