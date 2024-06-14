@@ -225,7 +225,7 @@ class EditSpendViewController: UIViewController {
         super.viewDidLoad()
         
         setupInitialValues()
-        view.backgroundColor = .white
+        self.view.backgroundColor = .linen
         
         view.addSubview(segmentControl)
         view.addSubview(underLineView)
