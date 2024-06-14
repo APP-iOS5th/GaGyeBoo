@@ -67,7 +67,7 @@ class RecurringExpenseSettingViewController: UIViewController {
     
     private func setupViews() {
         title = "월 고정 지출 설정"
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .linen
         navigationItem.rightBarButtonItem = saveButton
         saveButton.target = self
         saveButton.action = #selector(saveButtonTapped)

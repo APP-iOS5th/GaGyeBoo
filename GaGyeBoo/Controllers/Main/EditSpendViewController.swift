@@ -366,7 +366,7 @@ class EditSpendViewController: UIViewController {
               let category = selectedCategory, !category.isEmpty
         else {
             saveButton.isEnabled = false
-            saveButton.tintColor = .bg200
+            saveButton.tintColor = .linen
             return
         }
         saveButton.tintColor = .primary100

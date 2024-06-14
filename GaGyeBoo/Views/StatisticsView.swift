@@ -1,9 +1,14 @@
 import UIKit
 import DGCharts
+import Combine
+
+
 
 class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
     private var monthlySummaries: [MonthlyStatistics] = []
     private var filteredSummaries: [MonthlyStatistics] = []
+    
+    private var cancellables = Set<AnyCancellable>()
     
     private let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -11,7 +16,6 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         formatter.maximumFractionDigits = 0
         return formatter
     }()
-    
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -31,13 +35,21 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         return control
     }()
     
+    lazy var budgetLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+        label.textAlignment = .center
+        return label
+    }()
+    
     lazy var barChartView: BarChartView = {
         let barChartView = BarChartView()
         let recentMonths = StatisticsDataManager.shared.getRecentMonths()
         let months = recentMonths.map { ($0.components(separatedBy: "-").last ?? "") + "월" }
         let maxLabelCount = months.count
         barChartView.translatesAutoresizingMaskIntoConstraints = false
-        barChartView.backgroundColor = .bg100
+        barChartView.backgroundColor = .linen
         
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: months)
         barChartView.xAxis.setLabelCount(maxLabelCount, force: false)
@@ -74,39 +86,56 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         return tableView
     }()
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupSubscriptions()
         loadData()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+        setupSubscriptions()
         loadData()
     }
     
+    private func setupSubscriptions() {
+        StatisticsDataManager.shared.$monthlyStatistics
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.loadData()
+            }
+            .store(in: &cancellables)
+        
+        StatisticsDataManager.shared.statisticsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.loadData()
+            }
+            .store(in: &cancellables)
+    }
+    
     private func loadData() {
-        monthlySummaries = StatisticsDataManager.shared.fetchMonthlyStatistics()
+        monthlySummaries = StatisticsDataManager.shared.monthlyStatistics
         updateMonthlySummaries()
         updateBarChartData()
         tableView.reloadData()
+        updateBudget()
         
         if !filteredSummaries.isEmpty {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
     }
-    
-    
-    
     private func setupView() {
-        backgroundColor = .white
+        backgroundColor = .linen
         addSubview(titleLabel)
         addSubview(segmentedControl)
+        addSubview(budgetLabel)
         addSubview(barChartView)
         addSubview(noDataLabel)
         addSubview(tableView)
+        
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: -30),
@@ -119,7 +148,11 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             segmentedControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             segmentedControl.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            barChartView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
+            budgetLabel.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 13),
+            budgetLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            budgetLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15),
+            
+            barChartView.topAnchor.constraint(equalTo: budgetLabel.bottomAnchor, constant: 10),
             barChartView.leadingAnchor.constraint(equalTo: leadingAnchor),
             barChartView.trailingAnchor.constraint(equalTo: trailingAnchor),
             barChartView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3),
@@ -127,20 +160,16 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             noDataLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             noDataLabel.centerYAnchor.constraint(equalTo: barChartView.centerYAnchor),
             
-            tableView.topAnchor.constraint(equalTo: barChartView.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: barChartView.bottomAnchor, constant: 30),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
-        
+        tableView.backgroundColor = .linen
         updateBarChartData()
     }
     
-    @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        updateMonthlySummaries()
-        updateBarChartData()
-        tableView.reloadData()
-    }
+    
     
     private func updateMonthlySummaries() {
         let selectedIndex = segmentedControl.selectedSegmentIndex
@@ -151,7 +180,12 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
         filteredSummaries.reverse()
         
+        let startIndex = max(filteredSummaries.count - 6, 0)
+        filteredSummaries = Array(filteredSummaries[startIndex..<filteredSummaries.count])
+        
+        
         tableView.reloadData()
+        
         if filteredSummaries.isEmpty {
             barChartView.isHidden = true
             noDataLabel.isHidden = false
@@ -161,12 +195,30 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    private func updateBudget() {
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: Date())
+        let monthString = String(format: "%d", month)
+        
+        if segmentedControl.selectedSegmentIndex == 0 {
+            let storedBudget = UserDefaults.standard.integer(forKey: "budgetAmount")
+            budgetLabel.text = "\(monthString)월 예상 예산: \(numberFormatter.string(from: NSNumber(value: storedBudget)) ?? "0") 원"
+            budgetLabel.textColor = .text200
+            budgetLabel.isHidden = false
+        } else {
+            let userExpenseData = UserDefaults.standard.integer(forKey: "expenseAmount")
+            let userSelectedDay = UserDefaults.standard.integer(forKey: "selectedDay")
+            budgetLabel.text = "매월 \(userSelectedDay)일 고정지출: \(numberFormatter.string(from: NSNumber(value: userExpenseData)) ?? "0") 원"
+            budgetLabel.textColor = .accent100
+            budgetLabel.isEnabled = true
+        }
+    }
     
     private func createBarChartData(values: [Double], label: String) -> BarChartData {
         let entries = entryData(values: values)
         let dataSet = BarChartDataSet(entries: entries, label: label)
         
-        dataSet.colors = dataSet.label == "수입" ? [.textBlue] : [.accent100]
+        dataSet.colors = dataSet.label == "수입" ? [.text200] : [.accent100]
         dataSet.valueFont = .systemFont(ofSize: 12)
         
         let chartData = BarChartData(dataSet: dataSet)
@@ -214,7 +266,7 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
             
             let entries = entryData(values: data)
             let dataSet = BarChartDataSet(entries: entries, label: selectedIndex == 0 ? "수입" : "지출")
-            dataSet.colors = selectedIndex == 0 ? [.textBlue] : [.accent100]
+            dataSet.colors = selectedIndex == 0 ? [.text200] : [.accent100]
             dataSet.valueFont = .systemFont(ofSize: 12)
             
             let chartData = BarChartData(dataSet: dataSet)
@@ -229,6 +281,14 @@ class StatisticsView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    
+    
+    @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        updateMonthlySummaries()
+        updateBarChartData()
+        updateBudget()
+        tableView.reloadData()
+    }
     
     
     

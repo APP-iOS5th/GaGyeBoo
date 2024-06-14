@@ -12,7 +12,6 @@ class MainViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         mainView.alertDelegate = self
         mainView.editDelegate = self
             

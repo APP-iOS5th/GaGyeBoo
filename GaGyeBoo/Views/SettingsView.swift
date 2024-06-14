@@ -54,7 +54,7 @@ class SettingsView: UIView, UITableViewDataSource, UITableViewDelegate {
         ])
         
         tableView.contentInset.top = -10
-        tableView.backgroundColor = .bg100
+        tableView.backgroundColor = .linen
     }
     
     private func configureTableView() {
@@ -74,6 +74,7 @@ class SettingsView: UIView, UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let setting = settings[indexPath.section][indexPath.row]
         cell.textLabel?.text = setting.title
+        cell.backgroundColor = .linen
         return cell
     }
     

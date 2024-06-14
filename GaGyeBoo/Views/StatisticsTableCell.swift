@@ -1,21 +1,21 @@
 import UIKit
 
 class StatisticsTableCell: UITableViewCell {
-    
     static let identifier = "StatisticsTableCell"
     
     private let monthLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.font = .systemFont(ofSize: 20, weight: .light)
+        label.textAlignment = .left
         return label
     }()
     
     private let incomeAmountLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 15, weight: .medium)
-        label.textColor = .textBlue
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .text200
         label.textAlignment = .right
         return label
     }()
@@ -23,7 +23,7 @@ class StatisticsTableCell: UITableViewCell {
     private let expenseAmountLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
         label.textColor = .accent100
         label.textAlignment = .right
         return label

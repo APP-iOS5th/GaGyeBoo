@@ -40,6 +40,7 @@ class MainView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        self.backgroundColor = .linen
         setSubscriber()
         configureUI()
         loadCurrentYearMonthData(year: currentYear, month: currentMonth)

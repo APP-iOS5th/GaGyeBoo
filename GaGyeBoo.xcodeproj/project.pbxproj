@@ -9,15 +9,15 @@
 /* Begin PBXBuildFile section */
 		7F8143B02C14B54A00741BBA /* StatisticsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */; };
 		7F8143BD2C16EB9800741BBA /* StatisticsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */; };
+		7FF255452C1B55CC00B4607C /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF255442C1B55CC00B4607C /* UIColor+Extension.swift */; };
+		7FF255472C1B55D700B4607C /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF255462C1B55D700B4607C /* UIFont+Extension.swift */; };
 		CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */; };
 		CB2578542C1780A900D67DFB /* RecurringExpenseSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */; };
 		CB981F822C19415F00163FB3 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB981F812C19415F00163FB3 /* SettingsViewController.swift */; };
 		CBD462A12C1A357F008B7D3F /* CategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD462A02C1A357F008B7D3F /* CategoryButton.swift */; };
 		CBD462A32C1A39BC008B7D3F /* BudgetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD462A22C1A39BC008B7D3F /* BudgetTextField.swift */; };
 		CBDBB26A2C182D5A00F7E869 /* InquiryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */; };
-		CD04C9A52C1A19950026DA51 /* GaGyeBooColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */; };
 		CD04C9A82C1A8E750026DA51 /* EditSpendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */; };
-		CD04C9AA2C1AF8EC0026DA51 /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD04C9A92C1AF8EC0026DA51 /* CustomComponents.swift */; };
 		CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */; };
 		CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */; };
 		CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0E38AB2C0D99BE00F9BF92 /* MainViewController.swift */; };
@@ -53,15 +53,15 @@
 		7F0AF4AD2C195DFA00D7C82A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		7F8143AF2C14B54A00741BBA /* StatisticsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTableCell.swift; sourceTree = "<group>"; };
 		7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsDataModel.swift; sourceTree = "<group>"; };
+		7FF255442C1B55CC00B4607C /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
+		7FF255462C1B55D700B4607C /* UIFont+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetSettingViewController.swift; sourceTree = "<group>"; };
 		CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringExpenseSettingViewController.swift; sourceTree = "<group>"; };
 		CB981F812C19415F00163FB3 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		CBD462A02C1A357F008B7D3F /* CategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryButton.swift; sourceTree = "<group>"; };
 		CBD462A22C1A39BC008B7D3F /* BudgetTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetTextField.swift; sourceTree = "<group>"; };
 		CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryViewController.swift; sourceTree = "<group>"; };
-		CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaGyeBooColors.swift; sourceTree = "<group>"; };
 		CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSpendViewController.swift; sourceTree = "<group>"; };
-		CD04C9A92C1AF8EC0026DA51 /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaGyeBoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -93,13 +93,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CD04C9A32C1A19850026DA51 /* Utils */ = {
+		7FF2553F2C1B546B00B4607C /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				CD04C9A42C1A19950026DA51 /* GaGyeBooColors.swift */,
-				CD04C9A92C1AF8EC0026DA51 /* CustomComponents.swift */,
+				7FF255462C1B55D700B4607C /* UIFont+Extension.swift */,
+				7FF255442C1B55CC00B4607C /* UIColor+Extension.swift */,
 			);
-			path = Utils;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		CD04C9A62C1A8E640026DA51 /* Main */ = {
@@ -138,6 +138,8 @@
 				CD0E38BF2C0D99DF00F9BF92 /* Controllers */,
 				CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */,
 				CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */,
+				CD0E38C02C0D9A3900F9BF92 /* Datas */,
+				7FF2553F2C1B546B00B4607C /* Extensions */,
 				CD0E38B32C0D99BF00F9BF92 /* Assets.xcassets */,
 				CD0E38B52C0D99BF00F9BF92 /* LaunchScreen.storyboard */,
 				CD0E38B82C0D99BF00F9BF92 /* Info.plist */,
@@ -271,10 +273,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0E38AC2C0D99BE00F9BF92 /* MainViewController.swift in Sources */,
-				CD04C9AA2C1AF8EC0026DA51 /* CustomComponents.swift in Sources */,
 				CD2574162C0ECEB000BC4844 /* MainView.swift in Sources */,
 				CBD462A12C1A357F008B7D3F /* CategoryButton.swift in Sources */,
-				CD04C9A52C1A19950026DA51 /* GaGyeBooColors.swift in Sources */,
 				CD2574182C0ECEB500BC4844 /* AddView.swift in Sources */,
 				CBD462A32C1A39BC008B7D3F /* BudgetTextField.swift in Sources */,
 				CB2578542C1780A900D67DFB /* RecurringExpenseSettingViewController.swift in Sources */,
@@ -285,8 +285,10 @@
 				CD25740F2C0ECC3900BC4844 /* AddViewController.swift in Sources */,
 				CD994AAC2C12E52C00681C50 /* SpendDataManager.swift in Sources */,
 				CD0E38A82C0D99BE00F9BF92 /* AppDelegate.swift in Sources */,
+				7FF255452C1B55CC00B4607C /* UIColor+Extension.swift in Sources */,
 				CD0E38B22C0D99BE00F9BF92 /* GaGyeBoo.xcdatamodeld in Sources */,
 				7F8143BD2C16EB9800741BBA /* StatisticsDataModel.swift in Sources */,
+				7FF255472C1B55D700B4607C /* UIFont+Extension.swift in Sources */,
 				CD25741C2C0ECEC600BC4844 /* StatisticsView.swift in Sources */,
 				CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */,
 				CD0E38AA2C0D99BE00F9BF92 /* SceneDelegate.swift in Sources */,
