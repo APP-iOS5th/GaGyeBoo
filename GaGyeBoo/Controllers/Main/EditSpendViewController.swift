@@ -156,7 +156,7 @@ class EditSpendViewController: UIViewController {
             config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 30)
             config.imagePadding = 5
             config.imagePlacement = .top
-            let topButton = UIButton(configuration: config)
+            // let topButton = UIButton(configuration: config)
             button.configuration = config
             button.layer.cornerRadius = 5.0
             button.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
@@ -271,9 +271,8 @@ class EditSpendViewController: UIViewController {
             (moneyTextField.arrangedSubviews[1] as? UITextField)?.text = "\(Int(selectedSpend.amount))"
             (contentsField.arrangedSubviews[1] as? UITextField)?.text = selectedSpend.spendType ?? ""
             
+            /*
             let categories: [String] = segmentControl.selectedSegmentIndex == 0 ? ["월급", "용돈", "기타", "추가"] : ["식비", "교통", "쇼핑", "문화생활", "공과금", "기타", "추가"]
-            
-            print(categories.filter{ selectedSpend.category == $0 })
             if let category = categories.filter({ selectedSpend.category == $0 }).first {
                 let buttonStack = textFieldContainer.arrangedSubviews[1].subviews[0] as! UIStackView
                 for button in buttonStack.subviews {
@@ -287,6 +286,7 @@ class EditSpendViewController: UIViewController {
                     }
                 }
             }
+            */
         }
     }
     
@@ -322,14 +322,14 @@ class EditSpendViewController: UIViewController {
         textFieldContainer.addArrangedSubview(contentsField)
         textFieldContainer.addArrangedSubview(saveButton)
         view.layoutIfNeeded()
-        switch sender.selectedSegmentIndex {
-        case 0:
-            let saveType: Categories = .income
-        case 1:
-            let saveType: Categories = .expense
-        default:
-            break
-        }
+//        switch sender.selectedSegmentIndex {
+//        case 0:
+//            let saveType: Categories = .income
+//        case 1:
+//            let saveType: Categories = .expense
+//        default:
+//            break
+//        }
     }
     
     // 금액 입력 부분 감지
@@ -391,8 +391,10 @@ class EditSpendViewController: UIViewController {
         }
         
         let gagyebooData = GaGyeBooModel(id: selectedSpend!.id, date: date, saveType: saveType, category: category, spendType: spendType, amount: amount, isUserDefault: false)
+        
         spendDataManager.editSpendData(target: gagyebooData)
         calendarDelegate?.reloadCalendar(newSpend: gagyebooData, isDeleted: false)
+        
         
         dismiss(animated: true, completion: nil)
     }

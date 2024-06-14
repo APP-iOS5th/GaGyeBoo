@@ -1,10 +1,3 @@
-//
-//  BudgetTextField.swift
-//  GaGyeBoo
-//
-//  Created by Jude Song on 6/13/24.
-//
-
 import UIKit
 
 class BudgetTextField: UITextField {

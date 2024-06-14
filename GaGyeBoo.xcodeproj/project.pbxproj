@@ -131,11 +131,13 @@
 		CD0E38A62C0D99BE00F9BF92 /* GaGyeBoo */ = {
 			isa = PBXGroup;
 			children = (
-				CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */,
-				CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */,
+				CD04C9A32C1A19850026DA51 /* Utils */,
+				CD0E38C02C0D9A3900F9BF92 /* Datas */,
 				CD0E38BE2C0D99DA00F9BF92 /* Models */,
 				CD2574142C0ECEA300BC4844 /* Views */,
 				CD0E38BF2C0D99DF00F9BF92 /* Controllers */,
+				CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */,
+				CD0E38A92C0D99BE00F9BF92 /* SceneDelegate.swift */,
 				CD0E38C02C0D9A3900F9BF92 /* Datas */,
 				7FF2553F2C1B546B00B4607C /* Extensions */,
 				CD0E38B32C0D99BF00F9BF92 /* Assets.xcassets */,

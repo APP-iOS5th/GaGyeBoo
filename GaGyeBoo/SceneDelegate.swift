@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  GaGyeBoo
-//
-//  Created by MadCow on 2024/6/3.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
