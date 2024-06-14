@@ -61,6 +61,9 @@
 		CBD462A02C1A357F008B7D3F /* CategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryButton.swift; sourceTree = "<group>"; };
 		CBD462A22C1A39BC008B7D3F /* BudgetTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetTextField.swift; sourceTree = "<group>"; };
 		CBDBB2692C182D5A00F7E869 /* InquiryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryViewController.swift; sourceTree = "<group>"; };
+		CD03D7142C1C2C4C00E46228 /* NotoSansKR-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NotoSansKR-VariableFont_wght.ttf"; path = "../../../../Downloads/fonts/Noto_Sans_KR/NotoSansKR-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		CD03D7152C1C2C4C00E46228 /* Jua-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Jua-Regular.ttf"; path = "../../../../Downloads/fonts/Jua/Jua-Regular.ttf"; sourceTree = "<group>"; };
+		CD03D7162C1C2C4C00E46228 /* SongMyung-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SongMyung-Regular.ttf"; path = "../../../../Downloads/fonts/Song_Myung/SongMyung-Regular.ttf"; sourceTree = "<group>"; };
 		CD04C9A72C1A8E750026DA51 /* EditSpendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSpendViewController.swift; sourceTree = "<group>"; };
 		CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GaGyeBoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0E38A72C0D99BE00F9BF92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -102,6 +105,16 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		CD03D70D2C1C2C0B00E46228 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				CD03D7152C1C2C4C00E46228 /* Jua-Regular.ttf */,
+				CD03D7142C1C2C4C00E46228 /* NotoSansKR-VariableFont_wght.ttf */,
+				CD03D7162C1C2C4C00E46228 /* SongMyung-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		CD04C9A62C1A8E640026DA51 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -131,8 +144,7 @@
 		CD0E38A62C0D99BE00F9BF92 /* GaGyeBoo */ = {
 			isa = PBXGroup;
 			children = (
-				CD04C9A32C1A19850026DA51 /* Utils */,
-				CD0E38C02C0D9A3900F9BF92 /* Datas */,
+				CD03D70D2C1C2C0B00E46228 /* Fonts */,
 				CD0E38BE2C0D99DA00F9BF92 /* Models */,
 				CD2574142C0ECEA300BC4844 /* Views */,
 				CD0E38BF2C0D99DF00F9BF92 /* Controllers */,
