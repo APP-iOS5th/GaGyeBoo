@@ -40,7 +40,6 @@ class MainView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = .linen
         setSubscriber()
         configureUI()
         loadCurrentYearMonthData(year: currentYear, month: currentMonth)
@@ -92,7 +91,7 @@ class MainView: UIView {
     }
     
     func configureUI() {
-        self.backgroundColor = .systemBackground
+        self.backgroundColor = .linen
         
         [scrollView].forEach{ self.addSubview($0) }
         [scrollView, contentView, secondContentView].forEach{ $0.translatesAutoresizingMaskIntoConstraints = false }
