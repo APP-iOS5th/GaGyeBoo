@@ -2,43 +2,61 @@ import UIKit
 
 
 
-// Jua
-// SongMyung
+// Jua-Regular
+// SongMyung-Regular
+
+enum CustomFont: String {
+    case jua = "Jua-Regular"
+    
+    func withSize(_ size: CGFloat) -> UIFont? {
+        return UIFont(name: self.rawValue, size: size)
+    }
+}
+
 extension UILabel {
-    func setCustomFont() {
-        guard let customFont = UIFont(name: "Jua", size: self.font.pointSize) else {
+    func setCustomFont(_ customFont: CustomFont) {
+        guard let font = customFont.withSize(self.font.pointSize) else {
+            print("Failed to load \(customFont.rawValue) font")
             return
         }
-        self.font = customFont
+        self.font = font
     }
 }
 
 extension UIButton {
-    func setCustomFont() {
-        guard let customFont = UIFont(name: "Jua", size: self.titleLabel?.font.pointSize ?? UIFont.labelFontSize) else {
+    func setCustomFont(_ customFont: CustomFont) {
+        guard let font = customFont.withSize(self.titleLabel?.font.pointSize ?? UIFont.labelFontSize) else {
+            print("Failed to load \(customFont.rawValue) font")
             return
         }
-        self.titleLabel?.font = customFont
+        self.titleLabel?.font = font
     }
 }
 
 extension UITextField {
-    func setCustomFont() {
-        guard let customFont = UIFont(name: "Jua", size: self.font?.pointSize ?? UIFont.labelFontSize) else {
+    func setCustomFont(_ customFont: CustomFont) {
+        guard let font = customFont.withSize(self.font?.pointSize ?? UIFont.labelFontSize) else {
+            print("Failed to load \(customFont.rawValue) font")
             return
         }
-        self.font = customFont
+        self.font = font
     }
 }
 
 extension UITextView {
-    func setCustomFont() {
-        guard let customFont = UIFont(name: "Jua", size: self.font?.pointSize ?? UIFont.labelFontSize) else {
+    func setCustomFont(_ customFont: CustomFont) {
+        guard let font = customFont.withSize(self.font?.pointSize ?? UIFont.labelFontSize) else {
+            print("Failed to load \(customFont.rawValue) font")
             return
         }
-        self.font = customFont
+        self.font = font
     }
 }
+
+
+
+
+
 
 class CustomLabel: UILabel {
     override init(frame: CGRect) {

@@ -11,6 +11,7 @@
 		7F8143BD2C16EB9800741BBA /* StatisticsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8143BC2C16EB9800741BBA /* StatisticsDataModel.swift */; };
 		7FF255452C1B55CC00B4607C /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF255442C1B55CC00B4607C /* UIColor+Extension.swift */; };
 		7FF255472C1B55D700B4607C /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF255462C1B55D700B4607C /* UIFont+Extension.swift */; };
+		7FF255492C1BD1DD00B4607C /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 7FF255482C1BD1DD00B4607C /* DGCharts */; };
 		CB2578482C16CF6C00D67DFB /* BudgetSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578472C16CF6C00D67DFB /* BudgetSettingViewController.swift */; };
 		CB2578542C1780A900D67DFB /* RecurringExpenseSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2578532C1780A900D67DFB /* RecurringExpenseSettingViewController.swift */; };
 		CB981F822C19415F00163FB3 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB981F812C19415F00163FB3 /* SettingsViewController.swift */; };
@@ -86,6 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FF255492C1BD1DD00B4607C /* DGCharts in Frameworks */,
 				F7B22A202C1987B400DEC619 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -131,8 +133,6 @@
 		CD0E38A62C0D99BE00F9BF92 /* GaGyeBoo */ = {
 			isa = PBXGroup;
 			children = (
-				CD04C9A32C1A19850026DA51 /* Utils */,
-				CD0E38C02C0D9A3900F9BF92 /* Datas */,
 				CD0E38BE2C0D99DA00F9BF92 /* Models */,
 				CD2574142C0ECEA300BC4844 /* Views */,
 				CD0E38BF2C0D99DF00F9BF92 /* Controllers */,
@@ -213,6 +213,7 @@
 			name = GaGyeBoo;
 			packageProductDependencies = (
 				F7B22A1F2C1987B400DEC619 /* DGCharts */,
+				7FF255482C1BD1DD00B4607C /* DGCharts */,
 			);
 			productName = GaGyeBoo;
 			productReference = CD0E38A42C0D99BE00F9BF92 /* GaGyeBoo.app */;
@@ -522,6 +523,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7FF255482C1BD1DD00B4607C /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7FE7D5C92C19C6ED000B7530 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
 		F7B22A1F2C1987B400DEC619 /* DGCharts */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DGCharts;
